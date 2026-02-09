@@ -19,11 +19,11 @@ vagas = {
         "expira_em": "2026-02-14"
     },
     "devops-pl": {
-        "titulo": "DevOps Pleno",
-        "empresa": "Empresa Y",
-        "link": "https://www.linkedin.com/jobs/view/456",
-        "publicada_em": "2026-01-15",
-        "expira_em": "2026-02-05"
+        "titulo": "Analista de Backoffice Senior",
+        "empresa": "BYD",
+        "link": "https://bydbrasil.gupy.io/jobs/10575131?jobBoardSource=gupy_public_page",
+        "publicada_em": "2025-12-22",
+        "expira_em": "2026-03-16"
     }
 }
 
