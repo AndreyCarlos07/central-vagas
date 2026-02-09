@@ -4,75 +4,125 @@
 # In[ ]:
 
 
+from playwright.sync_api import sync_playwright
 import csv
-from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+import uuid
+import os
 
 CSV_FILE = "vagas.csv"
-FIELDNAMES = ["titulo", "empresa", "link", "ativa", "inativa"]
 
-def scrape_site(page, url, nome_site):
-    print(f"\n🔎 Buscando vagas da {nome_site}")
+SITES = [
+    {
+        "empresa": "BYD",
+        "url": "https://bydbrasil.gupy.io",
+        "selector": 'a[href*="/jobs/"]'
+    },
+    {
+        "empresa": "MOTIVA",
+        "url": "https://motiva.gupy.io",
+        "selector": 'a[href*="/jobs/"]'
+    }
+]
+
+# 📍 palavras-chave para filtrar BAHIA
+FILTRO_BA = [
+    " - BA",
+    " BAHIA",
+    " SALVADOR",
+    " CAMAÇARI",
+    " LAURO DE FREITAS",
+    " FEIRA DE SANTANA",
+    " DIAS D'ÁVILA"
+]
+
+def scroll_ate_carregar_tudo(page, tentativas=12):
+    ultima_altura = page.evaluate("document.body.scrollHeight")
+
+    for _ in range(tentativas):
+        page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+        page.wait_for_timeout(3000)
+
+        nova_altura = page.evaluate("document.body.scrollHeight")
+        if nova_altura == ultima_altura:
+            break
+
+        ultima_altura = nova_altura
+
+def salvar_vagas(vagas):
+    with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=["id", "titulo", "empresa", "link", "ativa"]
+        )
+        writer.writeheader()
+
+        for vaga in vagas:
+            writer.writerow(vaga)
+
+def main():
     vagas = []
+    links_encontrados = set()
 
-    try:
-        page.goto(url, timeout=30000)  # aumenta timeout para 30s
-        # Aguarda os cards aparecerem (ajuste seletor conforme necessário)
-        page.wait_for_selector("a[href*='/jobs/']", timeout=20000)
-
-        cards = page.locator("a[href*='/jobs/']")
-        total = cards.count()
-        print(f"[{nome_site}] Total de cards encontrados: {total}")
-
-        for i in range(total):
-            card = cards.nth(i)
-            titulo = card.inner_text().strip()
-            link = card.get_attribute("href")
-            vagas.append({
-                "titulo": titulo,
-                "empresa": nome_site,
-                "link": link,
-                "ativa": "sim",
-                "inativa": "não"
-            })
-
-    except PlaywrightTimeoutError:
-        print(f"[{nome_site}] nenhum card encontrado (timeout)")
-        # salva HTML para debug
-        with open(f"{nome_site}_page.html", "w", encoding="utf-8") as f:
-            f.write(page.content())
-
-    return vagas
-
-def scrape():
-    all_vagas = []
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
 
-        # Sites que você quer raspar
-        sites = {
-            "CIBRA": "https://example.com/cibra-jobs",
-            "BYD": "https://example.com/byd-jobs",
-            "Motiva": "https://example.com/motiva-jobs"
-        }
+        for site in SITES:
+            page.goto(site["url"], timeout=60000)
+            page.wait_for_timeout(4000)
 
-        for nome, url in sites.items():
-            vagas = scrape_site(page, url, nome)
-            all_vagas.extend(vagas)
+            # 🔥 carrega todas as vagas (paginação)
+            scroll_ate_carregar_tudo(page)
+
+            cards = page.locator(site["selector"])
+            count = cards.count()
+
+            for i in range(count):
+                try:
+                    el = cards.nth(i)
+                    titulo = el.inner_text(timeout=3000).strip()
+                    link = el.get_attribute("href")
+
+                    if not titulo or not link:
+                        continue
+
+                    titulo_upper = titulo.upper()
+
+                    # 🎯 FILTRO BAHIA
+                    if not any(x in titulo_upper for x in FILTRO_BA):
+                        continue
+
+                    if not link.startswith("http"):
+                        link = site["url"] + link
+
+                    links_encontrados.add(link)
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": site["empresa"],
+                        "link": link,
+                        "ativa": "1"
+                    })
+
+                except Exception:
+                    continue
 
         browser.close()
 
-    # Escrevendo no CSV, filtrando apenas os fieldnames
-    with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
-        writer.writeheader()
-        for vaga in all_vagas:
-            writer.writerow({k: v for k, v in vaga.items() if k in FIELDNAMES})
+    # 🔄 desativa vagas que sumiram do site
+    if os.path.exists(CSV_FILE):
+        with open(CSV_FILE, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for vaga in reader:
+                if vaga["link"] not in links_encontrados:
+                    vaga["ativa"] = "0"
+                    vagas.append(vaga)
 
-    print(f"\n✅ Total de vagas salvas: {len(all_vagas)}")
+    salvar_vagas(vagas)
 
 if __name__ == "__main__":
-    scrape()
+    main()
 
 
 
