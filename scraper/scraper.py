@@ -16,23 +16,39 @@ SITES = [
         "empresa": "BYD",
         "url": "https://bydbrasil.gupy.io",
         "selector": 'a[href*="/jobs/"]'
+    },
+    {
+        "empresa": "MOTIVA",
+        "url": "https://motiva.gupy.io",
+        "selector": 'a[href*="/jobs/"]'
     }
 ]
 
+# 📍 palavras-chave para filtrar BAHIA
+FILTRO_BA = [
+    " - BA",
+    " BAHIA",
+    " SALVADOR",
+    " CAMAÇARI",
+    " LAURO DE FREITAS",
+    " FEIRA DE SANTANA",
+    " DIAS D'ÁVILA"
+]
 
-def carregar_links_existentes():
-    links = set()
-    if os.path.exists(CSV_FILE):
-        with open(CSV_FILE, newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                links.add(row["link"])
-    return links
+def scroll_ate_carregar_tudo(page, tentativas=12):
+    ultima_altura = page.evaluate("document.body.scrollHeight")
 
+    for _ in range(tentativas):
+        page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+        page.wait_for_timeout(3000)
+
+        nova_altura = page.evaluate("document.body.scrollHeight")
+        if nova_altura == ultima_altura:
+            break
+
+        ultima_altura = nova_altura
 
 def salvar_vagas(vagas):
-    arquivo_existe = os.path.exists(CSV_FILE)
-
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
@@ -43,10 +59,8 @@ def salvar_vagas(vagas):
         for vaga in vagas:
             writer.writerow(vaga)
 
-
 def main():
     vagas = []
-    links_existentes = carregar_links_existentes()
     links_encontrados = set()
 
     with sync_playwright() as p:
@@ -57,8 +71,10 @@ def main():
             page.goto(site["url"], timeout=60000)
             page.wait_for_timeout(4000)
 
-            cards = page.locator(site["selector"])
+            # 🔥 carrega todas as vagas (paginação)
+            scroll_ate_carregar_tudo(page)
 
+            cards = page.locator(site["selector"])
             count = cards.count()
 
             for i in range(count):
@@ -68,6 +84,12 @@ def main():
                     link = el.get_attribute("href")
 
                     if not titulo or not link:
+                        continue
+
+                    titulo_upper = titulo.upper()
+
+                    # 🎯 FILTRO BAHIA
+                    if not any(x in titulo_upper for x in FILTRO_BA):
                         continue
 
                     if not link.startswith("http"):
@@ -84,12 +106,11 @@ def main():
                     })
 
                 except Exception:
-                    # ignora card bugado sem derrubar o job
                     continue
 
         browser.close()
 
-    # 🔄 se a vaga existia antes e não foi encontrada agora → desativa
+    # 🔄 desativa vagas que sumiram do site
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
