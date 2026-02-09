@@ -15,32 +15,13 @@ SITES = [
     {
         "empresa": "CIBRA",
         "url": "https://cibra.gupy.io/",
-        "selector": 'a[href*="/jobs/"]'
+        "selector": 'a[href*="/jobs/"]',
+        "local_selector": ".sc-dlfnbm"  # exemplo: onde aparece a cidade/estado no card
     }
 ]
 
-# 📍 FILTRO BAHIA (usado DENTRO da página da vaga)
-FILTRO_BA = [
-    " BA",
-    "BAHIA",
-    "SALVADOR",
-    "CAMAÇARI",
-    "LAURO DE FREITAS",
-    "FEIRA DE SANTANA",
-    "DIAS D'ÁVILA"
-]
-
-
-def vaga_eh_bahia(page, link):
-    try:
-        page.goto(link, timeout=60000)
-        page.wait_for_timeout(2000)
-
-        texto = page.inner_text("body").upper()
-        return any(f in texto for f in FILTRO_BA)
-
-    except Exception:
-        return False
+# 🏖️ Lista de locais da BA
+LOC_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO DE FREITAS", "FEIRA DE SANTANA", "DIAS D'ÁVILA"]
 
 
 def salvar_vagas(vagas):
@@ -65,39 +46,46 @@ def main():
         for site in SITES:
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
 
-            page_num = 0
+            page.goto(site["url"], timeout=60000)
+            page.wait_for_timeout(2000)
 
+            # Opcional: aplicar filtro de Estado, se o site permitir
+            if page.query_selector("#state-select"):
+                page.fill("#state-select", "Bahia")
+                page.keyboard.press("Enter")
+                page.wait_for_timeout(1000)
+
+            page_num = 0
             while True:
+                # recarregar a página ou navegar na paginação
                 url = f"{site['url']}?page={page_num}"
                 page.goto(url, timeout=60000)
-                page.wait_for_timeout(3000)
+                page.wait_for_timeout(2000)
 
                 cards = page.locator(site["selector"])
                 count = cards.count()
-
                 print(f"[{site['empresa']}] página {page_num} → {count} cards")
 
                 if count == 0:
-                    break  # fim real da paginação
+                    break
 
                 for i in range(count):
                     try:
                         el = cards.nth(i)
-                        titulo = el.inner_text(timeout=3000).strip()
+                        titulo = el.inner_text(timeout=2000).strip()
                         link = el.get_attribute("href")
-
-                        if not titulo or not link:
-                            continue
 
                         if not link.startswith("http"):
                             link = site["url"] + link
 
+                        # pegar o local direto do card
+                        local_text = el.locator(site["local_selector"]).inner_text(timeout=2000).upper()
+
+                        # filtrar por Bahia
+                        if not any(loc in local_text for loc in LOC_BA):
+                            continue
+
                         if link in links_encontrados:
-                            continue  # evita duplicação
-
-                        print(f"   ↪ Verificando: {titulo}")
-
-                        if not vaga_eh_bahia(page, link):
                             continue
 
                         links_encontrados.add(link)
@@ -133,6 +121,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
