@@ -24,6 +24,7 @@ SITES = [
     }
 ]
 
+# 📍 FILTRO BAHIA
 FILTRO_BA = [
     " BA",
     "BAHIA",
@@ -33,6 +34,12 @@ FILTRO_BA = [
     "FEIRA DE SANTANA",
     "DIAS D'ÁVILA"
 ]
+
+
+def vaga_eh_bahia(titulo):
+    titulo = titulo.upper()
+    return any(filtro in titulo for filtro in FILTRO_BA)
+
 
 def salvar_vagas(vagas):
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
@@ -44,6 +51,7 @@ def salvar_vagas(vagas):
         for vaga in vagas:
             writer.writerow(vaga)
 
+
 def main():
     vagas = []
     links_encontrados = set()
@@ -53,38 +61,41 @@ def main():
         page = browser.new_page()
 
         for site in SITES:
+            print(f"\n🔎 Buscando vagas da {site['empresa']}")
+
             page_num = 0
-            links_pagina_anterior = set()
 
             while True:
                 url = f"{site['url']}?page={page_num}"
                 page.goto(url, timeout=60000)
-                page.wait_for_timeout(2500)
+                page.wait_for_timeout(3000)
 
                 cards = page.locator(site["selector"])
                 count = cards.count()
 
-                print(f"[{site['empresa']}] página {page_num} → {count} cards")
+                print(f"[{site['empresa']}] página {page_num} → {count} vagas")
 
-                links_pagina_atual = set()
+                if count == 0:
+                    break  # acabou a paginação real
 
                 for i in range(count):
                     try:
                         el = cards.nth(i)
-                        titulo = el.inner_text(timeout=2000).strip()
+                        titulo = el.inner_text(timeout=3000).strip()
                         link = el.get_attribute("href")
 
                         if not titulo or not link:
                             continue
 
-                        titulo_upper = titulo.upper()
-                        if not any(x in titulo_upper for x in FILTRO_BA):
+                        if not vaga_eh_bahia(titulo):
                             continue
 
                         if not link.startswith("http"):
                             link = site["url"] + link
 
-                        links_pagina_atual.add(link)
+                        if link in links_encontrados:
+                            continue  # evita duplicação
+
                         links_encontrados.add(link)
 
                         vagas.append({
@@ -98,17 +109,23 @@ def main():
                     except Exception:
                         continue
 
-                # 🚨 CONDIÇÃO DE PARADA CORRETA
-                if not links_pagina_atual or links_pagina_atual == links_pagina_anterior:
-                    print(f"[{site['empresa']}] fim da paginação")
-                    break
-
-                links_pagina_anterior = links_pagina_atual
                 page_num += 1
 
         browser.close()
 
+    # 🔄 desativa vagas que sumiram
+    if os.path.exists(CSV_FILE):
+        with open(CSV_FILE, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for vaga in reader:
+                if vaga["link"] not in links_encontrados:
+                    vaga["ativa"] = "0"
+                    vagas.append(vaga)
+
     salvar_vagas(vagas)
+
+    print(f"\n✅ Scraping finalizado. Total de vagas BA ativas: {len(links_encontrados)}")
+
 
 if __name__ == "__main__":
     main()
