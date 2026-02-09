@@ -21,6 +21,22 @@ SITES = [
         "location_selector": ".job-card-location a",
         "link_selector": "a[href]",
     },
+    {
+        "nome": "BYD",
+        "url": "https://www.gupy.io/company/byd/jobs",
+        "card_selector": ".job-card",
+        "title_selector": ".job-card-title",
+        "location_selector": ".job-card-location a",
+        "link_selector": "a[href]",
+    },
+    {
+        "nome": "Motiva",
+        "url": "https://www.gupy.io/company/motiva/jobs",
+        "card_selector": ".job-card",
+        "title_selector": ".job-card-title",
+        "location_selector": ".job-card-location a",
+        "link_selector": "a[href]",
+    },
 ]
 
 def scrape():
@@ -78,6 +94,7 @@ def scrape():
 
 if __name__ == "__main__":
     scrape()
+
 
 
 
