@@ -1,4 +1,4 @@
-id,titulo,empresa,link,publicada_em,expira_em
+id,titulo,empresa,link,ativa
 8eca912f,Pular para o conteúdo principal,BYD,#h1,2026-02-09,2026-03-01
 a50460af,Entrar,BYD,https://login.gupy.io/candidates/signin,2026-02-09,2026-03-01
 edec766b,Termos de Uso da Gupy,BYD,https://www.gupy.io/termos-de-uso-recrutamento-e-selecao-candidatos,2026-02-09,2026-03-01
@@ -40,3 +40,4 @@ a934bfbe,Website,BYD,https://www.byd.com.br/,2026-02-09,2026-03-01
 42969abd,LinkedIn,BYD,https://www.linkedin.com/company/11161016/admin/,2026-02-09,2026-03-01
 a632e722,Facebook,BYD,https://www.facebook.com/BYDBrasil/,2026-02-09,2026-03-01
 39db4b08,Instagram,BYD,https://www.instagram.com/byd_brasil/,2026-02-09,2026-03-01
+
