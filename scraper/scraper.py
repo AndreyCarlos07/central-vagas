@@ -15,14 +15,16 @@ SITES = [
     {
         "empresa": "CIBRA",
         "url": "https://cibra.gupy.io/",
-        "selector": 'a[href*="/jobs/"]',
-        "local_selector": ".sc-dlfnbm"  # exemplo: onde aparece a cidade/estado no card
+        "job_selector": 'a[href*="/jobs/"]',
+        "location_selector": ".job-card-location"  # classe que aparece na listagem das vagas
     }
 ]
 
-# 🏖️ Lista de locais da BA
-LOC_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO DE FREITAS", "FEIRA DE SANTANA", "DIAS D'ÁVILA"]
-
+# Estados/locais da Bahia
+BA_FILTER = [
+    "BA", "BAHIA", "SALVADOR", "CAMAÇARI", 
+    "LAURO DE FREITAS", "FEIRA DE SANTANA", "DIAS D'ÁVILA"
+]
 
 def salvar_vagas(vagas):
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
@@ -34,7 +36,6 @@ def salvar_vagas(vagas):
         for vaga in vagas:
             writer.writerow(vaga)
 
-
 def main():
     vagas = []
     links_encontrados = set()
@@ -45,63 +46,44 @@ def main():
 
         for site in SITES:
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
-
             page.goto(site["url"], timeout=60000)
-            page.wait_for_timeout(2000)
+            page.wait_for_timeout(3000)
 
-            # Opcional: aplicar filtro de Estado, se o site permitir
-            if page.query_selector("#state-select"):
-                page.fill("#state-select", "Bahia")
-                page.keyboard.press("Enter")
-                page.wait_for_timeout(1000)
+            # pegar todas as vagas da listagem
+            cards = page.locator(site["job_selector"])
+            count = cards.count()
+            print(f"[{site['empresa']}] Total de cards encontrados: {count}")
 
-            page_num = 0
-            while True:
-                # recarregar a página ou navegar na paginação
-                url = f"{site['url']}?page={page_num}"
-                page.goto(url, timeout=60000)
-                page.wait_for_timeout(2000)
+            for i in range(count):
+                try:
+                    el = cards.nth(i)
+                    titulo = el.inner_text(timeout=2000).strip()
+                    link = el.get_attribute("href")
+                    location = el.locator(site["location_selector"]).inner_text(timeout=2000).upper()
 
-                cards = page.locator(site["selector"])
-                count = cards.count()
-                print(f"[{site['empresa']}] página {page_num} → {count} cards")
+                    if not link.startswith("http"):
+                        link = site["url"] + link
 
-                if count == 0:
-                    break
-
-                for i in range(count):
-                    try:
-                        el = cards.nth(i)
-                        titulo = el.inner_text(timeout=2000).strip()
-                        link = el.get_attribute("href")
-
-                        if not link.startswith("http"):
-                            link = site["url"] + link
-
-                        # pegar o local direto do card
-                        local_text = el.locator(site["local_selector"]).inner_text(timeout=2000).upper()
-
-                        # filtrar por Bahia
-                        if not any(loc in local_text for loc in LOC_BA):
-                            continue
-
-                        if link in links_encontrados:
-                            continue
-
-                        links_encontrados.add(link)
-
-                        vagas.append({
-                            "id": str(uuid.uuid4())[:8],
-                            "titulo": titulo,
-                            "empresa": site["empresa"],
-                            "link": link,
-                            "ativa": "1"
-                        })
-
-                    except Exception:
+                    if link in links_encontrados:
                         continue
 
-                page_num += 1
+                    # filtrar Bahia direto na listagem
+                    if not any(f in location for f in BA_FILTER):
+                        continue
+
+                    links_encontrados.add(link)
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": site["empresa"],
+                        "link": link,
+                        "ativa": "1"
+                    })
+                    print(f"   ↪ Encontrada: {titulo} ({location})")
+
+                except Exception:
+                    continue
 
         browser.close()
 
@@ -115,9 +97,7 @@ def main():
                     vagas.append(vaga)
 
     salvar_vagas(vagas)
-
     print(f"\n✅ Finalizado. Total de vagas BA ativas: {len(links_encontrados)}")
-
 
 if __name__ == "__main__":
     main()
