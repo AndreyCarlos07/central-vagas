@@ -13,13 +13,8 @@ CSV_FILE = "vagas.csv"
 
 SITES = [
     {
-        "empresa": "BYD",
-        "url": "https://bydbrasil.gupy.io",
-        "selector": 'a[href*="/jobs/"]'
-    },
-    {
-        "empresa": "MOTIVA",
-        "url": "https://motiva.gupy.io",
+        "empresa": "CIBRA",
+        "url": "https://cibra.gupy.io/",
         "selector": 'a[href*="/jobs/"]'
     }
 ]
