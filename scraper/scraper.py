@@ -8,7 +8,6 @@ from playwright.sync_api import sync_playwright
 import csv
 import uuid
 import os
-import time
 
 CSV_FILE = "vagas.csv"
 
@@ -25,6 +24,7 @@ SITES = [
     }
 ]
 
+# 📍 FILTRO BAHIA (usado DENTRO da página da vaga)
 FILTRO_BA = [
     " BA",
     "BAHIA",
@@ -35,9 +35,18 @@ FILTRO_BA = [
     "DIAS D'ÁVILA"
 ]
 
-def vaga_eh_bahia(titulo):
-    titulo = titulo.upper()
-    return any(f in titulo for f in FILTRO_BA)
+
+def vaga_eh_bahia(page, link):
+    try:
+        page.goto(link, timeout=60000)
+        page.wait_for_timeout(2000)
+
+        texto = page.inner_text("body").upper()
+        return any(f in texto for f in FILTRO_BA)
+
+    except Exception:
+        return False
+
 
 def salvar_vagas(vagas):
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
@@ -46,7 +55,9 @@ def salvar_vagas(vagas):
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
-        writer.writerows(vagas)
+        for vaga in vagas:
+            writer.writerow(vaga)
+
 
 def main():
     vagas = []
@@ -58,37 +69,43 @@ def main():
 
         for site in SITES:
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
-            page.goto(site["url"], timeout=60000)
-            page.wait_for_timeout(3000)
 
-            scroll_sem_novidade = 0
+            page_num = 0
 
-            while scroll_sem_novidade < 2:
+            while True:
+                url = f"{site['url']}?page={page_num}"
+                page.goto(url, timeout=60000)
+                page.wait_for_timeout(3000)
+
                 cards = page.locator(site["selector"])
                 count = cards.count()
-                novos = 0
 
-                print(f"[{site['empresa']}] cards visíveis: {count}")
+                print(f"[{site['empresa']}] página {page_num} → {count} cards")
+
+                if count == 0:
+                    break  # fim real da paginação
 
                 for i in range(count):
                     try:
                         el = cards.nth(i)
-                        titulo = el.inner_text(timeout=2000).strip()
+                        titulo = el.inner_text(timeout=3000).strip()
                         link = el.get_attribute("href")
 
                         if not titulo or not link:
-                            continue
-                        if not vaga_eh_bahia(titulo):
                             continue
 
                         if not link.startswith("http"):
                             link = site["url"] + link
 
                         if link in links_encontrados:
+                            continue  # evita duplicação
+
+                        print(f"   ↪ Verificando: {titulo}")
+
+                        if not vaga_eh_bahia(page, link):
                             continue
 
                         links_encontrados.add(link)
-                        novos += 1
 
                         vagas.append({
                             "id": str(uuid.uuid4())[:8],
@@ -101,18 +118,11 @@ def main():
                     except Exception:
                         continue
 
-                if novos == 0:
-                    scroll_sem_novidade += 1
-                else:
-                    scroll_sem_novidade = 0
-
-                # 🔽 scroll real
-                page.mouse.wheel(0, 5000)
-                time.sleep(2)
+                page_num += 1
 
         browser.close()
 
-    # 🔄 desativar vagas antigas
+    # 🔄 marca vagas antigas como inativas
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -122,10 +132,13 @@ def main():
                     vagas.append(vaga)
 
     salvar_vagas(vagas)
-    print(f"\n✅ Finalizado. Vagas BA ativas: {len(links_encontrados)}")
+
+    print(f"\n✅ Finalizado. Total de vagas BA ativas: {len(links_encontrados)}")
+
 
 if __name__ == "__main__":
     main()
+
 
 
 
