@@ -8,6 +8,7 @@ from playwright.sync_api import sync_playwright
 import csv
 import uuid
 import os
+import time
 
 CSV_FILE = "vagas.csv"
 
@@ -57,18 +58,17 @@ def main():
 
         for site in SITES:
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
-            page_num = 0
+            page.goto(site["url"], timeout=60000)
+            page.wait_for_timeout(3000)
 
-            while True:
-                url = f"{site['url']}?page={page_num}"
-                page.goto(url, timeout=60000)
-                page.wait_for_timeout(2000)
+            scroll_sem_novidade = 0
 
+            while scroll_sem_novidade < 2:
                 cards = page.locator(site["selector"])
                 count = cards.count()
+                novos = 0
 
-                novos_links = 0
-                print(f"[{site['empresa']}] página {page_num} → {count} cards")
+                print(f"[{site['empresa']}] cards visíveis: {count}")
 
                 for i in range(count):
                     try:
@@ -88,7 +88,7 @@ def main():
                             continue
 
                         links_encontrados.add(link)
-                        novos_links += 1
+                        novos += 1
 
                         vagas.append({
                             "id": str(uuid.uuid4())[:8],
@@ -101,16 +101,18 @@ def main():
                     except Exception:
                         continue
 
-                # ⛔ condição REAL de parada
-                if novos_links == 0:
-                    print("⛔ Nenhuma vaga nova, encerrando paginação")
-                    break
+                if novos == 0:
+                    scroll_sem_novidade += 1
+                else:
+                    scroll_sem_novidade = 0
 
-                page_num += 1
+                # 🔽 scroll real
+                page.mouse.wheel(0, 5000)
+                time.sleep(2)
 
         browser.close()
 
-    # 🔄 desativa vagas antigas
+    # 🔄 desativar vagas antigas
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -124,5 +126,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 
