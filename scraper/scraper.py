@@ -14,37 +14,40 @@ CSV_FILE = "vagas.csv"
 SITES = [
     {
         "empresa": "BYD",
-        "url": "https://bydbrasil.gupy.io"
+        "url": "https://bydbrasil.gupy.io",
+        "selector": 'a[href*="/jobs/"]'
     }
 ]
 
-def carregar_vagas():
-    vagas = {}
+
+def carregar_links_existentes():
+    links = set()
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                row["ativa"] = "0"  # 🔴 tudo começa como inativo
-                vagas[row["link"]] = row
-    return vagas
+                links.add(row["link"])
+    return links
+
 
 def salvar_vagas(vagas):
+    arquivo_existe = os.path.exists(CSV_FILE)
+
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
-        for vaga in vagas.values():
+
+        for vaga in vagas:
             writer.writerow(vaga)
 
-def vaga_aceita_candidatura(page):
-    # Heurística simples e eficiente
-    botoes = page.query_selector_all("text=/candidatar|inscreva-se|apply/i")
-    return len(botoes) > 0
 
 def main():
-    vagas = carregar_vagas()
+    vagas = []
+    links_existentes = carregar_links_existentes()
+    links_encontrados = set()
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -52,41 +55,52 @@ def main():
 
         for site in SITES:
             page.goto(site["url"], timeout=60000)
-            page.wait_for_timeout(3000)
+            page.wait_for_timeout(4000)
 
-            links = page.query_selector_all('a[href*="/jobs/"]')
+            cards = page.locator(site["selector"])
 
-            for el in links:
-                titulo = el.inner_text().strip()
-                link = el.get_attribute("href")
+            count = cards.count()
 
-                if not titulo or not link:
-                    continue
+            for i in range(count):
+                try:
+                    el = cards.nth(i)
+                    titulo = el.inner_text(timeout=3000).strip()
+                    link = el.get_attribute("href")
 
-                if not link.startswith("http"):
-                    link = site["url"] + link
+                    if not titulo or not link:
+                        continue
 
-                page.goto(link, timeout=60000)
-                page.wait_for_timeout(2000)
+                    if not link.startswith("http"):
+                        link = site["url"] + link
 
-                if not vaga_aceita_candidatura(page):
-                    continue  # 🚫 vaga encerrada
+                    links_encontrados.add(link)
 
-                if link in vagas:
-                    vagas[link]["ativa"] = "1"
-                else:
-                    vagas[link] = {
+                    vagas.append({
                         "id": str(uuid.uuid4())[:8],
                         "titulo": titulo,
                         "empresa": site["empresa"],
                         "link": link,
                         "ativa": "1"
-                    }
+                    })
+
+                except Exception:
+                    # ignora card bugado sem derrubar o job
+                    continue
 
         browser.close()
+
+    # 🔄 se a vaga existia antes e não foi encontrada agora → desativa
+    if os.path.exists(CSV_FILE):
+        with open(CSV_FILE, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for vaga in reader:
+                if vaga["link"] not in links_encontrados:
+                    vaga["ativa"] = "0"
+                    vagas.append(vaga)
 
     salvar_vagas(vagas)
 
 if __name__ == "__main__":
     main()
+
 
