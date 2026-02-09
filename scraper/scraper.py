@@ -76,6 +76,7 @@ def main():
 
             cards = page.locator(site["selector"])
             count = cards.count()
+            print(f"[{site['empresa']}] total de cards encontrados: {count}")
 
             for i in range(count):
                 try:
