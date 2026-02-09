@@ -16,15 +16,37 @@ SITES = [
         "empresa": "CIBRA",
         "url": "https://cibra.gupy.io/",
         "job_selector": 'a[href*="/jobs/"]',
-        "location_selector": ".job-card-location"  # classe que aparece na listagem das vagas
+        "location_selector": ".job-card-location"
+    },
+    {
+        "empresa": "BYD",
+        "url": "https://byd.gupy.io/",
+        "job_selector": 'a[href*="/jobs/"]',
+        "location_selector": ".job-card-location"
+    },
+    {
+        "empresa": "Motiva",
+        "url": "https://motiva.gupy.io/",
+        "job_selector": 'a[href*="/jobs/"]',
+        "location_selector": ".job-card-location"
     }
 ]
 
 # Estados/locais da Bahia
 BA_FILTER = [
-    "BA", "BAHIA", "SALVADOR", "CAMAÇARI", 
+    "BA", "BAHIA", "SALVADOR", "CAMAÇARI",
     "LAURO DE FREITAS", "FEIRA DE SANTANA", "DIAS D'ÁVILA"
 ]
+
+def carregar_vagas_existentes():
+    """Carrega vagas existentes no CSV e retorna um dict por link"""
+    vagas_existentes = {}
+    if os.path.exists(CSV_FILE):
+        with open(CSV_FILE, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for vaga in reader:
+                vagas_existentes[vaga["link"]] = vaga
+    return vagas_existentes
 
 def salvar_vagas(vagas):
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
@@ -37,7 +59,8 @@ def salvar_vagas(vagas):
             writer.writerow(vaga)
 
 def main():
-    vagas = []
+    vagas_existentes = carregar_vagas_existentes()
+    vagas_novas = []
     links_encontrados = set()
 
     with sync_playwright() as p:
@@ -49,7 +72,6 @@ def main():
             page.goto(site["url"], timeout=60000)
             page.wait_for_timeout(3000)
 
-            # pegar todas as vagas da listagem
             cards = page.locator(site["job_selector"])
             count = cards.count()
             print(f"[{site['empresa']}] Total de cards encontrados: {count}")
@@ -64,23 +86,28 @@ def main():
                     if not link.startswith("http"):
                         link = site["url"] + link
 
-                    if link in links_encontrados:
-                        continue
-
-                    # filtrar Bahia direto na listagem
+                    # filtrar Bahia
                     if not any(f in location for f in BA_FILTER):
                         continue
 
                     links_encontrados.add(link)
 
-                    vagas.append({
-                        "id": str(uuid.uuid4())[:8],
-                        "titulo": titulo,
-                        "empresa": site["empresa"],
-                        "link": link,
-                        "ativa": "1"
-                    })
-                    print(f"   ↪ Encontrada: {titulo} ({location})")
+                    # Se já existe, só mantém ativa
+                    if link in vagas_existentes:
+                        vaga = vagas_existentes[link]
+                        vaga["ativa"] = "1"
+                        vagas_novas.append(vaga)
+                    else:
+                        # nova vaga
+                        vaga = {
+                            "id": str(uuid.uuid4())[:8],
+                            "titulo": titulo,
+                            "empresa": site["empresa"],
+                            "link": link,
+                            "ativa": "1"
+                        }
+                        vagas_novas.append(vaga)
+                        print(f"   ↪ Encontrada: {titulo} ({location})")
 
                 except Exception:
                     continue
@@ -88,15 +115,12 @@ def main():
         browser.close()
 
     # 🔄 marca vagas antigas como inativas
-    if os.path.exists(CSV_FILE):
-        with open(CSV_FILE, newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for vaga in reader:
-                if vaga["link"] not in links_encontrados:
-                    vaga["ativa"] = "0"
-                    vagas.append(vaga)
+    for link, vaga in vagas_existentes.items():
+        if link not in links_encontrados:
+            vaga["ativa"] = "0"
+            vagas_novas.append(vaga)
 
-    salvar_vagas(vagas)
+    salvar_vagas(vagas_novas)
     print(f"\n✅ Finalizado. Total de vagas BA ativas: {len(links_encontrados)}")
 
 if __name__ == "__main__":
