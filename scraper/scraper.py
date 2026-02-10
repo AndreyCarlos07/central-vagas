@@ -61,21 +61,22 @@ def main():
         for emp in EMPRESAS:
             print(f"\n🔎 Buscando vagas da {emp['empresa']}")
 
-            # 1️⃣ Carrega a página da empresa (gera cookies)
+            # 1️⃣ abre a página (gera cookies válidos)
             page.goto(f"https://{emp['slug']}.gupy.io/", timeout=60000)
             page.wait_for_timeout(5000)
 
             page_num = 0
 
             while True:
-                params = {
+                body = {
                     "page": page_num,
+                    "pageSize": 10,
                     "companyId": emp["company_id"]
                 }
 
-                resp = page.request.get(
+                resp = page.request.post(
                     API_URL,
-                    params=params,
+                    data=body,
                     headers={
                         "User-Agent": (
                             "Mozilla/5.0 (X11; Linux x86_64) "
@@ -83,6 +84,7 @@ def main():
                             "Chrome/120.0.0.0 Safari/537.36"
                         ),
                         "Accept": "application/json",
+                        "Content-Type": "application/json",
                         "Origin": f"https://{emp['slug']}.gupy.io",
                         "Referer": f"https://{emp['slug']}.gupy.io/"
                     }
@@ -105,6 +107,9 @@ def main():
                     titulo = job.get("name", "")
                     link = job.get("jobUrl", "")
 
+                    if not titulo or not link:
+                        continue
+
                     titulo_upper = titulo.upper()
                     if not any(f in titulo_upper for f in FILTRO_BA):
                         continue
@@ -123,7 +128,7 @@ def main():
                     })
 
                 page_num += 1
-                time.sleep(1)  # respeita rate-limit
+                time.sleep(1)  # evita rate-limit
 
         browser.close()
 
