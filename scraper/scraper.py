@@ -24,7 +24,7 @@ SITES = [
     }
 ]
 
-# 📍 palavras-chave para filtrar BAHIA
+# 📍 palavras-chave para filtrar BAHIA (ainda mantido caso o título tenha o estado)
 FILTRO_BA = [
     " BA",
     "BAHIA",
@@ -35,82 +35,32 @@ FILTRO_BA = [
     "DIAS D'ÁVILA"
 ]
 
-
 # ✅ FUNÇÃO CERTA — FORÇA O REACT A CARREGAR TUDO
 def carregar_todas_vagas(page):
     last_count = 0
-
     for _ in range(40):  # limite de segurança
         page.wait_for_timeout(2000)
-
         cards = page.locator('a[href*="/jobs/"]')
         count = cards.count()
-
         print(f"🔄 vagas renderizadas: {count}")
-
         if count == last_count:
-            break  # não entrou vaga nova → acabou
-
+            break
         last_count = count
-
         # força scroll humano
         page.mouse.wheel(0, 8000)
 
-
-# ✅ FUNÇÃO NOVA — NAVEGAÇÃO POR PAGINAS
-def navegar_todas_paginas(page, site):
-    pagina_atual = 1
-    vagas = []
-
-    while True:
-        print(f"📄 Página {pagina_atual}")
-        page.wait_for_timeout(3000)
-
-        # coleta os cards da página atual
-        cards = page.locator(site["selector"])
-        for i in range(cards.count()):
-            el = cards.nth(i)
-            try:
-                titulo = el.inner_text(timeout=3000).strip()
-                link = el.get_attribute("href")
-
-                if not titulo or not link:
-                    continue
-
-                titulo_upper = titulo.upper()
-
-                # 🎯 FILTRO BAHIA
-                if not any(x in titulo_upper for x in FILTRO_BA):
-                    continue
-
-                if not link.startswith("http"):
-                    link = site["url"] + link
-
-                vagas.append({
-                    "id": str(uuid.uuid4())[:8],
-                    "titulo": titulo,
-                    "empresa": site["empresa"],
-                    "link": link,
-                    "ativa": "1"
-                })
-
-            except Exception:
-                continue
-
-        # tenta achar o botão da próxima página
-        proxima_pagina = page.locator(
-            f'button[data-testid="pagination-page-button"]:has-text("{pagina_atual + 1}")'
-        )
-
-        if proxima_pagina.count() == 0:
-            break  # acabou as páginas
-
-        proxima_pagina.first.click()
-        pagina_atual += 1
-
-    print(f"📌 Total de vagas coletadas nesta empresa: {len(vagas)}")
-    return vagas
-
+# 🎯 FUNÇÃO NOVA — FILTRAR SOMENTE BAHIA NO MOTIVA
+def filtrar_estado_bahia(page):
+    """Seleciona 'Bahia (BA)' no select de estado da Gupy."""
+    try:
+        page.wait_for_selector("#state-select", timeout=5000)
+        page.click("#state-select")  # abre o combo
+        bahia_option = page.locator("div.sc-uVWWZ:has-text('Bahia (BA)')")
+        bahia_option.first.click()
+        page.wait_for_timeout(2000)  # espera as vagas recarregarem
+        print("✅ Filtrado por Bahia no MOTIVA")
+    except Exception:
+        print("⚠️ Não foi possível filtrar por Bahia")
 
 def salvar_vagas(vagas):
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
@@ -119,13 +69,11 @@ def salvar_vagas(vagas):
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
-
         for vaga in vagas:
             writer.writerow(vaga)
 
-
 def main():
-    todas_vagas = []
+    vagas = []
     links_encontrados = set()
 
     with sync_playwright() as p:
@@ -134,18 +82,47 @@ def main():
 
         for site in SITES:
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
-
             page.goto(site["url"], timeout=60000)
             page.wait_for_timeout(4000)
 
-            # 🔥 força o carregamento de todas as vagas do React
+            # 🔹 Se for MOTIVA, filtra Bahia
+            if site["empresa"] == "MOTIVA":
+                filtrar_estado_bahia(page)
+
+            # 🔥 Carrega todas as vagas
             carregar_todas_vagas(page)
 
-            # 🔄 navega por todas as páginas e coleta as vagas
-            vagas_empresa = navegar_todas_paginas(page, site)
-            for vaga in vagas_empresa:
-                links_encontrados.add(vaga["link"])
-                todas_vagas.append(vaga)
+            cards = page.locator(site["selector"])
+            count = cards.count()
+            print(f"📌 Total de vagas renderizadas: {count}")
+
+            for i in range(count):
+                try:
+                    el = cards.nth(i)
+                    titulo = el.inner_text(timeout=3000).strip()
+                    link = el.get_attribute("href")
+                    if not titulo or not link:
+                        continue
+
+                    # Mantido filtro extra por título caso queira reforçar
+                    titulo_upper = titulo.upper()
+                    if not any(x in titulo_upper for x in FILTRO_BA):
+                        continue
+
+                    if not link.startswith("http"):
+                        link = site["url"] + link
+
+                    links_encontrados.add(link)
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": site["empresa"],
+                        "link": link,
+                        "ativa": "1"
+                    })
+                except Exception:
+                    continue
 
         browser.close()
 
@@ -156,13 +133,12 @@ def main():
             for vaga in reader:
                 if vaga["link"] not in links_encontrados:
                     vaga["ativa"] = "0"
-                    todas_vagas.append(vaga)
+                    vagas.append(vaga)
 
-    salvar_vagas(todas_vagas)
+    salvar_vagas(vagas)
 
     print("\n✅ Finalizado")
     print(f"📌 Vagas BA ativas encontradas: {len(links_encontrados)}")
-
 
 if __name__ == "__main__":
     main()
