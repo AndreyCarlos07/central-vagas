@@ -15,7 +15,7 @@ SITES = [
     {"empresa": "MOTIVA", "url": "https://motiva.gupy.io", "selector": 'a[href*="/jobs/"]'}
 ]
 
-# 📍 palavras-chave para filtrar BAHIA
+# 📍 palavras-chave para filtrar vagas na BAHIA
 FILTRO_BA = [
     " - BA Efetivo",
     " - BA Banco de Talentos",
