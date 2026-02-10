@@ -24,29 +24,16 @@ SITES = [
     }
 ]
 
-# 📍 palavras-chave para filtrar BAHIA
+# 📍 FILTRO BAHIA
 FILTRO_BA = [
     " - BA",
-    " BAHIA",
-    " SALVADOR",
-    " CAMAÇARI",
-    " LAURO DE FREITAS",
-    " FEIRA DE SANTANA",
-    " DIAS D'ÁVILA"
+    "BAHIA",
+    "SALVADOR",
+    "CAMAÇARI",
+    "LAURO DE FREITAS",
+    "FEIRA DE SANTANA",
+    "DIAS D'ÁVILA"
 ]
-
-def scroll_ate_carregar_tudo(page, tentativas=12):
-    ultima_altura = page.evaluate("document.body.scrollHeight")
-
-    for _ in range(tentativas):
-        page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-        page.wait_for_timeout(3000)
-
-        nova_altura = page.evaluate("document.body.scrollHeight")
-        if nova_altura == ultima_altura:
-            break
-
-        ultima_altura = nova_altura
 
 def salvar_vagas(vagas):
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
@@ -55,7 +42,6 @@ def salvar_vagas(vagas):
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
-
         for vaga in vagas:
             writer.writerow(vaga)
 
@@ -68,49 +54,67 @@ def main():
         page = browser.new_page()
 
         for site in SITES:
-            page.goto(site["url"], timeout=60000)
-            page.wait_for_timeout(4000)
+            print(f"\n🔎 Buscando vagas da {site['empresa']}")
 
-            # 🔥 carrega todas as vagas (paginação)
-            scroll_ate_carregar_tudo(page)
+            page_num = 0
 
-            cards = page.locator(site["selector"])
-            count = cards.count()
+            while True:
+                url = f"{site['url']}?page={page_num}"
+                page.goto(url, timeout=60000)
+                page.wait_for_timeout(2000)
 
-            for i in range(count):
-                try:
-                    el = cards.nth(i)
-                    titulo = el.inner_text(timeout=3000).strip()
-                    link = el.get_attribute("href")
+                cards = page.locator(site["selector"])
+                count = cards.count()
 
-                    if not titulo or not link:
+                print(f"[{site['empresa']}] página {page_num} → {count} vagas")
+
+                if count == 0:
+                    break  # acabou de verdade
+
+                novos = 0
+
+                for i in range(count):
+                    try:
+                        el = cards.nth(i)
+                        titulo = el.inner_text(timeout=2000).strip()
+                        link = el.get_attribute("href")
+
+                        if not titulo or not link:
+                            continue
+
+                        titulo_upper = titulo.upper()
+                        if not any(f in titulo_upper for f in FILTRO_BA):
+                            continue
+
+                        if not link.startswith("http"):
+                            link = site["url"] + link
+
+                        if link in links_encontrados:
+                            continue
+
+                        links_encontrados.add(link)
+                        novos += 1
+
+                        vagas.append({
+                            "id": str(uuid.uuid4())[:8],
+                            "titulo": titulo,
+                            "empresa": site["empresa"],
+                            "link": link,
+                            "ativa": "1"
+                        })
+
+                    except Exception:
                         continue
 
-                    titulo_upper = titulo.upper()
+                # se não encontrou nenhuma vaga nova nessa página → para
+                if novos == 0:
+                    break
 
-                    # 🎯 FILTRO BAHIA
-                    if not any(x in titulo_upper for x in FILTRO_BA):
-                        continue
-
-                    if not link.startswith("http"):
-                        link = site["url"] + link
-
-                    links_encontrados.add(link)
-
-                    vagas.append({
-                        "id": str(uuid.uuid4())[:8],
-                        "titulo": titulo,
-                        "empresa": site["empresa"],
-                        "link": link,
-                        "ativa": "1"
-                    })
-
-                except Exception:
-                    continue
+                page_num += 1
 
         browser.close()
 
-    # 🔄 desativa vagas que sumiram do site
+    # 🔄 desativa vagas que sumiram
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -120,6 +124,7 @@ def main():
                     vagas.append(vaga)
 
     salvar_vagas(vagas)
+    print(f"\n✅ Finalizado. Total de vagas BA ativas: {len(links_encontrados)}")
 
 if __name__ == "__main__":
     main()
