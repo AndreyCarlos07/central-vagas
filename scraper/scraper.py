@@ -24,25 +24,39 @@ SITES = [
     }
 ]
 
-# 🎯 Estado alvo para filtrar
-ESTADO_ALVO = "Bahia (BA)"
+# 📍 palavras-chave para filtrar BAHIA
+FILTRO_BA = [
+    "BAHIA",
+    "SALVADOR",
+    "CAMAÇARI",
+    "LAURO DE FREITAS",
+    "FEIRA DE SANTANA",
+    "DIAS D'ÁVILA"
+]
 
 
 # ✅ FUNÇÃO CERTA — FORÇA O REACT A CARREGAR TUDO
 def carregar_todas_vagas(page):
     last_count = 0
+
     for _ in range(40):  # limite de segurança
         page.wait_for_timeout(2000)
+
         cards = page.locator('a[href*="/jobs/"]')
         count = cards.count()
+
         print(f"🔄 vagas renderizadas: {count}")
+
         if count == last_count:
             break  # não entrou vaga nova → acabou
+
         last_count = count
+
+        # força scroll humano
         page.mouse.wheel(0, 8000)
 
 
-# ✅ FUNÇÃO NOVA — NAVEGAÇÃO POR PÁGINAS COM FILTRO DE ESTADO
+# ✅ FUNÇÃO NOVA — NAVEGAÇÃO POR PAGINAS
 def navegar_todas_paginas(page, site):
     pagina_atual = 1
     vagas = []
@@ -51,6 +65,7 @@ def navegar_todas_paginas(page, site):
         print(f"📄 Página {pagina_atual}")
         page.wait_for_timeout(3000)
 
+        # coleta os cards da página atual
         cards = page.locator(site["selector"])
         for i in range(cards.count()):
             el = cards.nth(i)
@@ -61,15 +76,10 @@ def navegar_todas_paginas(page, site):
                 if not titulo or not link:
                     continue
 
-                # ✅ pega o estado real do card (Motiva)
-                estado_card = ""
-                try:
-                    estado_card = el.locator("div.common-select__single-value").inner_text(timeout=1000).strip()
-                except Exception:
-                    pass  # alguns cards podem não ter o estado no mesmo padrão
+                titulo_upper = titulo.upper()
 
-                # 🎯 filtra pelo estado correto
-                if site["empresa"] == "MOTIVA" and ESTADO_ALVO != estado_card:
+                # 🎯 FILTRO BAHIA
+                if not any(x in titulo_upper for x in FILTRO_BA):
                     continue
 
                 if not link.startswith("http"):
@@ -90,8 +100,10 @@ def navegar_todas_paginas(page, site):
         proxima_pagina = page.locator(
             f'button[data-testid="pagination-page-button"]:has-text("{pagina_atual + 1}")'
         )
+
         if proxima_pagina.count() == 0:
             break  # acabou as páginas
+
         proxima_pagina.first.click()
         pagina_atual += 1
 
@@ -106,6 +118,7 @@ def salvar_vagas(vagas):
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
+
         for vaga in vagas:
             writer.writerow(vaga)
 
@@ -120,13 +133,16 @@ def main():
 
         for site in SITES:
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
+
             page.goto(site["url"], timeout=60000)
             page.wait_for_timeout(4000)
 
+            # 🔥 força o carregamento de todas as vagas do React
             carregar_todas_vagas(page)
-            vagas = navegar_todas_paginas(page, site)
 
-            for vaga in vagas:
+            # 🔄 navega por todas as páginas e coleta as vagas
+            vagas_empresa = navegar_todas_paginas(page, site)
+            for vaga in vagas_empresa:
                 links_encontrados.add(vaga["link"])
                 todas_vagas.append(vaga)
 
