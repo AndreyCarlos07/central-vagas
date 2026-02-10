@@ -44,22 +44,28 @@ def carregar_todas_vagas(page):
 # ===========================
 def filtrar_estado_bahia(page):
     try:
-        # clica na setinha do filtro de estado
-        seta_estado = page.locator('.common-select__indicator.common-select__dropdown-indicator')
-        if seta_estado.count() > 0:
-            seta_estado.first.click()
-            page.wait_for_timeout(1000)
+        # localiza o input do estado
+        input_estado = page.locator("#state-select")
+        if input_estado.count() == 0:
+            print("⚠️ Input de estado não encontrado")
+            return
 
-            # seleciona "Bahia (BA)"
-            bahia_option = page.locator('div[role="option"]', has_text="Bahia (BA)")
-            if bahia_option.count() > 0:
-                bahia_option.first.click()
-                page.wait_for_timeout(2000)
-                print("✅ Filtro por Bahia aplicado")
-            else:
-                print("⚠️ Opção Bahia (BA) não encontrada")
+        # clica no input para ativar o dropdown
+        input_estado.click()
+        page.wait_for_timeout(1000)
+
+        # digita "Bahia"
+        input_estado.fill("Bahia")
+        page.wait_for_timeout(1500)
+
+        # clica na opção que aparece
+        bahia_option = page.locator('div[role="option"]', has_text="Bahia (BA)")
+        if bahia_option.count() > 0:
+            bahia_option.first.click()
+            page.wait_for_timeout(2000)
+            print("✅ Filtro por Bahia aplicado")
         else:
-            print("⚠️ Filtro de estado não encontrado")
+            print("⚠️ Opção Bahia (BA) não encontrada")
     except Exception as e:
         print(f"⚠️ Erro ao aplicar filtro: {e}")
 
