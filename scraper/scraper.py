@@ -35,21 +35,30 @@ FILTRO_BA = [
     "DIAS D'ÁVILA"
 ]
 
+
+# ✅ FUNÇÃO CERTA — FORÇA O REACT A CARREGAR TUDO
 def carregar_todas_vagas(page):
-    """Força o React a renderizar todas as vagas via scroll."""
     last_count = 0
+
     for _ in range(40):  # limite de segurança
         page.wait_for_timeout(2000)
+
         cards = page.locator('a[href*="/jobs/"]')
         count = cards.count()
+
         print(f"🔄 vagas renderizadas: {count}")
+
         if count == last_count:
-            break
+            break  # não entrou vaga nova → acabou
+
         last_count = count
+
+        # força scroll humano
         page.mouse.wheel(0, 8000)
 
+
+# ✅ FUNÇÃO NOVA — NAVEGAÇÃO POR PAGINAS
 def navegar_todas_paginas(page, site):
-    """Percorre todas as páginas e coleta vagas filtrando Bahia."""
     pagina_atual = 1
     vagas = []
 
@@ -62,18 +71,16 @@ def navegar_todas_paginas(page, site):
         for i in range(cards.count()):
             el = cards.nth(i)
             try:
-                texto_completo = el.inner_text(timeout=3000).strip()
+                titulo = el.inner_text(timeout=3000).strip()
                 link = el.get_attribute("href")
-                if not texto_completo or not link:
+
+                if not titulo or not link:
                     continue
 
-                # tenta extrair o local do final do texto
-                partes = texto_completo.split()
-                local = " ".join(partes[-3:])  # últimos 3 termos (cidade + UF + tipo)
-                local_upper = local.upper()
+                titulo_upper = titulo.upper()
 
-                # FILTRO BAHIA
-                if not any(x in local_upper for x in FILTRO_BA):
+                # 🎯 FILTRO BAHIA
+                if not any(x in titulo_upper for x in FILTRO_BA):
                     continue
 
                 if not link.startswith("http"):
@@ -81,7 +88,7 @@ def navegar_todas_paginas(page, site):
 
                 vagas.append({
                     "id": str(uuid.uuid4())[:8],
-                    "titulo": texto_completo,
+                    "titulo": titulo,
                     "empresa": site["empresa"],
                     "link": link,
                     "ativa": "1"
@@ -90,17 +97,20 @@ def navegar_todas_paginas(page, site):
             except Exception:
                 continue
 
-        # tenta ir para a próxima página
+        # tenta achar o botão da próxima página
         proxima_pagina = page.locator(
             f'button[data-testid="pagination-page-button"]:has-text("{pagina_atual + 1}")'
         )
+
         if proxima_pagina.count() == 0:
-            break
+            break  # acabou as páginas
+
         proxima_pagina.first.click()
         pagina_atual += 1
 
     print(f"📌 Total de vagas coletadas nesta empresa: {len(vagas)}")
     return vagas
+
 
 def salvar_vagas(vagas):
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
@@ -109,8 +119,10 @@ def salvar_vagas(vagas):
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
+
         for vaga in vagas:
             writer.writerow(vaga)
+
 
 def main():
     todas_vagas = []
@@ -122,20 +134,22 @@ def main():
 
         for site in SITES:
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
+
             page.goto(site["url"], timeout=60000)
             page.wait_for_timeout(4000)
 
+            # 🔥 força o carregamento de todas as vagas do React
             carregar_todas_vagas(page)
-            vagas_empresa = navegar_todas_paginas(page, site)
 
-            # adiciona links encontrados para controle de vagas inativas
+            # 🔄 navega por todas as páginas e coleta as vagas
+            vagas_empresa = navegar_todas_paginas(page, site)
             for vaga in vagas_empresa:
                 links_encontrados.add(vaga["link"])
-            todas_vagas.extend(vagas_empresa)
+                todas_vagas.append(vaga)
 
         browser.close()
 
-    # desativa vagas que sumiram do site
+    # 🔄 desativa vagas que sumiram do site
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -145,8 +159,10 @@ def main():
                     todas_vagas.append(vaga)
 
     salvar_vagas(todas_vagas)
+
     print("\n✅ Finalizado")
     print(f"📌 Vagas BA ativas encontradas: {len(links_encontrados)}")
+
 
 if __name__ == "__main__":
     main()
