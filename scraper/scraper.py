@@ -16,12 +16,26 @@ SITES = [
     {"empresa": "MOTIVA", "url": "https://motiva.gupy.io", "selector": 'a[href*="/jobs/"]'}
 ]
 
+# 📍 palavras-chave para filtrar BAHIA
+FILTRO_BA = [
+    " - BA Efetivo",
+    " - BA Banco de Talentos",
+    " BAHIA",
+    " SALVADOR",
+    " Salvador - BA Efetivo",
+    " Salvador - BA Banco de Talentos",
+    " CAMAÇARI",
+    " LAURO DE FREITAS",
+    " FEIRA DE SANTANA",
+    " DIAS D'ÁVILA"
+]
+
 # ===========================
 # FUNÇÃO: CARREGAR TODAS AS VAGAS (scroll)
 # ===========================
 def carregar_todas_vagas(page):
     last_count = 0
-    for _ in range(40):  # limite de segurança
+    for _ in range(40):
         page.wait_for_timeout(2000)
         cards = page.locator('a[href*="/jobs/"]')
         count = cards.count()
@@ -30,32 +44,6 @@ def carregar_todas_vagas(page):
             break
         last_count = count
         page.mouse.wheel(0, 8000)
-
-# ===========================
-# FUNÇÃO: FILTRAR POR ESTADO (Bahia)
-# ===========================
-def filtrar_estado_bahia(page):
-    try:
-        # 1️⃣ Clica no dropdown do Estado
-        page.click("#state-select")
-        page.wait_for_timeout(1000)
-
-        # 2️⃣ Espera e clica na opção Bahia
-        try:
-            bahia_locator = page.locator("div.sc-uVWWZ.llsGmb:text('Bahia (BA)')")
-            bahia_locator.wait_for(timeout=10000)
-            bahia_locator.click()
-            page.wait_for_timeout(2000)
-            print("✅ Estado Bahia selecionado")
-
-            # 3️⃣ Espera a lista de vagas atualizar (aguarda ao menos 1 vaga aparecer)
-            vagas_locator = page.locator('a[href*="/jobs/"]')
-            vagas_locator.first.wait_for(timeout=15000)
-            print("✅ Lista de vagas atualizada para Bahia")
-        except TimeoutError:
-            print("⚠️ Opção Bahia (BA) não encontrada ou lista de vagas não carregou")
-    except Exception as e:
-        print(f"⚠️ Erro ao aplicar filtro: {e}")
 
 # ===========================
 # FUNÇÃO: NAVEGAR PÁGINAS E COLETAR VAGAS
@@ -101,13 +89,49 @@ def navegar_todas_paginas(page, site):
     return vagas
 
 # ===========================
-# FUNÇÃO: SALVAR CSV
+# FUNÇÃO: FILTRAR VAGAS POR PALAVRAS-CHAVE
 # ===========================
-def salvar_vagas(vagas):
-    with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
+def filtrar_vagas_bahia(vagas):
+    vagas_ba = []
+    for vaga in vagas:
+        for termo in FILTRO_BA:
+            if termo.upper() in vaga["titulo"].upper():
+                vagas_ba.append(vaga)
+                break
+    print(f"📌 Total de vagas filtradas para Bahia: {len(vagas_ba)}")
+    return vagas_ba
+
+# ===========================
+# FUNÇÃO: SALVAR CSV COM ATIVA
+# ===========================
+def salvar_vagas(vagas, arquivo=CSV_FILE):
+    # lê vagas antigas para marcar inativas
+    vagas_anteriores = {}
+    if os.path.exists(arquivo):
+        with open(arquivo, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for vaga in reader:
+                vagas_anteriores[vaga["link"]] = vaga
+
+    # atualiza status de vagas antigas
+    links_novas = {v["link"] for v in vagas}
+    todas_vagas = []
+
+    # adiciona vagas novas
+    for vaga in vagas:
+        todas_vagas.append(vaga)
+
+    # adiciona vagas antigas que sumiram, marcando como inativas
+    for link, vaga_ant in vagas_anteriores.items():
+        if link not in links_novas:
+            vaga_ant["ativa"] = "0"
+            todas_vagas.append(vaga_ant)
+
+    # salva tudo
+    with open(arquivo, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["id", "titulo", "empresa", "link", "ativa"])
         writer.writeheader()
-        for vaga in vagas:
+        for vaga in todas_vagas:
             writer.writerow(vaga)
 
 # ===========================
@@ -115,7 +139,6 @@ def salvar_vagas(vagas):
 # ===========================
 def main():
     todas_vagas = []
-    links_encontrados = set()
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -126,27 +149,22 @@ def main():
             page.goto(site["url"], timeout=60000)
             page.wait_for_timeout(4000)
 
-            filtrar_estado_bahia(page)
+            # força o carregamento de todas as vagas
             carregar_todas_vagas(page)
 
+            # coleta todas as vagas
             vagas_empresa = navegar_todas_paginas(page, site)
-            for vaga in vagas_empresa:
-                links_encontrados.add(vaga["link"])
-                todas_vagas.append(vaga)
+            todas_vagas.extend(vagas_empresa)
 
         browser.close()
 
-    if os.path.exists(CSV_FILE):
-        with open(CSV_FILE, newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for vaga in reader:
-                if vaga["link"] not in links_encontrados:
-                    vaga["ativa"] = "0"
-                    todas_vagas.append(vaga)
+    # filtra apenas vagas da Bahia
+    vagas_ba = filtrar_vagas_bahia(todas_vagas)
 
-    salvar_vagas(todas_vagas)
+    # salva no CSV, mantendo vagas antigas e atualizando status "ativa"
+    salvar_vagas(vagas_ba)
     print("\n✅ Finalizado")
-    print(f"📌 Vagas BA ativas encontradas: {len(links_encontrados)}")
+    print(f"📌 Vagas BA ativas encontradas: {len(vagas_ba)}")
 
 if __name__ == "__main__":
     main()
