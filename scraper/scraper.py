@@ -4,7 +4,7 @@
 # In[ ]:
 
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, TimeoutError
 import csv
 import uuid
 import os
@@ -54,18 +54,21 @@ def filtrar_estado_bahia(page):
         input_estado.click()
         page.wait_for_timeout(1000)
 
-        # digita "Bahia"
+        # digita "Bahia" para filtrar
         input_estado.fill("Bahia")
         page.wait_for_timeout(1500)
 
-        # clica na opção que aparece
-        bahia_option = page.locator('div[role="option"]', has_text="Bahia (BA)")
-        if bahia_option.count() > 0:
+        # tenta localizar a opção correta pelo texto exato dentro do div
+        bahia_option = page.locator('div.common-select__single-value div', has_text="Bahia (BA)")
+        
+        try:
+            bahia_option.first.wait_for(timeout=5000)
             bahia_option.first.click()
             page.wait_for_timeout(2000)
             print("✅ Filtro por Bahia aplicado")
-        else:
-            print("⚠️ Opção Bahia (BA) não encontrada")
+        except TimeoutError:
+            print("⚠️ Opção Bahia (BA) não encontrada ou demorou para carregar")
+        
     except Exception as e:
         print(f"⚠️ Erro ao aplicar filtro: {e}")
 
