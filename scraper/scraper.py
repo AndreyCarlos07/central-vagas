@@ -8,6 +8,7 @@ from playwright.sync_api import sync_playwright
 import csv
 import uuid
 import os
+import time
 
 CSV_FILE = "vagas.csv"
 
@@ -15,17 +16,17 @@ EMPRESAS = [
     {
         "empresa": "BYD",
         "slug": "bydbrasil",
-        "company_id": 11858
+        "company_id": 1181
     },
     {
         "empresa": "MOTIVA",
         "slug": "motiva",
-        "company_id": 17147
+        "company_id": 3202
     }
 ]
 
 FILTRO_BA = [
-    "BA",
+    " BA",
     "BAHIA",
     "SALVADOR",
     "CAMAÇARI",
@@ -34,64 +35,57 @@ FILTRO_BA = [
     "DIAS D'ÁVILA"
 ]
 
-
-def eh_bahia(locations):
-    texto = " ".join(locations).upper()
-    return any(f in texto for f in FILTRO_BA)
+API_URL = "https://api.gupy.io/api/v1/jobs/search"
 
 
-def carregar_antigas():
-    vagas = {}
-    if os.path.exists(CSV_FILE):
-        with open(CSV_FILE, newline="", encoding="utf-8") as f:
-            for row in csv.DictReader(f):
-                vagas[row["link"]] = row
-    return vagas
-
-
-def salvar(vagas):
+def salvar_vagas(vagas):
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
-        for v in vagas:
-            writer.writerow(v)
+        for vaga in vagas:
+            writer.writerow(vaga)
 
 
 def main():
-    vagas_finais = []
-    encontrados = set()
-    antigas = carregar_antigas()
+    vagas = []
+    links_encontrados = set()
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+        context = browser.new_context()
+        page = context.new_page()
 
         for emp in EMPRESAS:
             print(f"\n🔎 Buscando vagas da {emp['empresa']}")
+
+            # 1️⃣ Carrega a página da empresa (gera cookies)
+            page.goto(f"https://{emp['slug']}.gupy.io/", timeout=60000)
+            page.wait_for_timeout(5000)
+
             page_num = 0
 
             while True:
-                api_url = "https://api.gupy.io/api/v1/jobs/search"
-
-                payload = {
-                    "companyId": emp["company_id"],
+                params = {
                     "page": page_num,
-                    "pageSize": 10,
-                    "filters": {}
+                    "companyId": emp["company_id"]
                 }
 
-                resp = page.request.post(
-                    api_url,
+                resp = page.request.get(
+                    API_URL,
+                    params=params,
                     headers={
-                        "User-Agent": "Mozilla/5.0",
+                        "User-Agent": (
+                            "Mozilla/5.0 (X11; Linux x86_64) "
+                            "AppleWebKit/537.36 (KHTML, like Gecko) "
+                            "Chrome/120.0.0.0 Safari/537.36"
+                        ),
                         "Accept": "application/json",
-                        "Content-Type": "application/json",
+                        "Origin": f"https://{emp['slug']}.gupy.io",
                         "Referer": f"https://{emp['slug']}.gupy.io/"
-                    },
-                    data=payload
+                    }
                 )
 
                 if not resp.ok:
@@ -109,17 +103,19 @@ def main():
 
                 for job in jobs:
                     titulo = job.get("name", "")
-                    link = job.get("careerPageUrl", "")
-                    locations = job.get("locations", [])
+                    link = job.get("jobUrl", "")
 
-                    if not eh_bahia(locations):
+                    titulo_upper = titulo.upper()
+                    if not any(f in titulo_upper for f in FILTRO_BA):
                         continue
 
-                    encontrados.add(link)
-                    antiga = antigas.get(link)
+                    if link in links_encontrados:
+                        continue
 
-                    vagas_finais.append({
-                        "id": antiga["id"] if antiga else str(uuid.uuid4())[:8],
+                    links_encontrados.add(link)
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
                         "titulo": titulo,
                         "empresa": emp["empresa"],
                         "link": link,
@@ -127,22 +123,25 @@ def main():
                     })
 
                 page_num += 1
+                time.sleep(1)  # respeita rate-limit
 
         browser.close()
 
-    # marca antigas como inativas
-    for link, vaga in antigas.items():
-        if link not in encontrados:
-            vaga["ativa"] = "0"
-            vagas_finais.append(vaga)
+    # 🔄 marca vagas antigas como inativas
+    if os.path.exists(CSV_FILE):
+        with open(CSV_FILE, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for vaga in reader:
+                if vaga["link"] not in links_encontrados:
+                    vaga["ativa"] = "0"
+                    vagas.append(vaga)
 
-    salvar(vagas_finais)
-    print(f"\n✅ Finalizado. Vagas BA ativas: {len(encontrados)}")
+    salvar_vagas(vagas)
+    print(f"\n✅ Finalizado. Vagas BA ativas: {len(links_encontrados)}")
 
 
 if __name__ == "__main__":
     main()
-
 
 
 
