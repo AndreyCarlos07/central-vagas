@@ -9,7 +9,6 @@ import csv
 import uuid
 import os
 import time
-import requests
 
 CSV_FILE = "vagas.csv"
 
@@ -66,12 +65,6 @@ def main():
             page.goto(f"https://{emp['slug']}.gupy.io/", timeout=60000)
             page.wait_for_timeout(5000)
 
-            # 🔑 cookies reais da sessão
-            cookies = {
-                c["name"]: c["value"]
-                for c in context.cookies()
-            }
-
             page_num = 0
 
             while True:
@@ -81,31 +74,44 @@ def main():
                     "companyId": emp["company_id"]
                 }
 
-                headers = {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "User-Agent": (
-                        "Mozilla/5.0 (X11; Linux x86_64) "
-                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                        "Chrome/120.0.0.0 Safari/537.36"
-                    ),
-                    "Origin": f"https://{emp['slug']}.gupy.io",
-                    "Referer": f"https://{emp['slug']}.gupy.io/"
-                }
+                result = page.evaluate(
+                    """async ({ apiUrl, body, slug }) => {
+                        const resp = await fetch(apiUrl, {
+                            method: "POST",
+                            mode: "cors",
+                            credentials: "include",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Accept": "application/json",
+                                "Origin": `https://${slug}.gupy.io`,
+                                "Referer": `https://${slug}.gupy.io/`
+                            },
+                            body: JSON.stringify(body)
+                        });
 
-                resp = requests.post(
-                    API_URL,
-                    json=body,
-                    headers=headers,
-                    cookies=cookies,
-                    timeout=30
+                        let data = null;
+                        try {
+                            data = await resp.json();
+                        } catch (e) {}
+
+                        return {
+                            ok: resp.ok,
+                            status: resp.status,
+                            data
+                        };
+                    }""",
+                    {
+                        "apiUrl": API_URL,
+                        "body": body,
+                        "slug": emp["slug"]
+                    }
                 )
 
-                if not resp.ok:
-                    print(f"❌ Erro HTTP {resp.status_code} na página {page_num}")
+                if not result["ok"]:
+                    print(f"❌ Erro HTTP {result['status']} na página {page_num}")
                     break
 
-                data = resp.json()
+                data = result["data"] or {}
                 jobs = data.get("data", [])
 
                 if not jobs:
