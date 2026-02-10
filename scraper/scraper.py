@@ -85,15 +85,15 @@ def navegar_todas_paginas(page, site):
 # ===========================
 # FUNÇÃO: FILTRAR VAGAS POR PALAVRAS-CHAVE
 # ===========================
-def filtrar_vagas_bahia(vagas):
-    vagas_ba = []
-    for vaga in vagas:
-        for termo in FILTRO_BA:
-            if termo.upper() in vaga["titulo"].upper():
-                vagas_ba.append(vaga)
-                break
-    print(f"📌 Total de vagas filtradas para Bahia: {len(vagas_ba)}")
-    return vagas_ba
+#def filtrar_vagas_bahia(vagas):
+    #vagas_ba = []
+    #for vaga in vagas:
+        #for termo in FILTRO_BA:
+            #if termo.upper() in vaga["titulo"].upper():
+                #vagas_ba.append(vaga)
+                #break
+    #print(f"📌 Total de vagas filtradas para Bahia: {len(vagas_ba)}")
+    #return vagas_ba
 
 # ===========================
 # FUNÇÃO: SALVAR CSV
