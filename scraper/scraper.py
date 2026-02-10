@@ -130,10 +130,10 @@ def main():
         browser.close()
 
     # filtra apenas vagas da Bahia
-    vagas_ba = filtrar_vagas_bahia(todas_vagas)
+    #vagas_ba = filtrar_vagas_bahia(todas_vagas)
 
     # salva no CSV
-    salvar_vagas(vagas_ba)
+    salvar_vagas(todas_vagas)
     print("\n✅ Finalizado")
     print(f"📌 Vagas BA encontradas: {len(vagas_ba)}")
 
