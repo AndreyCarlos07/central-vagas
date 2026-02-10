@@ -11,48 +11,56 @@ import os
 
 CSV_FILE = "vagas.csv"
 
+# Empresas Gupy
 EMPRESAS = [
-    {"empresa": "BYD", "slug": "bydbrasil"},
-    {"empresa": "MOTIVA", "slug": "motiva"},
+    {
+        "empresa": "BYD",
+        "slug": "bydbrasil"
+    },
+    {
+        "empresa": "MOTIVA",
+        "slug": "motiva"
+    }
 ]
 
+# 📍 Palavras-chave para Bahia
 FILTRO_BA = [
     " - BA",
-    "BAHIA",
-    "SALVADOR",
-    "CAMAÇARI",
-    "LAURO DE FREITAS",
-    "FEIRA DE SANTANA",
-    "DIAS D'ÁVILA"
+    " BAHIA",
+    " SALVADOR",
+    " CAMAÇARI",
+    " LAURO DE FREITAS",
+    " FEIRA DE SANTANA",
+    " DIAS D'ÁVILA"
 ]
 
-def titulo_eh_ba(titulo: str) -> bool:
-    t = titulo.upper()
-    return any(f in t for f in FILTRO_BA)
+def eh_bahia(texto):
+    texto = texto.upper()
+    return any(f in texto for f in FILTRO_BA)
 
-def carregar_csv_existente():
-    vagas = {}
-    if not os.path.exists(CSV_FILE):
-        return vagas
+def carregar_links_existentes():
+    links = set()
+    if os.path.exists(CSV_FILE):
+        with open(CSV_FILE, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                links.add(row["link"])
+    return links
 
-    with open(CSV_FILE, newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            vagas[row["link"]] = row
-    return vagas
-
-def salvar_csv(vagas):
+def salvar_vagas(vagas):
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
-        writer.writerows(vagas)
+        for vaga in vagas:
+            writer.writerow(vaga)
 
 def main():
-    vagas_antigas = carregar_csv_existente()
-    vagas_novas = {}
-    links_ativos = set()
+    vagas = []
+    links_encontrados = set()
+    links_antigos = carregar_links_existentes()
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -60,61 +68,88 @@ def main():
 
         for emp in EMPRESAS:
             print(f"\n🔎 Buscando vagas da {emp['empresa']}")
+
             page_num = 0
+            per_page = 10
 
             while True:
                 api_url = (
                     f"https://{emp['slug']}.gupy.io/api/v1/jobs"
-                    f"?page={page_num}&perPage=10"
+                    f"?page={page_num}&perPage={per_page}"
                 )
 
-                resp = page.request.get(api_url)
-                data = resp.json()
+                resp = page.request.get(
+                    api_url,
+                    headers={
+                        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)",
+                        "Accept": "application/json",
+                        "Referer": f"https://{emp['slug']}.gupy.io/"
+                    }
+                )
 
-                jobs = data.get("data", [])
-                print(f"[{emp['empresa']}] página {page_num} → {len(jobs)} vagas")
-
-                if not jobs:
+                if not resp.ok:
+                    print(f"❌ Erro HTTP {resp.status} na página {page_num}")
                     break
 
+                try:
+                    data = resp.json()
+                except Exception:
+                    print(f"⚠️ Resposta não-JSON na página {page_num}, encerrando paginação")
+                    break
+
+                jobs = data.get("data", [])
+
+                if not jobs:
+                    print(f"ℹ️ Fim das vagas na página {page_num}")
+                    break
+
+                print(f"[{emp['empresa']}] página {page_num} → {len(jobs)} vagas")
+
                 for job in jobs:
-                    titulo = job["name"]
-                    if not titulo_eh_ba(titulo):
+                    titulo = job.get("name", "").strip()
+                    link = job.get("careerPageUrl", "").strip()
+
+                    if not titulo or not link:
                         continue
 
-                    link = f"https://{emp['slug']}.gupy.io/jobs/{job['id']}"
-                    links_ativos.add(link)
+                    if not eh_bahia(titulo):
+                        continue
 
-                    if link in vagas_antigas:
-                        vaga = vagas_antigas[link]
-                        vaga["ativa"] = "1"
-                    else:
-                        vaga = {
-                            "id": str(uuid.uuid4())[:8],
-                            "titulo": titulo,
-                            "empresa": emp["empresa"],
-                            "link": link,
-                            "ativa": "1"
-                        }
+                    if link in links_encontrados:
+                        continue
 
-                    vagas_novas[link] = vaga
+                    links_encontrados.add(link)
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": emp["empresa"],
+                        "link": link,
+                        "ativa": "1"
+                    })
 
                 page_num += 1
 
         browser.close()
 
-    # 🔻 Desativar vagas que sumiram
-    for link, vaga in vagas_antigas.items():
-        if link not in links_ativos:
-            vaga["ativa"] = "0"
-            vagas_novas[link] = vaga
+    # 🔄 marcar vagas antigas como inativas
+    for link_antigo in links_antigos:
+        if link_antigo not in links_encontrados:
+            vagas.append({
+                "id": str(uuid.uuid4())[:8],
+                "titulo": "",
+                "empresa": "",
+                "link": link_antigo,
+                "ativa": "0"
+            })
 
-    salvar_csv(list(vagas_novas.values()))
-    print(f"\n✅ Finalizado. Total de vagas BA ativas: {len(links_ativos)}")
+    salvar_vagas(vagas)
+
+    print(f"\n✅ Scraping finalizado")
+    print(f"➡️ Vagas BA ativas: {len(links_encontrados)}")
 
 if __name__ == "__main__":
     main()
-
 
 
 
