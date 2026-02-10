@@ -92,7 +92,7 @@ def main():
                     titulo_upper = titulo.upper()
 
                     # 🎯 FILTRO BAHIA
-                    if not any(x in titulo_upper for x in FILTRO_BA):
+                    if any(x in titulo_upper for x in FILTRO_BA):
                         continue
 
                     if not link.startswith("http"):
