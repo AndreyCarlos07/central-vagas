@@ -74,7 +74,7 @@ def main():
             page_num = 0
 
             while True:
-                api_url = "https://portal.api.gupy.io/api/v1/jobs/search"
+                api_url = "api_url = "https://api.gupy.io/api/v1/jobs/search"
 
                 payload = {
                     "companyId": emp["company_id"],
