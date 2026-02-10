@@ -15,14 +15,16 @@ SITES = [
     {
         "empresa": "BYD",
         "url": "https://bydbrasil.gupy.io",
+        "selector": 'a[href*="/jobs/"]'
     },
     {
         "empresa": "MOTIVA",
         "url": "https://motiva.gupy.io",
+        "selector": 'a[href*="/jobs/"]'
     }
 ]
 
-# 📍 Filtro Bahia
+# 📍 palavras-chave para filtrar BAHIA
 FILTRO_BA = [
     " BA",
     "BAHIA",
@@ -34,26 +36,25 @@ FILTRO_BA = [
 ]
 
 
-def forcar_50_por_pagina(page):
-    try:
-        page.locator("select").first.select_option("50")
-        page.wait_for_timeout(3000)
-    except Exception:
-        pass
-
-
+# ✅ FUNÇÃO CERTA — FORÇA O REACT A CARREGAR TUDO
 def carregar_todas_vagas(page):
     last_count = 0
 
-    for _ in range(20):
-        page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-        page.wait_for_timeout(3000)
+    for _ in range(40):  # limite de segurança
+        page.wait_for_timeout(2000)
 
-        count = page.locator('a[href*="/jobs/"]').count()
+        cards = page.locator('a[href*="/jobs/"]')
+        count = cards.count()
+
+        print(f"🔄 vagas renderizadas: {count}")
+
         if count == last_count:
-            break
+            break  # não entrou vaga nova → acabou
 
         last_count = count
+
+        # força scroll humano
+        page.mouse.wheel(0, 8000)
 
 
 def salvar_vagas(vagas):
@@ -63,6 +64,7 @@ def salvar_vagas(vagas):
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
+
         for vaga in vagas:
             writer.writerow(vaga)
 
@@ -81,18 +83,15 @@ def main():
             page.goto(site["url"], timeout=60000)
             page.wait_for_timeout(4000)
 
-            # 🔧 força 50 vagas por página
-            forcar_50_por_pagina(page)
-
-            # 🔄 garante carregamento completo
+            # 🔥 AQUI ESTÁ O FIX
             carregar_todas_vagas(page)
 
-            cards = page.locator('a[href*="/jobs/"]')
-            total = cards.count()
+            cards = page.locator(site["selector"])
+            count = cards.count()
 
-            print(f"📄 Total de cards encontrados: {total}")
+            print(f"📌 Total de vagas renderizadas: {count}")
 
-            for i in range(total):
+            for i in range(count):
                 try:
                     el = cards.nth(i)
                     titulo = el.inner_text(timeout=3000).strip()
@@ -102,14 +101,13 @@ def main():
                         continue
 
                     titulo_upper = titulo.upper()
-                    if not any(f in titulo_upper for f in FILTRO_BA):
+
+                    # 🎯 FILTRO BAHIA
+                    if not any(x in titulo_upper for x in FILTRO_BA):
                         continue
 
                     if not link.startswith("http"):
                         link = site["url"] + link
-
-                    if link in links_encontrados:
-                        continue
 
                     links_encontrados.add(link)
 
@@ -126,7 +124,7 @@ def main():
 
         browser.close()
 
-    # 🔄 Marca vagas antigas como inativas
+    # 🔄 desativa vagas que sumiram do site
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
