@@ -24,26 +24,33 @@ SITES = [
     }
 ]
 
+# 📍 palavras-chave para filtrar BAHIA
 FILTRO_BA = [
     " - BA",
-    " BAHIA",
-    " SALVADOR",
-    " CAMAÇARI",
-    " LAURO DE FREITAS",
-    " FEIRA DE SANTANA",
-    " DIAS D'ÁVILA"
+    " BA",
+    "BAHIA",
+    "SALVADOR",
+    "CAMAÇARI",
+    "LAURO DE FREITAS",
+    "FEIRA DE SANTANA",
+    "DIAS D'ÁVILA"
 ]
 
 
+# ✅ FUNÇÃO FINAL QUE DESTRAVA A PAGINAÇÃO DA GUPY
 def carregar_todas_vagas(page):
-    for _ in range(15):
-        page.evaluate("""
-            const container = document.querySelector('.job-listing');
-            if (container) {
-                container.scrollTop = container.scrollHeight;
-            }
-        """)
-        page.wait_for_timeout(2500)
+    last_count = 0
+
+    for _ in range(20):
+        page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+        page.wait_for_timeout(3000)
+
+        count = page.locator('a[href*="/jobs/"]').count()
+
+        if count == last_count:
+            break  # não carregou mais nada → acabou
+
+        last_count = count
 
 
 def salvar_vagas(vagas):
@@ -71,11 +78,12 @@ def main():
             page.goto(site["url"], timeout=60000)
             page.wait_for_timeout(4000)
 
-            # ✅ carregamento correto da Gupy
+            # 🔥 carrega TODAS as vagas (todas as páginas)
             carregar_todas_vagas(page)
 
             cards = page.locator(site["selector"])
             count = cards.count()
+
             print(f"[{site['empresa']}] cards encontrados: {count}")
 
             for i in range(count):
@@ -89,6 +97,7 @@ def main():
 
                     titulo_upper = titulo.upper()
 
+                    # 🎯 FILTRO BAHIA
                     if not any(x in titulo_upper for x in FILTRO_BA):
                         continue
 
@@ -113,7 +122,7 @@ def main():
 
         browser.close()
 
-    # 🔄 inativa vagas antigas
+    # 🔄 desativa vagas que sumiram do site
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -123,11 +132,12 @@ def main():
                     vagas.append(vaga)
 
     salvar_vagas(vagas)
-    print("\n✅ Finalizado com sucesso")
+
+    print("\n✅ Finalizado")
+    print(f"📌 Vagas BA ativas encontradas: {len(links_encontrados)}")
 
 
 if __name__ == "__main__":
     main()
-
 
 
