@@ -14,19 +14,15 @@ CSV_FILE = "vagas.csv"
 SITES = [
     {
         "empresa": "BYD",
-        "url": "https://bydbrasil.gupy.io",
-        "selector": 'a[href*="/jobs/"]'
+        "url": "https://bydbrasil.gupy.io"
     },
     {
         "empresa": "MOTIVA",
-        "url": "https://motiva.gupy.io",
-        "selector": 'a[href*="/jobs/"]'
+        "url": "https://motiva.gupy.io"
     }
 ]
 
-# 📍 palavras-chave para filtrar BAHIA
 FILTRO_BA = [
-    " - BA",
     " BA",
     "BAHIA",
     "SALVADOR",
@@ -37,20 +33,33 @@ FILTRO_BA = [
 ]
 
 
-# ✅ FUNÇÃO FINAL QUE DESTRAVA A PAGINAÇÃO DA GUPY
-def carregar_todas_vagas(page):
-    last_count = 0
+def carregar_todas_vagas(page, tentativas=25):
+    links_vistos = set()
+    sem_novos = 0
 
-    for _ in range(20):
+    for _ in range(tentativas):
         page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
         page.wait_for_timeout(3000)
 
-        count = page.locator('a[href*="/jobs/"]').count()
+        cards = page.locator('a[href*="/jobs/"]')
+        count = cards.count()
 
-        if count == last_count:
-            break  # não carregou mais nada → acabou
+        novos = 0
+        for i in range(count):
+            link = cards.nth(i).get_attribute("href")
+            if link and link not in links_vistos:
+                links_vistos.add(link)
+                novos += 1
 
-        last_count = count
+        if novos == 0:
+            sem_novos += 1
+        else:
+            sem_novos = 0
+
+        if sem_novos >= 3:
+            break
+
+    return links_vistos
 
 
 def salvar_vagas(vagas):
@@ -76,53 +85,41 @@ def main():
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
 
             page.goto(site["url"], timeout=60000)
-            page.wait_for_timeout(4000)
+            page.wait_for_timeout(5000)
 
-            # 🔥 carrega TODAS as vagas (todas as páginas)
-            carregar_todas_vagas(page)
+            links = carregar_todas_vagas(page)
 
-            cards = page.locator(site["selector"])
-            count = cards.count()
+            print(f"[{site['empresa']}] links encontrados: {len(links)}")
 
-            print(f"[{site['empresa']}] cards encontrados: {count}")
+            for link in links:
+                if not link.startswith("http"):
+                    link = site["url"] + link
 
-            for i in range(count):
+                page.goto(link, timeout=30000)
+                page.wait_for_timeout(2000)
+
                 try:
-                    el = cards.nth(i)
-                    titulo = el.inner_text(timeout=3000).strip()
-                    link = el.get_attribute("href")
-
-                    if not titulo or not link:
-                        continue
-
-                    titulo_upper = titulo.upper()
-
-                    # 🎯 FILTRO BAHIA
-                    if not any(x in titulo_upper for x in FILTRO_BA):
-                        continue
-
-                    if not link.startswith("http"):
-                        link = site["url"] + link
-
-                    if link in links_encontrados:
-                        continue
-
-                    links_encontrados.add(link)
-
-                    vagas.append({
-                        "id": str(uuid.uuid4())[:8],
-                        "titulo": titulo,
-                        "empresa": site["empresa"],
-                        "link": link,
-                        "ativa": "1"
-                    })
-
+                    titulo = page.locator("h1").inner_text().strip()
                 except Exception:
                     continue
 
+                titulo_upper = titulo.upper()
+                if not any(f in titulo_upper for f in FILTRO_BA):
+                    continue
+
+                links_encontrados.add(link)
+
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo,
+                    "empresa": site["empresa"],
+                    "link": link,
+                    "ativa": "1"
+                })
+
         browser.close()
 
-    # 🔄 desativa vagas que sumiram do site
+    # 🔄 marca vagas antigas como inativas
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -139,5 +136,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
