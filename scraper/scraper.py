@@ -10,6 +10,7 @@ import uuid
 import os
 import time
 import requests
+import json
 
 CSV_FILE = "vagas.csv"
 
@@ -72,6 +73,9 @@ def main():
                 for c in context.cookies()
             }
 
+            session = requests.Session()
+            session.cookies.update(cookies)
+
             page_num = 0
 
             while True:
@@ -93,12 +97,11 @@ def main():
                     "Referer": f"https://{emp['slug']}.gupy.io/"
                 }
 
-                # ✅ REQUESTS + COOKIES DO PLAYWRIGHT
-                resp = requests.post(
+                # ✅ REQUESTS + COOKIES DO PLAYWRIGHT (FIX AQUI)
+                resp = session.post(
                     API_URL,
-                    json=body,
+                    data=json.dumps(body),
                     headers=headers,
-                    cookies=cookies,
                     timeout=30
                 )
 
@@ -140,7 +143,7 @@ def main():
                     })
 
                 page_num += 1
-                time.sleep(1)  # evita rate-limit
+                time.sleep(1)
 
         browser.close()
 
@@ -161,7 +164,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
 
 
