@@ -17,12 +17,12 @@ SITES = [
 
 # 📍 palavras-chave para filtrar vagas na BAHIA
 FILTRO_BA = [
-    " - BA Efetivo",
-    " - BA Banco de Talentos",
     " BAHIA",
     " SALVADOR",
     " Salvador - BA Efetivo",
     " Salvador - BA Banco de Talentos",
+    " Camaçari - BA Efetivo",
+    " Camaçari - BA Bancdo de Talentos",
     " CAMAÇARI",
     " LAURO DE FREITAS",
     " FEIRA DE SANTANA",
