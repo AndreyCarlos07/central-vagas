@@ -9,7 +9,6 @@ import csv
 import uuid
 import os
 import time
-import json
 
 CSV_FILE = "vagas.csv"
 
@@ -50,23 +49,8 @@ def salvar_vagas(vagas):
             writer.writerow(vaga)
 
 
-def carregar_vagas_existentes():
-    vagas = []
-    links = set()
-
-    if os.path.exists(CSV_FILE):
-        with open(CSV_FILE, newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                vagas.append(row)
-                links.add(row["link"])
-
-    return vagas, links
-
-
 def main():
-    vagas_existentes, links_existentes = carregar_vagas_existentes()
-    vagas_novas = []
+    vagas = []
     links_encontrados = set()
 
     with sync_playwright() as p:
@@ -77,9 +61,9 @@ def main():
         for emp in EMPRESAS:
             print(f"\n🔎 Buscando vagas da {emp['empresa']}")
 
-            # Abre a página da empresa (gera cookies válidos)
+            # 1️⃣ abre a página da empresa (gera sessão + tokens válidos)
             page.goto(f"https://{emp['slug']}.gupy.io/", timeout=60000)
-            page.wait_for_timeout(4000)
+            page.wait_for_timeout(5000)
 
             page_num = 0
 
@@ -90,32 +74,34 @@ def main():
                     "companyId": emp["company_id"]
                 }
 
-                resp = page.request.post(
-                    API_URL,
-                    data=json.dumps(body),  # ✅ FIX DEFINITIVO
-                    headers={
-                        "User-Agent": (
-                            "Mozilla/5.0 (X11; Linux x86_64) "
-                            "AppleWebKit/537.36 (KHTML, like Gecko) "
-                            "Chrome/120.0.0.0 Safari/537.36"
-                        ),
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                        "Origin": f"https://{emp['slug']}.gupy.io",
-                        "Referer": f"https://{emp['slug']}.gupy.io/"
+                # ✅ REQUEST DENTRO DO CONTEXTO DO NAVEGADOR
+                result = page.evaluate(
+                    """async ({ apiUrl, body }) => {
+                        const resp = await fetch(apiUrl, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(body)
+                        });
+
+                        return {
+                            ok: resp.ok,
+                            status: resp.status,
+                            data: await resp.json()
+                        };
+                    }""",
+                    {
+                        "apiUrl": API_URL,
+                        "body": body
                     }
                 )
 
-                if not resp.ok:
-                    print(f"❌ Erro HTTP {resp.status} na página {page_num}")
+                if not result["ok"]:
+                    print(f"❌ Erro HTTP {result['status']} na página {page_num}")
                     break
 
-                try:
-                    data = resp.json()
-                except Exception:
-                    print("⚠️ Resposta inválida, encerrando paginação")
-                    break
-
+                data = result["data"]
                 jobs = data.get("data", [])
 
                 if not jobs:
@@ -135,12 +121,12 @@ def main():
                     if not any(f in titulo_upper for f in FILTRO_BA):
                         continue
 
-                    links_encontrados.add(link)
-
-                    if link in links_existentes:
+                    if link in links_encontrados:
                         continue
 
-                    vagas_novas.append({
+                    links_encontrados.add(link)
+
+                    vagas.append({
                         "id": str(uuid.uuid4())[:8],
                         "titulo": titulo,
                         "empresa": emp["empresa"],
@@ -149,32 +135,27 @@ def main():
                     })
 
                 page_num += 1
-                time.sleep(1)
+                time.sleep(1)  # evita rate limit
 
         browser.close()
 
-    # 🔄 Atualiza status das vagas antigas
-    vagas_final = []
+    # 🔄 Marca vagas antigas como inativas
+    if os.path.exists(CSV_FILE):
+        with open(CSV_FILE, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for vaga in reader:
+                if vaga["link"] not in links_encontrados:
+                    vaga["ativa"] = "0"
+                    vagas.append(vaga)
 
-    for vaga in vagas_existentes:
-        if vaga["link"] in links_encontrados:
-            vaga["ativa"] = "1"
-        else:
-            vaga["ativa"] = "0"
-        vagas_final.append(vaga)
+    salvar_vagas(vagas)
 
-    vagas_final.extend(vagas_novas)
-
-    salvar_vagas(vagas_final)
-
-    print("\n✅ SCRAPER FINALIZADO")
-    print(f"🟢 Vagas BA ativas encontradas: {len(links_encontrados)}")
-    print(f"🆕 Novas vagas adicionadas: {len(vagas_novas)}")
+    print(f"\n✅ Finalizado")
+    print(f"📌 Vagas BA ativas encontradas: {len(links_encontrados)}")
 
 
 if __name__ == "__main__":
     main()
-
 
 
 
