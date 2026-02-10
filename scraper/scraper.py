@@ -61,7 +61,7 @@ def main():
         for emp in EMPRESAS:
             print(f"\n🔎 Buscando vagas da {emp['empresa']}")
 
-            # 1️⃣ abre a página da empresa (gera sessão + tokens válidos)
+            # 1️⃣ Abre a página da empresa (gera sessão válida)
             page.goto(f"https://{emp['slug']}.gupy.io/", timeout=60000)
             page.wait_for_timeout(5000)
 
@@ -74,21 +74,29 @@ def main():
                     "companyId": emp["company_id"]
                 }
 
-                # ✅ REQUEST DENTRO DO CONTEXTO DO NAVEGADOR
+                # ✅ FIX DEFINITIVO (fetch no contexto do navegador)
                 result = page.evaluate(
                     """async ({ apiUrl, body }) => {
                         const resp = await fetch(apiUrl, {
                             method: "POST",
+                            mode: "cors",
+                            credentials: "include",
                             headers: {
-                                "Content-Type": "application/json"
+                                "Content-Type": "application/json",
+                                "Accept": "application/json"
                             },
                             body: JSON.stringify(body)
                         });
 
+                        let data = null;
+                        try {
+                            data = await resp.json();
+                        } catch (e) {}
+
                         return {
                             ok: resp.ok,
                             status: resp.status,
-                            data: await resp.json()
+                            data
                         };
                     }""",
                     {
@@ -101,7 +109,7 @@ def main():
                     print(f"❌ Erro HTTP {result['status']} na página {page_num}")
                     break
 
-                data = result["data"]
+                data = result["data"] or {}
                 jobs = data.get("data", [])
 
                 if not jobs:
