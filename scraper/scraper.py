@@ -9,6 +9,7 @@ import csv
 import uuid
 import os
 import time
+import json
 
 CSV_FILE = "vagas.csv"
 
@@ -49,8 +50,23 @@ def salvar_vagas(vagas):
             writer.writerow(vaga)
 
 
-def main():
+def carregar_vagas_existentes():
     vagas = []
+    links = set()
+
+    if os.path.exists(CSV_FILE):
+        with open(CSV_FILE, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                vagas.append(row)
+                links.add(row["link"])
+
+    return vagas, links
+
+
+def main():
+    vagas_existentes, links_existentes = carregar_vagas_existentes()
+    vagas_novas = []
     links_encontrados = set()
 
     with sync_playwright() as p:
@@ -61,9 +77,9 @@ def main():
         for emp in EMPRESAS:
             print(f"\n🔎 Buscando vagas da {emp['empresa']}")
 
-            # 1️⃣ Abre a página para gerar cookies válidos
+            # Abre a página da empresa (gera cookies válidos)
             page.goto(f"https://{emp['slug']}.gupy.io/", timeout=60000)
-            page.wait_for_timeout(5000)
+            page.wait_for_timeout(4000)
 
             page_num = 0
 
@@ -76,7 +92,7 @@ def main():
 
                 resp = page.request.post(
                     API_URL,
-                    json=body,  # 🔥 FIX DEFINITIVO
+                    data=json.dumps(body),  # ✅ FIX DEFINITIVO
                     headers={
                         "User-Agent": (
                             "Mozilla/5.0 (X11; Linux x86_64) "
@@ -97,7 +113,7 @@ def main():
                 try:
                     data = resp.json()
                 except Exception:
-                    print("⚠️ Resposta não JSON, encerrando paginação")
+                    print("⚠️ Resposta inválida, encerrando paginação")
                     break
 
                 jobs = data.get("data", [])
@@ -116,16 +132,15 @@ def main():
                         continue
 
                     titulo_upper = titulo.upper()
-
                     if not any(f in titulo_upper for f in FILTRO_BA):
-                        continue
-
-                    if link in links_encontrados:
                         continue
 
                     links_encontrados.add(link)
 
-                    vagas.append({
+                    if link in links_existentes:
+                        continue
+
+                    vagas_novas.append({
                         "id": str(uuid.uuid4())[:8],
                         "titulo": titulo,
                         "empresa": emp["empresa"],
@@ -138,17 +153,23 @@ def main():
 
         browser.close()
 
-    # 🔄 Marca vagas antigas como inativas
-    if os.path.exists(CSV_FILE):
-        with open(CSV_FILE, newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for vaga in reader:
-                if vaga["link"] not in links_encontrados:
-                    vaga["ativa"] = "0"
-                    vagas.append(vaga)
+    # 🔄 Atualiza status das vagas antigas
+    vagas_final = []
 
-    salvar_vagas(vagas)
-    print(f"\n✅ Finalizado. Vagas BA ativas: {len(links_encontrados)}")
+    for vaga in vagas_existentes:
+        if vaga["link"] in links_encontrados:
+            vaga["ativa"] = "1"
+        else:
+            vaga["ativa"] = "0"
+        vagas_final.append(vaga)
+
+    vagas_final.extend(vagas_novas)
+
+    salvar_vagas(vagas_final)
+
+    print("\n✅ SCRAPER FINALIZADO")
+    print(f"🟢 Vagas BA ativas encontradas: {len(links_encontrados)}")
+    print(f"🆕 Novas vagas adicionadas: {len(vagas_novas)}")
 
 
 if __name__ == "__main__":
