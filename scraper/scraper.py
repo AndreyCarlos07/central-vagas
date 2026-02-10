@@ -8,7 +8,6 @@ from playwright.sync_api import sync_playwright
 import csv
 import uuid
 import os
-import time
 
 CSV_FILE = "vagas.csv"
 
@@ -25,7 +24,6 @@ SITES = [
     }
 ]
 
-# 📍 palavras-chave para filtrar BAHIA
 FILTRO_BA = [
     " - BA",
     " BAHIA",
@@ -37,21 +35,15 @@ FILTRO_BA = [
 ]
 
 
-def clicar_carregar_mais(page):
-    """
-    Clica no botão 'Carregar mais' enquanto ele existir
-    """
-    while True:
-        try:
-            botao = page.locator("button:has-text('Carregar mais')")
-            if botao.count() == 0:
-                break
-
-            botao.first.click()
-            time.sleep(2)  # espera novas vagas renderizarem
-
-        except Exception:
-            break
+def carregar_todas_vagas(page):
+    for _ in range(15):
+        page.evaluate("""
+            const container = document.querySelector('.job-listing');
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+        """)
+        page.wait_for_timeout(2500)
 
 
 def salvar_vagas(vagas):
@@ -61,7 +53,6 @@ def salvar_vagas(vagas):
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
-
         for vaga in vagas:
             writer.writerow(vaga)
 
@@ -80,13 +71,12 @@ def main():
             page.goto(site["url"], timeout=60000)
             page.wait_for_timeout(4000)
 
-            # ✅ carrega TODAS as páginas clicando no botão
-            clicar_carregar_mais(page)
+            # ✅ carregamento correto da Gupy
+            carregar_todas_vagas(page)
 
             cards = page.locator(site["selector"])
             count = cards.count()
-
-            print(f"[{site['empresa']}] Total de vagas encontradas: {count}")
+            print(f"[{site['empresa']}] cards encontrados: {count}")
 
             for i in range(count):
                 try:
@@ -99,7 +89,6 @@ def main():
 
                     titulo_upper = titulo.upper()
 
-                    # 🎯 FILTRO BAHIA
                     if not any(x in titulo_upper for x in FILTRO_BA):
                         continue
 
@@ -124,7 +113,7 @@ def main():
 
         browser.close()
 
-    # 🔄 desativa vagas que sumiram do site
+    # 🔄 inativa vagas antigas
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -134,9 +123,7 @@ def main():
                     vagas.append(vaga)
 
     salvar_vagas(vagas)
-
-    print("\n✅ Finalizado")
-    print(f"📌 Vagas BA ativas: {len(links_encontrados)}")
+    print("\n✅ Finalizado com sucesso")
 
 
 if __name__ == "__main__":
