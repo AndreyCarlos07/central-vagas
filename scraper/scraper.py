@@ -11,19 +11,19 @@ import os
 
 CSV_FILE = "vagas.csv"
 
-# Empresas Gupy
 EMPRESAS = [
     {
         "empresa": "BYD",
-        "slug": "bydbrasil"
+        "slug": "bydbrasil",
+        "company_id": 11858
     },
     {
         "empresa": "MOTIVA",
-        "slug": "motiva"
+        "slug": "motiva",
+        "company_id": 17147
     }
 ]
 
-# 📍 Filtro Bahia
 FILTRO_BA = [
     "BA",
     "BAHIA",
@@ -35,36 +35,35 @@ FILTRO_BA = [
 ]
 
 
-def vaga_eh_bahia(locations):
+def eh_bahia(locations):
     texto = " ".join(locations).upper()
     return any(f in texto for f in FILTRO_BA)
 
 
-def carregar_links_antigos():
-    links = {}
+def carregar_antigas():
+    vagas = {}
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                links[row["link"]] = row
-    return links
+            for row in csv.DictReader(f):
+                vagas[row["link"]] = row
+    return vagas
 
 
-def salvar_vagas(vagas):
+def salvar(vagas):
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
-        for vaga in vagas:
-            writer.writerow(vaga)
+        for v in vagas:
+            writer.writerow(v)
 
 
 def main():
     vagas_finais = []
-    links_encontrados = set()
-    vagas_antigas = carregar_links_antigos()
+    encontrados = set()
+    antigas = carregar_antigas()
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -72,16 +71,14 @@ def main():
 
         for emp in EMPRESAS:
             print(f"\n🔎 Buscando vagas da {emp['empresa']}")
-
             page_num = 0
-            per_page = 10
 
             while True:
                 api_url = (
                     "https://portal.api.gupy.io/api/v1/jobs"
-                    f"?careerPageSlug={emp['slug']}"
+                    f"?companyId={emp['company_id']}"
                     f"&page={page_num}"
-                    f"&perPage={per_page}"
+                    f"&perPage=10"
                 )
 
                 resp = page.request.get(
@@ -97,37 +94,28 @@ def main():
                     print(f"❌ Erro HTTP {resp.status} na página {page_num}")
                     break
 
-                try:
-                    data = resp.json()
-                except Exception:
-                    print("⚠️ Resposta não-JSON, encerrando paginação")
-                    break
-
+                data = resp.json()
                 jobs = data.get("data", [])
 
                 if not jobs:
-                    print(f"⏹️ Fim das vagas da {emp['empresa']}")
+                    print("⏹️ Fim da paginação")
                     break
 
-                print(f"[{emp['empresa']}] página {page_num} → {len(jobs)} vagas")
+                print(f"[{emp['empresa']}] página {page_num}: {len(jobs)} vagas")
 
                 for job in jobs:
-                    titulo = job.get("name", "").strip()
+                    titulo = job.get("name", "")
                     link = job.get("careerPageUrl", "")
                     locations = job.get("locations", [])
 
-                    if not titulo or not link:
+                    if not eh_bahia(locations):
                         continue
 
-                    if not vaga_eh_bahia(locations):
-                        continue
-
-                    links_encontrados.add(link)
-
-                    vaga_antiga = vagas_antigas.get(link)
+                    encontrados.add(link)
+                    antiga = antigas.get(link)
 
                     vagas_finais.append({
-                        "id": vaga_antiga["id"] if vaga_antiga else str(uuid.uuid4())[:8],
+                        "id": antiga["id"] if antiga else str(uuid.uuid4())[:8],
                         "titulo": titulo,
                         "empresa": emp["empresa"],
                         "link": link,
@@ -138,20 +126,17 @@ def main():
 
         browser.close()
 
-    # 🔄 marcar vagas antigas como inativas
-    for link, vaga in vagas_antigas.items():
-        if link not in links_encontrados:
+    for link, vaga in antigas.items():
+        if link not in encontrados:
             vaga["ativa"] = "0"
             vagas_finais.append(vaga)
 
-    salvar_vagas(vagas_finais)
-
-    print(f"\n✅ Finalizado. Total vagas BA ativas: {len(links_encontrados)}")
+    salvar(vagas_finais)
+    print(f"\n✅ Finalizado. Vagas BA ativas: {len(encontrados)}")
 
 
 if __name__ == "__main__":
     main()
-
 
 
 
