@@ -24,35 +24,21 @@ SITES = [
     }
 ]
 
-# 📍 palavras-chave para filtrar BAHIA
-FILTRO_BA = [
-    "BAHIA",
-    "SALVADOR",
-    "CAMAÇARI",
-    "LAURO DE FREITAS",
-    "FEIRA DE SANTANA",
-    "DIAS D'ÁVILA"
-]
+# Texto exato do estado que queremos
+ESTADO_ALVO = "Bahia (BA)"
 
 
-# ✅ FUNÇÃO CERTA — FORÇA O REACT A CARREGAR TUDO
 def carregar_todas_vagas(page):
+    """Força o React a renderizar todas as vagas por scroll"""
     last_count = 0
-
     for _ in range(40):  # limite de segurança
         page.wait_for_timeout(2000)
-
         cards = page.locator('a[href*="/jobs/"]')
         count = cards.count()
-
         print(f"🔄 vagas renderizadas: {count}")
-
         if count == last_count:
-            break  # não entrou vaga nova → acabou
-
+            break
         last_count = count
-
-        # força scroll humano
         page.mouse.wheel(0, 8000)
 
 
@@ -76,11 +62,10 @@ def navegar_todas_paginas(page, site):
                 if not titulo or not link:
                     continue
 
-                titulo_upper = titulo.upper()
-
-                # 🎯 FILTRO BAHIA
-                if not any(x in titulo_upper for x in FILTRO_BA):
-                    continue
+                # 🔎 filtra pelo estado dentro do card
+                local_element = el.locator("div, span").filter(has_text=ESTADO_ALVO)
+                if local_element.count() == 0:
+                    continue  # não é Bahia
 
                 if not link.startswith("http"):
                     link = site["url"] + link
@@ -100,7 +85,6 @@ def navegar_todas_paginas(page, site):
         proxima_pagina = page.locator(
             f'button[data-testid="pagination-page-button"]:has-text("{pagina_atual + 1}")'
         )
-
         if proxima_pagina.count() == 0:
             break  # acabou as páginas
 
@@ -118,13 +102,12 @@ def salvar_vagas(vagas):
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
-
         for vaga in vagas:
             writer.writerow(vaga)
 
 
 def main():
-    todas_vagas = []
+    vagas = []
     links_encontrados = set()
 
     with sync_playwright() as p:
@@ -133,32 +116,31 @@ def main():
 
         for site in SITES:
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
-
             page.goto(site["url"], timeout=60000)
             page.wait_for_timeout(4000)
 
-            # 🔥 força o carregamento de todas as vagas do React
+            # força o carregamento completo das vagas
             carregar_todas_vagas(page)
 
-            # 🔄 navega por todas as páginas e coleta as vagas
-            vagas_empresa = navegar_todas_paginas(page, site)
-            for vaga in vagas_empresa:
+            # navega todas as páginas e coleta vagas da Bahia
+            vagas_site = navegar_todas_paginas(page, site)
+
+            for vaga in vagas_site:
                 links_encontrados.add(vaga["link"])
-                todas_vagas.append(vaga)
+                vagas.append(vaga)
 
         browser.close()
 
-    # 🔄 desativa vagas que sumiram do site
+    # desativa vagas que sumiram do site
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for vaga in reader:
                 if vaga["link"] not in links_encontrados:
                     vaga["ativa"] = "0"
-                    todas_vagas.append(vaga)
+                    vagas.append(vaga)
 
-    salvar_vagas(todas_vagas)
-
+    salvar_vagas(vagas)
     print("\n✅ Finalizado")
     print(f"📌 Vagas BA ativas encontradas: {len(links_encontrados)}")
 
