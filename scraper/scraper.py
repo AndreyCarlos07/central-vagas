@@ -23,29 +23,32 @@ EMPRESAS = [
     }
 ]
 
-# 📍 Palavras-chave para Bahia
+# 📍 Filtro Bahia
 FILTRO_BA = [
-    " - BA",
-    " BAHIA",
-    " SALVADOR",
-    " CAMAÇARI",
-    " LAURO DE FREITAS",
-    " FEIRA DE SANTANA",
-    " DIAS D'ÁVILA"
+    "BA",
+    "BAHIA",
+    "SALVADOR",
+    "CAMAÇARI",
+    "LAURO DE FREITAS",
+    "FEIRA DE SANTANA",
+    "DIAS D'ÁVILA"
 ]
 
-def eh_bahia(texto):
-    texto = texto.upper()
+
+def vaga_eh_bahia(locations):
+    texto = " ".join(locations).upper()
     return any(f in texto for f in FILTRO_BA)
 
-def carregar_links_existentes():
-    links = set()
+
+def carregar_links_antigos():
+    links = {}
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                links.add(row["link"])
+                links[row["link"]] = row
     return links
+
 
 def salvar_vagas(vagas):
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
@@ -57,10 +60,11 @@ def salvar_vagas(vagas):
         for vaga in vagas:
             writer.writerow(vaga)
 
+
 def main():
-    vagas = []
+    vagas_finais = []
     links_encontrados = set()
-    links_antigos = carregar_links_existentes()
+    vagas_antigas = carregar_links_antigos()
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -74,14 +78,16 @@ def main():
 
             while True:
                 api_url = (
-                    f"https://{emp['slug']}.gupy.io/api/v1/jobs"
-                    f"?page={page_num}&perPage={per_page}"
+                    "https://portal.api.gupy.io/api/v1/jobs"
+                    f"?careerPageSlug={emp['slug']}"
+                    f"&page={page_num}"
+                    f"&perPage={per_page}"
                 )
 
                 resp = page.request.get(
                     api_url,
                     headers={
-                        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)",
+                        "User-Agent": "Mozilla/5.0",
                         "Accept": "application/json",
                         "Referer": f"https://{emp['slug']}.gupy.io/"
                     }
@@ -94,34 +100,34 @@ def main():
                 try:
                     data = resp.json()
                 except Exception:
-                    print(f"⚠️ Resposta não-JSON na página {page_num}, encerrando paginação")
+                    print("⚠️ Resposta não-JSON, encerrando paginação")
                     break
 
                 jobs = data.get("data", [])
 
                 if not jobs:
-                    print(f"ℹ️ Fim das vagas na página {page_num}")
+                    print(f"⏹️ Fim das vagas da {emp['empresa']}")
                     break
 
                 print(f"[{emp['empresa']}] página {page_num} → {len(jobs)} vagas")
 
                 for job in jobs:
                     titulo = job.get("name", "").strip()
-                    link = job.get("careerPageUrl", "").strip()
+                    link = job.get("careerPageUrl", "")
+                    locations = job.get("locations", [])
 
                     if not titulo or not link:
                         continue
 
-                    if not eh_bahia(titulo):
-                        continue
-
-                    if link in links_encontrados:
+                    if not vaga_eh_bahia(locations):
                         continue
 
                     links_encontrados.add(link)
 
-                    vagas.append({
-                        "id": str(uuid.uuid4())[:8],
+                    vaga_antiga = vagas_antigas.get(link)
+
+                    vagas_finais.append({
+                        "id": vaga_antiga["id"] if vaga_antiga else str(uuid.uuid4())[:8],
                         "titulo": titulo,
                         "empresa": emp["empresa"],
                         "link": link,
@@ -133,20 +139,15 @@ def main():
         browser.close()
 
     # 🔄 marcar vagas antigas como inativas
-    for link_antigo in links_antigos:
-        if link_antigo not in links_encontrados:
-            vagas.append({
-                "id": str(uuid.uuid4())[:8],
-                "titulo": "",
-                "empresa": "",
-                "link": link_antigo,
-                "ativa": "0"
-            })
+    for link, vaga in vagas_antigas.items():
+        if link not in links_encontrados:
+            vaga["ativa"] = "0"
+            vagas_finais.append(vaga)
 
-    salvar_vagas(vagas)
+    salvar_vagas(vagas_finais)
 
-    print(f"\n✅ Scraping finalizado")
-    print(f"➡️ Vagas BA ativas: {len(links_encontrados)}")
+    print(f"\n✅ Finalizado. Total vagas BA ativas: {len(links_encontrados)}")
+
 
 if __name__ == "__main__":
     main()
