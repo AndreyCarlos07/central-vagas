@@ -74,20 +74,24 @@ def main():
             page_num = 0
 
             while True:
-                api_url = (
-                    "https://portal.api.gupy.io/api/v1/jobs"
-                    f"?companyId={emp['company_id']}"
-                    f"&page={page_num}"
-                    f"&perPage=10"
-                )
+                api_url = "https://portal.api.gupy.io/api/v1/jobs/search"
 
-                resp = page.request.get(
+                payload = {
+                    "companyId": emp["company_id"],
+                    "page": page_num,
+                    "pageSize": 10,
+                    "filters": {}
+                }
+
+                resp = page.request.post(
                     api_url,
                     headers={
                         "User-Agent": "Mozilla/5.0",
                         "Accept": "application/json",
+                        "Content-Type": "application/json",
                         "Referer": f"https://{emp['slug']}.gupy.io/"
-                    }
+                    },
+                    data=payload
                 )
 
                 if not resp.ok:
@@ -126,6 +130,7 @@ def main():
 
         browser.close()
 
+    # marca antigas como inativas
     for link, vaga in antigas.items():
         if link not in encontrados:
             vaga["ativa"] = "0"
