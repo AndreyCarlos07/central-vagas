@@ -9,35 +9,49 @@ import csv
 import uuid
 import os
 import time
-import requests
-import json
 
 CSV_FILE = "vagas.csv"
 
-EMPRESAS = [
+SITES = [
     {
         "empresa": "BYD",
-        "slug": "bydbrasil",
-        "company_id": 1181
+        "url": "https://bydbrasil.gupy.io",
+        "selector": 'a[href*="/jobs/"]'
     },
     {
         "empresa": "MOTIVA",
-        "slug": "motiva",
-        "company_id": 3202
+        "url": "https://motiva.gupy.io",
+        "selector": 'a[href*="/jobs/"]'
     }
 ]
 
+# 📍 palavras-chave para filtrar BAHIA
 FILTRO_BA = [
-    " BA",
-    "BAHIA",
-    "SALVADOR",
-    "CAMAÇARI",
-    "LAURO DE FREITAS",
-    "FEIRA DE SANTANA",
-    "DIAS D'ÁVILA"
+    " - BA",
+    " BAHIA",
+    " SALVADOR",
+    " CAMAÇARI",
+    " LAURO DE FREITAS",
+    " FEIRA DE SANTANA",
+    " DIAS D'ÁVILA"
 ]
 
-API_URL = "https://api.gupy.io/api/v1/jobs/search"
+
+def clicar_carregar_mais(page):
+    """
+    Clica no botão 'Carregar mais' enquanto ele existir
+    """
+    while True:
+        try:
+            botao = page.locator("button:has-text('Carregar mais')")
+            if botao.count() == 0:
+                break
+
+            botao.first.click()
+            time.sleep(2)  # espera novas vagas renderizarem
+
+        except Exception:
+            break
 
 
 def salvar_vagas(vagas):
@@ -47,6 +61,7 @@ def salvar_vagas(vagas):
             fieldnames=["id", "titulo", "empresa", "link", "ativa"]
         )
         writer.writeheader()
+
         for vaga in vagas:
             writer.writerow(vaga)
 
@@ -57,77 +72,39 @@ def main():
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        context = browser.new_context()
-        page = context.new_page()
+        page = browser.new_page()
 
-        for emp in EMPRESAS:
-            print(f"\n🔎 Buscando vagas da {emp['empresa']}")
+        for site in SITES:
+            print(f"\n🔎 Buscando vagas da {site['empresa']}")
 
-            # 1️⃣ Abre a página da empresa (gera sessão + cookies válidos)
-            page.goto(f"https://{emp['slug']}.gupy.io/", timeout=60000)
-            page.wait_for_timeout(5000)
+            page.goto(site["url"], timeout=60000)
+            page.wait_for_timeout(4000)
 
-            # 🔑 cookies reais da sessão Playwright
-            cookies = {
-                c["name"]: c["value"]
-                for c in context.cookies()
-            }
+            # ✅ carrega TODAS as páginas clicando no botão
+            clicar_carregar_mais(page)
 
-            session = requests.Session()
-            session.cookies.update(cookies)
+            cards = page.locator(site["selector"])
+            count = cards.count()
 
-            page_num = 0
+            print(f"[{site['empresa']}] Total de vagas encontradas: {count}")
 
-            while True:
-                body = {
-                    "page": page_num,
-                    "pageSize": 10,
-                    "companyId": emp["company_id"]
-                }
-
-                headers = {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "User-Agent": (
-                        "Mozilla/5.0 (X11; Linux x86_64) "
-                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                        "Chrome/120.0.0.0 Safari/537.36"
-                    ),
-                    "Origin": f"https://{emp['slug']}.gupy.io",
-                    "Referer": f"https://{emp['slug']}.gupy.io/"
-                }
-
-                # ✅ REQUESTS + COOKIES DO PLAYWRIGHT (FIX AQUI)
-                resp = session.post(
-                    API_URL,
-                    data=json.dumps(body),
-                    headers=headers,
-                    timeout=30
-                )
-
-                if not resp.ok:
-                    print(f"❌ Erro HTTP {resp.status_code} na página {page_num}")
-                    break
-
-                data = resp.json()
-                jobs = data.get("data", [])
-
-                if not jobs:
-                    print("⏹️ Fim da paginação")
-                    break
-
-                print(f"[{emp['empresa']}] página {page_num}: {len(jobs)} vagas")
-
-                for job in jobs:
-                    titulo = job.get("name", "")
-                    link = job.get("jobUrl", "")
+            for i in range(count):
+                try:
+                    el = cards.nth(i)
+                    titulo = el.inner_text(timeout=3000).strip()
+                    link = el.get_attribute("href")
 
                     if not titulo or not link:
                         continue
 
                     titulo_upper = titulo.upper()
-                    if not any(f in titulo_upper for f in FILTRO_BA):
+
+                    # 🎯 FILTRO BAHIA
+                    if not any(x in titulo_upper for x in FILTRO_BA):
                         continue
+
+                    if not link.startswith("http"):
+                        link = site["url"] + link
 
                     if link in links_encontrados:
                         continue
@@ -137,17 +114,17 @@ def main():
                     vagas.append({
                         "id": str(uuid.uuid4())[:8],
                         "titulo": titulo,
-                        "empresa": emp["empresa"],
+                        "empresa": site["empresa"],
                         "link": link,
                         "ativa": "1"
                     })
 
-                page_num += 1
-                time.sleep(1)
+                except Exception:
+                    continue
 
         browser.close()
 
-    # 🔄 Marca vagas antigas como inativas
+    # 🔄 desativa vagas que sumiram do site
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -158,8 +135,8 @@ def main():
 
     salvar_vagas(vagas)
 
-    print(f"\n✅ Finalizado")
-    print(f"📌 Vagas BA ativas encontradas: {len(links_encontrados)}")
+    print("\n✅ Finalizado")
+    print(f"📌 Vagas BA ativas: {len(links_encontrados)}")
 
 
 if __name__ == "__main__":
