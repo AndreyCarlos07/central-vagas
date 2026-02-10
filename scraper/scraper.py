@@ -61,7 +61,7 @@ def main():
         for emp in EMPRESAS:
             print(f"\n🔎 Buscando vagas da {emp['empresa']}")
 
-            # 1️⃣ abre a página (gera cookies válidos)
+            # 1️⃣ Abre a página para gerar cookies válidos
             page.goto(f"https://{emp['slug']}.gupy.io/", timeout=60000)
             page.wait_for_timeout(5000)
 
@@ -76,7 +76,7 @@ def main():
 
                 resp = page.request.post(
                     API_URL,
-                    data=body,
+                    json=body,  # 🔥 FIX DEFINITIVO
                     headers={
                         "User-Agent": (
                             "Mozilla/5.0 (X11; Linux x86_64) "
@@ -94,7 +94,12 @@ def main():
                     print(f"❌ Erro HTTP {resp.status} na página {page_num}")
                     break
 
-                data = resp.json()
+                try:
+                    data = resp.json()
+                except Exception:
+                    print("⚠️ Resposta não JSON, encerrando paginação")
+                    break
+
                 jobs = data.get("data", [])
 
                 if not jobs:
@@ -111,6 +116,7 @@ def main():
                         continue
 
                     titulo_upper = titulo.upper()
+
                     if not any(f in titulo_upper for f in FILTRO_BA):
                         continue
 
@@ -128,11 +134,11 @@ def main():
                     })
 
                 page_num += 1
-                time.sleep(1)  # evita rate-limit
+                time.sleep(1)
 
         browser.close()
 
-    # 🔄 marca vagas antigas como inativas
+    # 🔄 Marca vagas antigas como inativas
     if os.path.exists(CSV_FILE):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
