@@ -135,7 +135,7 @@ def main():
     # salva no CSV
     salvar_vagas(todas_vagas)
     print("\n✅ Finalizado")
-    print(f"📌 Vagas BA encontradas: {len(vagas_ba)}")
+    #print(f"📌 Vagas BA encontradas: {len(vagas_ba)}")
 
 if __name__ == "__main__":
     main()
