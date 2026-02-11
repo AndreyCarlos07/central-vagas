@@ -7,8 +7,17 @@
 from playwright.sync_api import sync_playwright
 import csv
 import uuid
+import re
+import os
 
 CSV_FILE = "vagas.csv"
+
+# ===========================
+# CREDENCIAIS VAGAS.COM
+# ===========================
+
+VAGAS_EMAIL = os.getenv("VAGAS_EMAIL")
+VAGAS_SENHA = os.getenv("VAGAS_SENHA")
 
 # ===========================
 # SITES CONFIGURADOS
@@ -20,13 +29,8 @@ SITES = [
         "tipo": "gupy"
     },
     {
-        "empresa": "MOTIVA",
-        "url": "https://motiva.gupy.io",
-        "tipo": "gupy"
-    },
-    {
         "empresa": "BRIDGESTONE",
-        "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers",
+        "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers/",
         "tipo": "workday",
         "base": "https://bridgestone.wd5.myworkdayjobs.com",
         "pesquisas": ["Bahia"]
@@ -36,134 +40,185 @@ SITES = [
         "url": "https://dow.wd1.myworkdayjobs.com/pt-BR/ExternalCareers",
         "tipo": "workday",
         "base": "https://dow.wd1.myworkdayjobs.com",
-        "pesquisas": ["Aratu"]
+        "pesquisas": ["Aratu", "Catu"]
+    },
+    {
+        "tipo": "vagas",
+        "url": "https://www.vagas.com.br/login-candidatos",
+        "empresas_desejadas": ["ZEENTECH", "AZ CONSULT", "WHITE MARTINS"],
+        "cidade": "Camaçari - BA"
     }
 ]
 
-# 📍 filtro Bahia (somente GUPY)
-PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVILA"]
+PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO"]
 
 # ===========================
-# GUPY
+# VAGAS.COM
 # ===========================
-def carregar_scroll_gupy(page):
-    last_count = 0
-    for _ in range(40):
-        page.wait_for_timeout(2000)
-        cards = page.locator('a[href*="/jobs/"]')
-        count = cards.count()
-        if count == last_count:
-            break
-        last_count = count
-        page.mouse.wheel(0, 8000)
-
-def coletar_gupy(page, site):
+def coletar_vagas_com(page, site):
     vagas = []
+
+    print("🔐 Fazendo login no Vagas.com")
 
     page.goto(site["url"], timeout=60000)
     page.wait_for_timeout(4000)
 
-    carregar_scroll_gupy(page)
+    # login
+    page.fill('input[name="login"]', VAGAS_EMAIL)
+    page.fill('input[name="password"]', VAGAS_SENHA)
+    page.click('button[type="submit"]')
 
-    pagina_atual = 1
+    page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(5000)
 
-    while True:
+    # clicar em filtrar
+    page.click("text=Filtrar")
+    page.wait_for_timeout(3000)
+
+    # desmarcar recomendadas
+    switch = page.locator('[data-testid="switch-mostrar-vagas-recomendadas"]')
+    if switch.is_checked():
+        switch.click()
+        page.wait_for_timeout(2000)
+
+        page.click('[data-testid="button-vagas-nao-recomendadas"]')
         page.wait_for_timeout(3000)
-        cards = page.locator('a[href*="/jobs/"]')
 
-        for i in range(cards.count()):
-            el = cards.nth(i)
-            try:
-                titulo = el.inner_text().strip()
-                link = el.get_attribute("href")
+    # digitar cidade
+    page.fill('input[placeholder="Digite uma cidade"]', site["cidade"])
+    page.wait_for_timeout(2000)
 
-                if not link.startswith("http"):
-                    link = site["url"] + link
+    # selecionar primeira opção do dropdown
+    page.keyboard.press("ArrowDown")
+    page.keyboard.press("Enter")
 
-                vagas.append({
-                    "id": str(uuid.uuid4())[:8],
-                    "titulo": titulo,
-                    "empresa": site["empresa"],
-                    "link": link
-                })
-            except:
+    page.wait_for_timeout(2000)
+
+    page.click('[data-testid="button-mostrar-vagas"]')
+    page.wait_for_timeout(5000)
+
+    # scroll
+    for _ in range(10):
+        page.mouse.wheel(0, 5000)
+        page.wait_for_timeout(2000)
+
+    cards = page.locator("div[role='button']")
+
+    for i in range(cards.count()):
+        try:
+            texto = cards.nth(i).inner_text()
+
+            # verifica empresa desejada
+            empresa_match = any(
+                emp in texto.upper() for emp in site["empresas_desejadas"]
+            )
+
+            if not empresa_match:
                 continue
 
-        proxima = page.locator(
-            f'button[data-testid="pagination-page-button"]:has-text("{pagina_atual + 1}")'
-        )
+            # extrai código da vaga (ex: 2777845)
+            codigo = re.search(r"\((\d+)\)", texto)
+            if not codigo:
+                continue
 
-        if proxima.count() == 0:
-            break
+            codigo_vaga = codigo.group(1)
 
-        proxima.first.click()
-        pagina_atual += 1
+            # extrai título
+            linhas = texto.split("\n")
+            titulo = linhas[1] if len(linhas) > 1 else "Sem título"
 
-    print(f"📌 {site['empresa']} (GUPY): {len(vagas)} vagas coletadas")
+            link = f"https://www.vagas.com.br/vagas/v{codigo_vaga}"
+
+            vagas.append({
+                "id": str(uuid.uuid4())[:8],
+                "titulo": titulo,
+                "empresa": "VAGAS.COM",
+                "link": link
+            })
+
+        except:
+            continue
+
+    print(f"📌 VAGAS.COM: {len(vagas)} vagas coletadas")
     return vagas
 
 # ===========================
-# WORKDAY (pesquisa por empresa)
+# WORKDAY
 # ===========================
 def coletar_workday(page, site):
     vagas = []
-    links_coletados = set()
+    links = set()
 
     for termo in site.get("pesquisas", []):
-        print(f"🔎 {site['empresa']} pesquisando: {termo}")
-
-        page.goto(site["url"], timeout=60000)
-        page.wait_for_timeout(5000)
+        page.goto(site["url"])
+        page.wait_for_timeout(4000)
 
         page.fill('input[data-automation-id="keywordSearchInput"]', termo)
         page.click('button[data-automation-id="keywordSearchButton"]')
-
-        page.wait_for_load_state("networkidle")
         page.wait_for_timeout(5000)
 
-        # scroll para carregar todas as vagas
-        for _ in range(20):
-            page.mouse.wheel(0, 6000)
+        for _ in range(10):
+            page.mouse.wheel(0, 5000)
             page.wait_for_timeout(2000)
 
         cards = page.locator('a[data-automation-id="jobTitle"]')
 
         for i in range(cards.count()):
             el = cards.nth(i)
-            try:
-                titulo = el.inner_text().strip()
-                link = el.get_attribute("href")
+            titulo = el.inner_text()
+            link = el.get_attribute("href")
 
-                if not link.startswith("http"):
-                    link = site["base"] + link
+            if not link.startswith("http"):
+                link = site["base"] + link
 
-                if link in links_coletados:
-                    continue
-
-                links_coletados.add(link)
-
-                vagas.append({
-                    "id": str(uuid.uuid4())[:8],
-                    "titulo": titulo,
-                    "empresa": site["empresa"],
-                    "link": link
-                })
-            except:
+            if link in links:
                 continue
 
-    print(f"📌 {site['empresa']} (WORKDAY): {len(vagas)} vagas coletadas")
+            links.add(link)
+
+            vagas.append({
+                "id": str(uuid.uuid4())[:8],
+                "titulo": titulo,
+                "empresa": site["empresa"],
+                "link": link
+            })
+
+    print(f"📌 {site['empresa']} WORKDAY: {len(vagas)} vagas")
     return vagas
 
 # ===========================
-# FILTRO GUPY
+# GUPY
 # ===========================
-def filtrar_gupy_bahia(vagas):
-    filtradas = [
-        vaga for vaga in vagas
-        if any(palavra in vaga["titulo"].upper() for palavra in PALAVRAS_BA)
-    ]
-    print(f"📌 GUPY após filtro Bahia: {len(filtradas)}")
-    return filtradas
+def coletar_gupy(page, site):
+    vagas = []
+
+    page.goto(site["url"])
+    page.wait_for_timeout(5000)
+
+    for _ in range(20):
+        page.mouse.wheel(0, 8000)
+        page.wait_for_timeout(2000)
+
+    cards = page.locator('a[href*="/jobs/"]')
+
+    for i in range(cards.count()):
+        el = cards.nth(i)
+        titulo = el.inner_text()
+        link = el.get_attribute("href")
+
+        if not link.startswith("http"):
+            link = site["url"] + link
+
+        if any(p in titulo.upper() for p in PALAVRAS_BA):
+            vagas.append({
+                "id": str(uuid.uuid4())[:8],
+                "titulo": titulo,
+                "empresa": site["empresa"],
+                "link": link
+            })
+
+    print(f"📌 {site['empresa']} GUPY: {len(vagas)} vagas")
+    return vagas
 
 # ===========================
 # SALVAR CSV
@@ -172,41 +227,34 @@ def salvar_vagas(vagas):
     with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["id", "titulo", "empresa", "link"])
         writer.writeheader()
-        for vaga in vagas:
-            writer.writerow(vaga)
+        writer.writerows(vagas)
 
 # ===========================
 # MAIN
 # ===========================
 def main():
-    todas_vagas = []
+    todas = []
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
 
         for site in SITES:
-            print(f"\n🔎 Buscando vagas da {site['empresa']}")
-
             if site["tipo"] == "gupy":
-                vagas = coletar_gupy(page, site)
-                vagas = filtrar_gupy_bahia(vagas)
+                todas.extend(coletar_gupy(page, site))
 
             elif site["tipo"] == "workday":
-                vagas = coletar_workday(page, site)
+                todas.extend(coletar_workday(page, site))
 
-            else:
-                vagas = []
-
-            todas_vagas.extend(vagas)
+            elif site["tipo"] == "vagas":
+                todas.extend(coletar_vagas_com(page, site))
 
         browser.close()
 
-    salvar_vagas(todas_vagas)
+    salvar_vagas(todas)
 
-    print("\n✅ Finalizado")
-    print(f"📌 Total salvo no CSV: {len(todas_vagas)}")
-
+    print("✅ Finalizado")
+    print(f"📌 Total coletado: {len(todas)}")
 
 if __name__ == "__main__":
     main()
