@@ -19,7 +19,7 @@ def vagas_ativas():
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for vaga in reader:
-                # só mostra vaga ativ
+                # só mostra vaga ativa
                 vagas.append(vaga)
     except FileNotFoundError:
         pass
@@ -44,6 +44,21 @@ def home():
             h1 {
                 color: #222;
             }
+            .linkedin-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: #0a66c2;
+                color: white;
+                padding: 8px 15px;
+                border-radius: 6px;
+                text-decoration: none;
+                font-weight: bold;
+                margin-bottom: 20px;
+            }
+            .linkedin-btn:hover {
+                background: #084a8b;
+            }
             .vaga {
                 background: white;
                 padding: 15px;
@@ -51,12 +66,12 @@ def home():
                 border-radius: 8px;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             }
-            a {
+            a.vaga-link {
                 text-decoration: none;
                 color: #0066cc;
                 font-size: 18px;
             }
-            a:hover {
+            a.vaga-link:hover {
                 text-decoration: underline;
             }
             .empresa {
@@ -68,12 +83,21 @@ def home():
     <body>
 
         <h1>Central de Vagas - Engenharia / Tech</h1>
-        <p>Projeto voluntário para ajudar profissionais a se candidatarem.</p>
+
+        <!-- Botão LinkedIn -->
+        <a href="https://www.linkedin.com/in/engandreycarlos/" target="_blank" class="linkedin-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+                <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.2 8.5h4.5v15h-4.5v-15zm7.5 0h4.3v2.1h.1c.6-1.1 2-2.1 4.2-2.1 4.5 0 5.3 3 5.3 6.9v7h-4.5v-6.2c0-1.5-.03-3.5-2.2-3.5-2.2 0-2.5 1.7-2.5 3.4v6.3h-4.5v-15z"/>
+            </svg>
+            Seguir no LinkedIn
+        </a>
+
+        <p>Projeto voluntário desenvolvido por Andrey Carlos para ajudar profissionais a se candidatarem.</p>
 
         {% if vagas %}
             {% for vaga in vagas %}
                 <div class="vaga">
-                    <a href="/vaga/{{ vaga.id }}" target="_blank">
+                    <a href="/vaga/{{ vaga.id }}" target="_blank" class="vaga-link">
                         <strong>{{ vaga.titulo }}</strong>
                     </a>
                     <div class="empresa">
@@ -109,6 +133,7 @@ def vaga(id):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
