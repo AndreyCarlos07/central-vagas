@@ -89,10 +89,10 @@ def home():
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
                 <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.2 8.5h4.5v15h-4.5v-15zm7.5 0h4.3v2.1h.1c.6-1.1 2-2.1 4.2-2.1 4.5 0 5.3 3 5.3 6.9v7h-4.5v-6.2c0-1.5-.03-3.5-2.2-3.5-2.2 0-2.5 1.7-2.5 3.4v6.3h-4.5v-15z"/>
             </svg>
-            Seguir no LinkedIn
+            Me siga no LinkedIn
         </a>
 
-        <p>Projeto voluntário desenvolvido por Andrey Carlos para ajudar profissionais a se candidatarem.</p>
+        <p>Projeto voluntário desenvolvido por <h1>Andrey Carlos<h1> para ajudar profissionais a se candidatarem.</p>
 
         {% if vagas %}
             {% for vaga in vagas %}
