@@ -19,9 +19,8 @@ def vagas_ativas():
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for vaga in reader:
-                # só mostra vaga ativa
-                if vaga.get("ativa") == "1":
-                    vagas.append(vaga)
+                # só mostra vaga ativ
+                vagas.append(vaga)
     except FileNotFoundError:
         pass
 
@@ -99,7 +98,7 @@ def vaga(id):
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for vaga in reader:
-                if vaga["id"] == id and vaga.get("ativa") == "1":
+                if vaga["id"] == id:
                     return redirect(vaga["link"])
     except FileNotFoundError:
         pass
