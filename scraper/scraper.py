@@ -103,8 +103,8 @@ PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVIL
 # ===========================
 def carregar_scroll_gupy(page):
     last_count = 0
-    for _ in range(40):
-        page.wait_for_timeout(2000)
+    for _ in range(20):
+        page.wait_for_timeout(1000)
         cards = page.locator('a[href*="/jobs/"]')
         count = cards.count()
         if count == last_count:
