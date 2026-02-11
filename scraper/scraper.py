@@ -12,7 +12,7 @@ CSV_FILE = "vagas.csv"
 
 SITES = [
     {"empresa": "BYD", "url": "https://bydbrasil.gupy.io", "selector": 'a[href*="/jobs/"]'},
-    {"empresa": "MOTIVA", "url": "https://motiva.gupy.io", "selector": 'a[href*="/jobs/"]'}
+    {"empresa": "MOTIVA", "url": "https://motiva.gupy.io", "selector": 'a[href*="/jobs/"]'},
     {"empresa": "KORDSA", "url": "https://kordsa.gupy.io", "selector": 'a[href*="/jobs/"]'},    
     {"empresa": "LM MOBILIDADE", "url": "https://lmvagas.gupy.io", "selector": 'a[href*="/jobs/"]'},
     {"empresa": "VOTORANTIM CIMENTOS", "url": "https://votorantimcimentos.gupy.io", "selector": 'a[href*="/jobs/"]'},
@@ -20,7 +20,7 @@ SITES = [
     {"empresa": "TIMAC AGRO", "url": "https://timacagro.gupy.io", "selector": 'a[href*="/jobs/"]'},
     {"empresa": "CIBRA", "url": "https://cibra.gupy.io", "selector": 'a[href*="/jobs/"]'},
     {"empresa": "TRONOX", "url": "https://tronoxbrasil.gupy.io", "selector": 'a[href*="/jobs/"]'},
-    {"empresa": "HERINGER", "url": "https://heringer.gupy.io/", "selector": 'a[href*="/jobs/"]'},
+    {"empresa": "HERINGER", "url": "https://heringer.gupy.io/", "selector": 'a[href*="/jobs/"]'}
 ]
 
 # 📍 palavras-chave para filtrar vagas na BAHIA
