@@ -32,9 +32,6 @@ SITES = [
     }
 ]
 
-# 📍 filtro Bahia
-PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVILA"]
-
 # ===========================
 # GUPY
 # ===========================
@@ -61,7 +58,6 @@ def coletar_gupy(page, site):
 
     while True:
         page.wait_for_timeout(3000)
-
         cards = page.locator('a[href*="/jobs/"]')
 
         for i in range(cards.count()):
@@ -79,7 +75,6 @@ def coletar_gupy(page, site):
                     "empresa": site["empresa"],
                     "link": link
                 })
-
             except:
                 continue
 
@@ -97,7 +92,7 @@ def coletar_gupy(page, site):
     return vagas
 
 # ===========================
-# WORKDAY
+# WORKDAY (COM PESQUISA BAHIA)
 # ===========================
 def coletar_workday(page, site):
     vagas = []
@@ -105,9 +100,16 @@ def coletar_workday(page, site):
     page.goto(site["url"], timeout=60000)
     page.wait_for_timeout(5000)
 
-    # Scroll para carregar tudo
-    for _ in range(15):
-        page.mouse.wheel(0, 5000)
+    # 🔎 Pesquisa automática por Bahia
+    page.fill('input[data-automation-id="keywordSearchInput"]', "Bahia")
+    page.click('button[data-automation-id="keywordSearchButton"]')
+
+    page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(5000)
+
+    # Scroll para garantir carregamento total
+    for _ in range(20):
+        page.mouse.wheel(0, 6000)
         page.wait_for_timeout(2000)
 
     cards = page.locator('a[data-automation-id="jobTitle"]')
@@ -133,17 +135,6 @@ def coletar_workday(page, site):
 
     print(f"📌 {site['empresa']} (WORKDAY): {len(vagas)} vagas coletadas")
     return vagas
-
-# ===========================
-# FILTRO BAHIA
-# ===========================
-def filtrar_vagas_bahia(vagas):
-    filtradas = [
-        vaga for vaga in vagas
-        if any(palavra in vaga["titulo"].upper() for palavra in PALAVRAS_BA)
-    ]
-    print(f"📌 Total Bahia após filtro: {len(filtradas)}")
-    return filtradas
 
 # ===========================
 # SALVAR CSV
@@ -181,12 +172,10 @@ def main():
 
         browser.close()
 
-    vagas_bahia = filtrar_vagas_bahia(todas_vagas)
-
-    salvar_vagas(vagas_bahia)
+    salvar_vagas(todas_vagas)
 
     print("\n✅ Finalizado")
-    print(f"📌 Total salvo no CSV: {len(vagas_bahia)}")
+    print(f"📌 Total salvo no CSV: {len(todas_vagas)}")
 
 
 if __name__ == "__main__":
