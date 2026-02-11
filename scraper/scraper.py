@@ -4,62 +4,72 @@
 # In[ ]:
 
 
-from playwright.sync_api import sync_playwright, TimeoutError
+from playwright.sync_api import sync_playwright
 import csv
 import uuid
 
 CSV_FILE = "vagas.csv"
 
+# ===========================
+# SITES CONFIGURADOS
+# ===========================
 SITES = [
-    {"empresa": "BYD", "url": "https://bydbrasil.gupy.io", "selector": 'a[href*="/jobs/"]'},
-    {"empresa": "MOTIVA", "url": "https://motiva.gupy.io", "selector": 'a[href*="/jobs/"]'},
-    {"empresa": "KORDSA", "url": "https://kordsa.gupy.io", "selector": 'a[href*="/jobs/"]'},    
-    {"empresa": "LM MOBILIDADE", "url": "https://lmvagas.gupy.io", "selector": 'a[href*="/jobs/"]'},
-    {"empresa": "VOTORANTIM CIMENTOS", "url": "https://votorantimcimentos.gupy.io", "selector": 'a[href*="/jobs/"]'},
-    {"empresa": "EUROCHEM", "url": "https://carreiras.gupy.io/", "selector": 'a[href*="/jobs/"]'},
-    {"empresa": "TIMAC AGRO", "url": "https://timacagro.gupy.io", "selector": 'a[href*="/jobs/"]'},
-    {"empresa": "CIBRA", "url": "https://cibra.gupy.io", "selector": 'a[href*="/jobs/"]'},
-    {"empresa": "TRONOX", "url": "https://tronoxbrasil.gupy.io", "selector": 'a[href*="/jobs/"]'},
-    {"empresa": "HERINGER", "url": "https://heringer.gupy.io/", "selector": 'a[href*="/jobs/"]'}
+    {
+        "empresa": "BYD",
+        "url": "https://bydbrasil.gupy.io",
+        "tipo": "gupy"
+    },
+    {
+        "empresa": "MOTIVA",
+        "url": "https://motiva.gupy.io",
+        "tipo": "gupy"
+    },
+    {
+        "empresa": "BRIDGESTONE",
+        "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers/",
+        "tipo": "workday",
+        "base": "https://bridgestone.wd5.myworkdayjobs.com"
+    }
 ]
 
-# 📍 palavras-chave para filtrar vagas na BAHIA
-PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVILA", "CANDEIAS"]
+# 📍 filtro Bahia
+PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVILA"]
 
 # ===========================
-# FUNÇÃO: CARREGAR TODAS AS VAGAS (scroll)
+# GUPY
 # ===========================
-def carregar_todas_vagas(page):
+def carregar_scroll_gupy(page):
     last_count = 0
-    for _ in range(40):  # limite de segurança
+    for _ in range(40):
         page.wait_for_timeout(2000)
         cards = page.locator('a[href*="/jobs/"]')
         count = cards.count()
-        print(f"🔄 vagas renderizadas: {count}")
         if count == last_count:
             break
         last_count = count
         page.mouse.wheel(0, 8000)
 
-# ===========================
-# FUNÇÃO: NAVEGAR PÁGINAS E COLETAR VAGAS
-# ===========================
-def navegar_todas_paginas(page, site):
-    pagina_atual = 1
+def coletar_gupy(page, site):
     vagas = []
 
+    page.goto(site["url"], timeout=60000)
+    page.wait_for_timeout(4000)
+
+    carregar_scroll_gupy(page)
+
+    pagina_atual = 1
+
     while True:
-        print(f"📄 Página {pagina_atual}")
         page.wait_for_timeout(3000)
 
-        cards = page.locator(site["selector"])
+        cards = page.locator('a[href*="/jobs/"]')
+
         for i in range(cards.count()):
             el = cards.nth(i)
             try:
-                titulo = el.inner_text(timeout=3000).strip()
+                titulo = el.inner_text().strip()
                 link = el.get_attribute("href")
-                if not titulo or not link:
-                    continue
+
                 if not link.startswith("http"):
                     link = site["url"] + link
 
@@ -69,43 +79,84 @@ def navegar_todas_paginas(page, site):
                     "empresa": site["empresa"],
                     "link": link
                 })
-            except Exception:
+
+            except:
                 continue
 
-        proxima_pagina = page.locator(
+        proxima = page.locator(
             f'button[data-testid="pagination-page-button"]:has-text("{pagina_atual + 1}")'
         )
-        if proxima_pagina.count() == 0:
+
+        if proxima.count() == 0:
             break
-        proxima_pagina.first.click()
+
+        proxima.first.click()
         pagina_atual += 1
 
-    print(f"📌 Total de vagas coletadas nesta empresa: {len(vagas)}")
+    print(f"📌 {site['empresa']} (GUPY): {len(vagas)} vagas coletadas")
     return vagas
 
 # ===========================
-# FUNÇÃO: FILTRAR VAGAS POR PALAVRAS-CHAVE
+# WORKDAY
+# ===========================
+def coletar_workday(page, site):
+    vagas = []
+
+    page.goto(site["url"], timeout=60000)
+    page.wait_for_timeout(5000)
+
+    # Scroll para carregar tudo
+    for _ in range(15):
+        page.mouse.wheel(0, 5000)
+        page.wait_for_timeout(2000)
+
+    cards = page.locator('a[data-automation-id="jobTitle"]')
+
+    for i in range(cards.count()):
+        el = cards.nth(i)
+        try:
+            titulo = el.inner_text().strip()
+            link = el.get_attribute("href")
+
+            if not link.startswith("http"):
+                link = site["base"] + link
+
+            vagas.append({
+                "id": str(uuid.uuid4())[:8],
+                "titulo": titulo,
+                "empresa": site["empresa"],
+                "link": link
+            })
+
+        except:
+            continue
+
+    print(f"📌 {site['empresa']} (WORKDAY): {len(vagas)} vagas coletadas")
+    return vagas
+
+# ===========================
+# FILTRO BAHIA
 # ===========================
 def filtrar_vagas_bahia(vagas):
-    vagas_ba = [
+    filtradas = [
         vaga for vaga in vagas
         if any(palavra in vaga["titulo"].upper() for palavra in PALAVRAS_BA)
     ]
-    print(f"📌 Total de vagas filtradas para Bahia: {len(vagas_ba)}")
-    return vagas_ba
+    print(f"📌 Total Bahia após filtro: {len(filtradas)}")
+    return filtradas
 
 # ===========================
-# FUNÇÃO: SALVAR CSV
+# SALVAR CSV
 # ===========================
-def salvar_vagas(vagas, arquivo=CSV_FILE):
-    with open(arquivo, "w", newline="", encoding="utf-8") as f:
+def salvar_vagas(vagas):
+    with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["id", "titulo", "empresa", "link"])
         writer.writeheader()
         for vaga in vagas:
             writer.writerow(vaga)
 
 # ===========================
-# FUNÇÃO PRINCIPAL
+# MAIN
 # ===========================
 def main():
     todas_vagas = []
@@ -116,22 +167,27 @@ def main():
 
         for site in SITES:
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
-            page.goto(site["url"], timeout=60000)
-            page.wait_for_timeout(4000)
 
-            carregar_todas_vagas(page)
-            vagas_empresa = navegar_todas_paginas(page, site)
-            todas_vagas.extend(vagas_empresa)
+            if site["tipo"] == "gupy":
+                vagas = coletar_gupy(page, site)
+
+            elif site["tipo"] == "workday":
+                vagas = coletar_workday(page, site)
+
+            else:
+                vagas = []
+
+            todas_vagas.extend(vagas)
 
         browser.close()
 
-    # filtra apenas vagas da Bahia
-    vagas_ba = filtrar_vagas_bahia(todas_vagas)
+    vagas_bahia = filtrar_vagas_bahia(todas_vagas)
 
-    # salva no CSV
-    salvar_vagas(vagas_ba)
+    salvar_vagas(vagas_bahia)
+
     print("\n✅ Finalizado")
-    print(f"📌 Total de vagas da Bahia salvas: {len(vagas_ba)}")
+    print(f"📌 Total salvo no CSV: {len(vagas_bahia)}")
+
 
 if __name__ == "__main__":
     main()
