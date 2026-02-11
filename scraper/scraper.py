@@ -26,23 +26,22 @@ SITES = [
     },
     {
         "empresa": "BRIDGESTONE",
-        "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers/",
+        "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers",
         "tipo": "workday",
-        "base": "https://bridgestone.wd5.myworkdayjobs.com"
+        "base": "https://bridgestone.wd5.myworkdayjobs.com",
+        "pesquisas": ["Bahia"]
     },
     {
         "empresa": "DOW",
         "url": "https://dow.wd1.myworkdayjobs.com/pt-BR/ExternalCareers",
         "tipo": "workday",
-        "base": "https://dow.wd1.myworkdayjobs.com"
+        "base": "https://dow.wd1.myworkdayjobs.com",
+        "pesquisas": ["Aratu"]
     }
 ]
 
-# 📍 filtro Bahia (apenas GUPY)
+# 📍 filtro Bahia (somente GUPY)
 PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVILA"]
-
-# 🔎 termos de pesquisa WORKDAY
-PESQUISAS_WORKDAY = ["Bahia", "Aratu"]
 
 # ===========================
 # GUPY
@@ -104,14 +103,14 @@ def coletar_gupy(page, site):
     return vagas
 
 # ===========================
-# WORKDAY MULTI-PESQUISA
+# WORKDAY (pesquisa por empresa)
 # ===========================
 def coletar_workday(page, site):
     vagas = []
-    links_coletados = set()  # 🔥 evita duplicadas
+    links_coletados = set()
 
-    for termo in PESQUISAS_WORKDAY:
-        print(f"🔎 Workday pesquisando: {termo}")
+    for termo in site.get("pesquisas", []):
+        print(f"🔎 {site['empresa']} pesquisando: {termo}")
 
         page.goto(site["url"], timeout=60000)
         page.wait_for_timeout(5000)
@@ -122,7 +121,7 @@ def coletar_workday(page, site):
         page.wait_for_load_state("networkidle")
         page.wait_for_timeout(5000)
 
-        # scroll para carregar tudo
+        # scroll para carregar todas as vagas
         for _ in range(20):
             page.mouse.wheel(0, 6000)
             page.wait_for_timeout(2000)
@@ -138,7 +137,6 @@ def coletar_workday(page, site):
                 if not link.startswith("http"):
                     link = site["base"] + link
 
-                # evita duplicidade
                 if link in links_coletados:
                     continue
 
@@ -150,7 +148,6 @@ def coletar_workday(page, site):
                     "empresa": site["empresa"],
                     "link": link
                 })
-
             except:
                 continue
 
