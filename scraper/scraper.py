@@ -66,7 +66,7 @@ def coletar_vagas_com(page, site):
     # login
     page.fill('input[name="login_candidatos_form[usuario]"]', VAGAS_EMAIL)
     page.fill('input[name="login_candidatos_form[senha]"]', VAGAS_SENHA)
-    page.click("#submitLogin")
+    page.locator("#submitLogin").click(force=True)
 
     page.wait_for_load_state("networkidle")
     page.wait_for_timeout(5000)
