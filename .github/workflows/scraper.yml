@@ -8,6 +8,10 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    
+    env:
+      VAGAS_EMAIL: ${{ secrets.VAGAS_EMAIL }}
+      VAGAS_SENHA: ${{ secrets.VAGAS_SENHA }}
 
     steps:
       - uses: actions/checkout@v4
