@@ -14,16 +14,35 @@ CSV_FILE = "vagas.csv"
 # SITES CONFIGURADOS
 # ===========================
 SITES = [
-    {
-        "empresa": "BYD",
-        "url": "https://bydbrasil.gupy.io",
-        "tipo": "gupy"
-    },
-    {
-        "empresa": "MOTIVA",
-        "url": "https://motiva.gupy.io",
-        "tipo": "gupy"
-    },
+    {"empresa": "BYD", "url": "https://bydbrasil.gupy.io", "tipo": "gupy"},
+    {"empresa": "MOTIVA", "url": "https://motiva.gupy.io", "tipo": "gupy"},
+    {"empresa": "KORDSA", "url": "https://kordsa.gupy.io", "tipo": "gupy"},    
+    {"empresa": "LM MOBILIDADE", "url": "https://lmvagas.gupy.io", "tipo": "gupy"},
+    {"empresa": "VOTORANTIM CIMENTOS", "url": "https://votorantimcimentos.gupy.io", "tipo": "gupy"},
+    {"empresa": "VOTORANTIM CIMENTOS", "url": "https://votorantimcimentostalentos.gupy.io", "tipo": "gupy"},
+    {"empresa": "EUROCHEM", "url": "https://carreiras.gupy.io/", "tipo": "gupy"},
+    {"empresa": "TIMAC AGRO", "url": "https://timacagro.gupy.io", "tipo": "gupy"},
+    {"empresa": "CIBRA", "url": "https://cibra.gupy.io", "tipo": "gupy"},
+    {"empresa": "TRONOX", "url": "https://tronoxbrasil.gupy.io", "tipo": "gupy"},
+    {"empresa": "HERINGER", "url": "https://heringer.gupy.io", "tipo": "gupy"},
+    {"empresa": "AXIA ENERGIA", "url": "https://axiaenergia.gupy.io", "tipo": "gupy"},
+    {"empresa": "BRAVA ENERGIA", "url": "https://bravaenergia.gupy.io", "tipo": "gupy"},
+    {"empresa": "ENGIE", "url": "https://engiebrasilenergia.gupy.io", "tipo": "gupy"},
+    {"empresa": "ULTRAGAZ", "url": "https://vagasultragaz.gupy.io", "tipo": "gupy"},
+    {"empresa": "COPA ENERGIA", "url": "https://carreirascopaenergia.gupy.io", "tipo": "gupy"},
+    {"empresa": "PETRORECONCAVO", "url": "https://petroreconcavocarreiras.gupy.io", "tipo": "gupy"},
+    {"empresa": "PERBRAS", "url": "https://perbras.gupy.io", "tipo": "gupy"},
+    {"empresa": "ULTRACARGO", "url": "https://ultracargo.gupy.io", "tipo": "gupy"},
+    {"empresa": "SOLAR COCA COLA", "url": "https://solarcocacola.gupy.io", "tipo": "gupy"},
+    {"empresa": "M. DIAS BRANCO", "url": "https://mdiasbranco.gupy.io", "tipo": "gupy"},
+    {"empresa": "ENGEPACK", "url": "https://engepack.gupy.io", "tipo": "gupy"},
+    {"empresa": "AMBEV", "url": "https://ambev.gupy.io", "tipo": "gupy"},
+    {"empresa": "FORTLEV", "url": "https://fortlev.gupy.io", "tipo": "gupy"},
+    {"empresa": "GRUPO BOTICÁRIO", "url": "https://grupoboticario.gupy.io", "tipo": "gupy"},
+    {"empresa": "VALGROUP", "url": "https://valgroup.gupy.io", "tipo": "gupy"},
+    {"empresa": "ITAÚ UNIBANCO", "url": "https://vemproitau.gupy.io", "tipo": "gupy"},
+    {"empresa": "KEMPETRO", "url": "https://vocenakempetro.gupy.io", "tipo": "gupy"},
+    {"empresa": "WILSON SONS", "url": "https://wilsonsons.gupy.io", "tipo": "gupy"},
     {
         "empresa": "BRIDGESTONE",
         "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers",
@@ -37,11 +56,46 @@ SITES = [
         "tipo": "workday",
         "base": "https://dow.wd1.myworkdayjobs.com",
         "pesquisas": ["Aratu"]
+    },
+    {
+        "empresa": "MOSAIC",
+        "url": "https://mosaic.wd5.myworkdayjobs.com/pt-BR/mosaic",
+        "tipo": "workday",
+        "base": "https://mosaic.wd5.myworkdayjobs.com",
+        "pesquisas": ["Candeias"]
+    },
+    {
+        "empresa": "NEOENERGIA",
+        "url": "https://iberdrola.wd3.myworkdayjobs.com/pt-BR/Iberdrola",
+        "tipo": "workday",
+        "base": "https://iberdrola.wd3.myworkdayjobs.com",
+        "pesquisas": ["Salvador"]
+    },
+    {
+        "empresa": "NEXTPOWER",
+        "url": "https://nextracker.wd5.myworkdayjobs.com/nextpower_careers",
+        "tipo": "workday",
+        "base": "https://nextracker.wd5.myworkdayjobs.com",
+        "pesquisas": ["Simões Filho"]
+    },
+    {
+        "empresa": "KIMBERLY-CLARK",
+        "url": "https://kimberlyclark.wd1.myworkdayjobs.com/pt-BR/GLOBAL",
+        "tipo": "workday",
+        "base": "https://kimberlyclark.wd1.myworkdayjobs.com",
+        "pesquisas": ["Camaçari"]
+    },
+    {
+        "empresa": "BRACELL",
+        "url": "https://averis.wd3.myworkdayjobs.com/pt-BR/RGE",
+        "tipo": "workday",
+        "base": "https://averis.wd3.myworkdayjobs.com",
+        "pesquisas": ["Camaçari", "Alagoinhas"]
     }
 ]
 
 # 📍 filtro Bahia (somente GUPY)
-PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVILA"]
+PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVILA", "CANDEIAS", "POJUCA", "CATU", "SIMÕES FILHO", "ALAGOINHAS"]
 
 # ===========================
 # GUPY
