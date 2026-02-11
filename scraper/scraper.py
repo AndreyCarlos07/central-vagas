@@ -29,11 +29,20 @@ SITES = [
         "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers/",
         "tipo": "workday",
         "base": "https://bridgestone.wd5.myworkdayjobs.com"
+    },
+    {
+        "empresa": "DOW",
+        "url": "https://dow.wd1.myworkdayjobs.com/pt-BR/ExternalCareers",
+        "tipo": "workday",
+        "base": "https://dow.wd1.myworkdayjobs.com"
     }
 ]
 
-# 📍 filtro Bahia (APENAS GUPY)
+# 📍 filtro Bahia (apenas GUPY)
 PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVILA"]
+
+# 🔎 termos de pesquisa WORKDAY
+PESQUISAS_WORKDAY = ["Bahia", "Aratu"]
 
 # ===========================
 # GUPY
@@ -95,51 +104,61 @@ def coletar_gupy(page, site):
     return vagas
 
 # ===========================
-# WORKDAY (PESQUISA BAHIA)
+# WORKDAY MULTI-PESQUISA
 # ===========================
 def coletar_workday(page, site):
     vagas = []
+    links_coletados = set()  # 🔥 evita duplicadas
 
-    page.goto(site["url"], timeout=60000)
-    page.wait_for_timeout(5000)
+    for termo in PESQUISAS_WORKDAY:
+        print(f"🔎 Workday pesquisando: {termo}")
 
-    # 🔎 Pesquisa automática por Bahia
-    page.fill('input[data-automation-id="keywordSearchInput"]', "Bahia")
-    page.click('button[data-automation-id="keywordSearchButton"]')
+        page.goto(site["url"], timeout=60000)
+        page.wait_for_timeout(5000)
 
-    page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(5000)
+        page.fill('input[data-automation-id="keywordSearchInput"]', termo)
+        page.click('button[data-automation-id="keywordSearchButton"]')
 
-    # Scroll para carregar todas
-    for _ in range(20):
-        page.mouse.wheel(0, 6000)
-        page.wait_for_timeout(2000)
+        page.wait_for_load_state("networkidle")
+        page.wait_for_timeout(5000)
 
-    cards = page.locator('a[data-automation-id="jobTitle"]')
+        # scroll para carregar tudo
+        for _ in range(20):
+            page.mouse.wheel(0, 6000)
+            page.wait_for_timeout(2000)
 
-    for i in range(cards.count()):
-        el = cards.nth(i)
-        try:
-            titulo = el.inner_text().strip()
-            link = el.get_attribute("href")
+        cards = page.locator('a[data-automation-id="jobTitle"]')
 
-            if not link.startswith("http"):
-                link = site["base"] + link
+        for i in range(cards.count()):
+            el = cards.nth(i)
+            try:
+                titulo = el.inner_text().strip()
+                link = el.get_attribute("href")
 
-            vagas.append({
-                "id": str(uuid.uuid4())[:8],
-                "titulo": titulo,
-                "empresa": site["empresa"],
-                "link": link
-            })
-        except:
-            continue
+                if not link.startswith("http"):
+                    link = site["base"] + link
+
+                # evita duplicidade
+                if link in links_coletados:
+                    continue
+
+                links_coletados.add(link)
+
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo,
+                    "empresa": site["empresa"],
+                    "link": link
+                })
+
+            except:
+                continue
 
     print(f"📌 {site['empresa']} (WORKDAY): {len(vagas)} vagas coletadas")
     return vagas
 
 # ===========================
-# FILTRO APENAS PARA GUPY
+# FILTRO GUPY
 # ===========================
 def filtrar_gupy_bahia(vagas):
     filtradas = [
@@ -174,9 +193,11 @@ def main():
 
             if site["tipo"] == "gupy":
                 vagas = coletar_gupy(page, site)
-                vagas = filtrar_gupy_bahia(vagas)  # 🔥 FILTRO AQUI
+                vagas = filtrar_gupy_bahia(vagas)
+
             elif site["tipo"] == "workday":
                 vagas = coletar_workday(page, site)
+
             else:
                 vagas = []
 
