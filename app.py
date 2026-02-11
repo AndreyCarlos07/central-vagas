@@ -92,7 +92,7 @@ def home():
             Me siga no LinkedIn
         </a>
 
-        <p>Projeto voluntário desenvolvido por <h1>Andrey Carlos<h1> para ajudar profissionais a se candidatarem.</p>
+        <p>Projeto voluntário desenvolvido por <strong>Andrey Carlos</strong> para ajudar profissionais a se candidatarem.</p>
 
         {% if vagas %}
             {% for vaga in vagas %}
