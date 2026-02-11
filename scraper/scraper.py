@@ -32,6 +32,9 @@ SITES = [
     }
 ]
 
+# 📍 filtro Bahia (APENAS GUPY)
+PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVILA"]
+
 # ===========================
 # GUPY
 # ===========================
@@ -92,7 +95,7 @@ def coletar_gupy(page, site):
     return vagas
 
 # ===========================
-# WORKDAY (COM PESQUISA BAHIA)
+# WORKDAY (PESQUISA BAHIA)
 # ===========================
 def coletar_workday(page, site):
     vagas = []
@@ -107,7 +110,7 @@ def coletar_workday(page, site):
     page.wait_for_load_state("networkidle")
     page.wait_for_timeout(5000)
 
-    # Scroll para garantir carregamento total
+    # Scroll para carregar todas
     for _ in range(20):
         page.mouse.wheel(0, 6000)
         page.wait_for_timeout(2000)
@@ -129,12 +132,22 @@ def coletar_workday(page, site):
                 "empresa": site["empresa"],
                 "link": link
             })
-
         except:
             continue
 
     print(f"📌 {site['empresa']} (WORKDAY): {len(vagas)} vagas coletadas")
     return vagas
+
+# ===========================
+# FILTRO APENAS PARA GUPY
+# ===========================
+def filtrar_gupy_bahia(vagas):
+    filtradas = [
+        vaga for vaga in vagas
+        if any(palavra in vaga["titulo"].upper() for palavra in PALAVRAS_BA)
+    ]
+    print(f"📌 GUPY após filtro Bahia: {len(filtradas)}")
+    return filtradas
 
 # ===========================
 # SALVAR CSV
@@ -161,10 +174,9 @@ def main():
 
             if site["tipo"] == "gupy":
                 vagas = coletar_gupy(page, site)
-
+                vagas = filtrar_gupy_bahia(vagas)  # 🔥 FILTRO AQUI
             elif site["tipo"] == "workday":
                 vagas = coletar_workday(page, site)
-
             else:
                 vagas = []
 
