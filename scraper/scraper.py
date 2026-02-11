@@ -16,14 +16,7 @@ SITES = [
 ]
 
 # 📍 palavras-chave para filtrar vagas na BAHIA
-FILTRO_BA = [
-    " BAHIA",
-    " SALVADOR",
-    " CAMAÇARI",
-    " LAURO DE FREITAS",
-    " FEIRA DE SANTANA",
-    " DIAS D'ÁVILA"
-]
+PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVILA"]
 
 # ===========================
 # FUNÇÃO: CARREGAR TODAS AS VAGAS (scroll)
@@ -86,14 +79,10 @@ def navegar_todas_paginas(page, site):
 # FUNÇÃO: FILTRAR VAGAS POR PALAVRAS-CHAVE
 # ===========================
 def filtrar_vagas_bahia(vagas):
-    vagas_ba = []
-    filtro_ba = ["BAHIA", "SALVADOR", "CAMAÇARI", "FEIRA", "LAURO", "DIAS D'ÁVILA"]
-    for vaga in vagas:
-        #for termo in FILTRO_BA:
-            #if termo.upper() in vaga["titulo"].upper():
-        if any(filtro in vaga["titulo"].upper() for filtro in filtro_ba):
-            vagas_ba.append(vaga)
-            break
+    vagas_ba = [
+        vaga for vaga in vagas
+        if any(palavra in vaga["titulo"].upper() for palavra in PALAVRAS_BA)
+    ]
     print(f"📌 Total de vagas filtradas para Bahia: {len(vagas_ba)}")
     return vagas_ba
 
@@ -122,10 +111,7 @@ def main():
             page.goto(site["url"], timeout=60000)
             page.wait_for_timeout(4000)
 
-            # força o carregamento de todas as vagas
             carregar_todas_vagas(page)
-
-            # coleta todas as vagas
             vagas_empresa = navegar_todas_paginas(page, site)
             todas_vagas.extend(vagas_empresa)
 
@@ -137,7 +123,7 @@ def main():
     # salva no CSV
     salvar_vagas(vagas_ba)
     print("\n✅ Finalizado")
-    #print(f"📌 Vagas BA encontradas: {len(vagas_ba)}")
+    print(f"📌 Total de vagas da Bahia salvas: {len(vagas_ba)}")
 
 if __name__ == "__main__":
     main()
