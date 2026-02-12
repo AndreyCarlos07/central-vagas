@@ -135,7 +135,7 @@ def home():
             }
 
             input, select {
-                padding: 8px;
+                padding: 6px 8px;
                 border-radius: 5px;
                 border: 1px solid #ccc;
                 margin-right: 10px;
