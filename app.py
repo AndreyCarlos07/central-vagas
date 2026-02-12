@@ -128,7 +128,7 @@ def home():
 
             .filtro-box {
                 background: white;
-                padding: 15px;
+                padding: 10px 15px;
                 border-radius: 8px;
                 margin-bottom: 20px;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.08);
