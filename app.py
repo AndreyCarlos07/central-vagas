@@ -5,11 +5,17 @@
 
 import os
 import csv
+import time
 from flask import Flask, redirect, render_template_string, request
 
 app = Flask(__name__)
 
 CSV_FILE = "vagas.csv"
+
+# ==========================
+# CONTROLE DE USUÁRIOS ONLINE
+# ==========================
+usuarios_online = {}
 
 
 def vagas_ativas():
@@ -27,6 +33,21 @@ def vagas_ativas():
 @app.route("/")
 def home():
     vagas = vagas_ativas()
+
+    # ==========================
+    # CONTROLE ONLINE (5 minutos)
+    # ==========================
+    user_ip = request.remote_addr
+    agora = time.time()
+
+    usuarios_online[user_ip] = agora
+
+    limite = 300  # 5 minutos
+    for ip in list(usuarios_online.keys()):
+        if agora - usuarios_online[ip] > limite:
+            del usuarios_online[ip]
+
+    total_online = len(usuarios_online)
 
     # ==========================
     # CAPTURA FILTROS
@@ -156,9 +177,12 @@ def home():
                 🏢 {{ total_empresas }} empresas monitoradas
             </div>
 
+            <div class="info-box">
+                🟢 {{ total_online }} pessoas online agora
+            </div>
+
         </div>
 
-        <!-- FILTRO -->
         <div class="filtro-box">
             <form method="GET">
                 <input type="text" name="q" placeholder="Pesquisar vaga..."
@@ -204,6 +228,7 @@ def home():
         vagas=vagas,
         total_vagas=total_vagas,
         total_empresas=total_empresas,
+        total_online=total_online,
         empresas_unicas=empresas_unicas,
         busca_nome=request.args.get("q", ""),
         filtro_empresa=filtro_empresa
