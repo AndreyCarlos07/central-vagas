@@ -80,7 +80,7 @@ def home():
     try:
         # ✅ ORDEM ALFABÉTICA SOMENTE SE NÃO HOUVER FILTRO NEM ORDEM NA URL
         if not busca_nome and not filtro_empresa and "ordem" not in request.args:
-            vagas.sort(key=lambda v: (v["empresa"].lower(), v["titulo"].lower()))
+            vagas.sort(key=lambda v: v["titulo"].lower())
         else:
             vagas.sort(
                 key=lambda v: datetime.fromisoformat(v["data_coleta"]) if v.get("data_coleta") else datetime.min,
