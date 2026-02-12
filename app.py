@@ -128,14 +128,21 @@ def home():
 
             .filtro-box {
                 background: white;
-                padding: 6px 15px;
+                padding: 15px;
                 border-radius: 8px;
                 margin-bottom: 20px;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             }
 
+            .filtro-box form {
+                display: flex;
+                justify-content: center;  /* centraliza horizontalmente */
+                align-items: center;      /* alinha verticalmente */
+                flex-wrap: wrap;          /* não quebra em telas menores */
+            }
+
             input, select {
-                padding: 6px 8px;
+                padding: 8px;
                 border-radius: 5px;
                 border: 1px solid #ccc;
                 margin-right: 10px;
