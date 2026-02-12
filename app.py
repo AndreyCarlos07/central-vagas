@@ -7,6 +7,7 @@ import os
 import csv
 import time
 from flask import Flask, redirect, render_template_string, request
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -42,7 +43,7 @@ def home():
 
     usuarios_online[user_ip] = agora
 
-    limite = 300  # 5 minutos
+    limite = 300
     for ip in list(usuarios_online.keys()):
         if agora - usuarios_online[ip] > limite:
             del usuarios_online[ip]
@@ -54,6 +55,7 @@ def home():
     # ==========================
     busca_nome = request.args.get("q", "").lower()
     filtro_empresa = request.args.get("empresa", "")
+    ordem = request.args.get("ordem", "recentes")
 
     # ==========================
     # APLICA FILTROS
@@ -69,6 +71,17 @@ def home():
             v for v in vagas
             if v["empresa"] == filtro_empresa
         ]
+
+    # ==========================
+    # ORDENAÇÃO
+    # ==========================
+    try:
+        vagas.sort(
+            key=lambda v: datetime.fromisoformat(v["data_coleta"]) if v.get("data_coleta") else datetime.min,
+            reverse=(ordem == "recentes")
+        )
+    except:
+        pass
 
     total_vagas = len(vagas)
     empresas_unicas = sorted(set(v["empresa"] for v in vagas_ativas()))
@@ -198,6 +211,15 @@ def home():
                     {% endfor %}
                 </select>
 
+                <select name="ordem">
+                    <option value="recentes" {% if ordem == "recentes" %}selected{% endif %}>
+                        Mais recentes
+                    </option>
+                    <option value="antigas" {% if ordem == "antigas" %}selected{% endif %}>
+                        Mais antigas
+                    </option>
+                </select>
+
                 <button type="submit">Filtrar</button>
             </form>
         </div>
@@ -231,7 +253,8 @@ def home():
         total_online=total_online,
         empresas_unicas=empresas_unicas,
         busca_nome=request.args.get("q", ""),
-        filtro_empresa=filtro_empresa
+        filtro_empresa=filtro_empresa,
+        ordem=ordem
     )
 
 
@@ -251,4 +274,4 @@ def vaga(id):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)    
+    app.run(host="0.0.0.0", port=port)
