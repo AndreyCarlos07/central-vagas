@@ -134,13 +134,6 @@ def home():
                 box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             }
 
-            .filtro-box form {
-                display: flex;
-                justify-content: center;  /* centraliza horizontalmente */
-                align-items: center;      /* alinha verticalmente */
-                flex-wrap: wrap;          /* não quebra em telas menores */
-            }
-
             input, select {
                 padding: 8px;
                 border-radius: 5px;
