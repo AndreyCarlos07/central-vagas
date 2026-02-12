@@ -178,6 +178,8 @@ def home():
             </form>
         </div>
 
+        <p>Projeto voluntário desenvolvido por <strong>Andrey Carlos</strong> para ajudar profissionais a se candidatarem.</p>
+        
         {% if vagas %}
             {% for vaga in vagas %}
                 <div class="vaga">
