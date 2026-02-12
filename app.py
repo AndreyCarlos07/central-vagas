@@ -14,11 +14,6 @@ app = Flask(__name__)
 CSV_FILE = "vagas.csv"
 VAGAS_POR_PAGINA = 100  # ✅ ADICIONADO
 
-# ==========================
-# CONTROLE DE USUÁRIOS ONLINE
-# ==========================
-usuarios_online = {}
-
 
 def vagas_ativas():
     vagas = []
@@ -36,27 +31,14 @@ def vagas_ativas():
 def home():
     vagas = vagas_ativas()
 
-    # ==========================
-    # CONTROLE ONLINE (5 minutos)
-    # ==========================
-    user_ip = request.remote_addr
-    agora = time.time()
-
-    usuarios_online[user_ip] = agora
-
-    limite = 300
-    for ip in list(usuarios_online.keys()):
-        if agora - usuarios_online[ip] > limite:
-            del usuarios_online[ip]
-
-    total_online = len(usuarios_online)
 
     # ==========================
     # CAPTURA FILTROS
     # ==========================
     busca_nome = request.args.get("q", "").lower()
     filtro_empresa = request.args.get("empresa", "")
-    ordem = request.args.get("ordem", "recentes")
+    #ordem = request.args.get("ordem", "recentes")
+    ordem = request.args.get("ordem", "padrao")
     page = int(request.args.get("page", 1))  # ✅ ADICIONADO
 
     # ==========================
@@ -77,9 +59,21 @@ def home():
     # ==========================
     # ORDENAÇÃO
     # ==========================
+    #try:
+        # ✅ ORDEM ALFABÉTICA SOMENTE SE NÃO HOUVER FILTRO NEM ORDEM NA URL
+        #if not busca_nome and not filtro_empresa and "ordem" not in request.args:
+            #vagas.sort(key=lambda v: v["titulo"].lower())
+        #else:
+            #vagas.sort(
+                #key=lambda v: datetime.fromisoformat(v["data_coleta"]) if v.get("data_coleta") else datetime.min,
+                #reverse=(ordem == "recentes")
+            #)
+    #except:
+        #pass
+
     try:
         # ✅ ORDEM ALFABÉTICA SOMENTE SE NÃO HOUVER FILTRO NEM ORDEM NA URL
-        if not busca_nome and not filtro_empresa and "ordem" not in request.args:
+        if ordem == "padrao":
             vagas.sort(key=lambda v: v["titulo"].lower())
         else:
             vagas.sort(
@@ -88,6 +82,7 @@ def home():
             )
     except:
         pass
+
 
     total_vagas = len(vagas)
 
@@ -224,9 +219,6 @@ def home():
                 🏢 {{ total_empresas }} empresas monitoradas
             </div>
 
-            <div class="info-box">
-                🟢 {{ total_online }} pessoas online agora
-            </div>
 
         </div>
 
@@ -245,7 +237,11 @@ def home():
                     {% endfor %}
                 </select>
 
+
                 <select name="ordem">
+                    <option value="padrao" {% if ordem == "padrao" %}selected{% endif %}>
+                        Padrão
+                    </option>
                     <option value="recentes" {% if ordem == "recentes" %}selected{% endif %}>
                         Mais recentes
                     </option>
@@ -253,6 +249,7 @@ def home():
                         Mais antigas
                     </option>
                 </select>
+
 
                 <button type="submit">Filtrar</button>
             </form>
@@ -298,7 +295,6 @@ def home():
         vagas=vagas,
         total_vagas=total_vagas,
         total_empresas=total_empresas,
-        total_online=total_online,
         empresas_unicas=empresas_unicas,
         busca_nome=request.args.get("q", ""),
         filtro_empresa=filtro_empresa,
