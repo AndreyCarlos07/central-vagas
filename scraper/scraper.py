@@ -7,8 +7,40 @@
 from playwright.sync_api import sync_playwright
 import csv
 import uuid
+import os
+from datetime import datetime
 
-CSV_FILE = "vagas.csv"
+CSV_HISTORICO = "vagas.csv"
+CSV_NOVAS = "vagas_novas.csv"
+
+# ===========================
+# CARREGAR HISTÓRICO
+# ===========================
+def carregar_historico():
+    vagas = []
+    links_existentes = set()
+
+    if os.path.exists(CSV_HISTORICO):
+        with open(CSV_HISTORICO, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                vagas.append(row)
+                links_existentes.add(row["link"])
+
+    return vagas, links_existentes
+
+
+# ===========================
+# SALVAR CSV
+# ===========================
+def salvar_csv(arquivo, vagas):
+    with open(arquivo, "w", newline="", encoding="utf-8") as f:
+        fieldnames = ["id", "titulo", "empresa", "link", "data_coleta"]
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for vaga in vagas:
+            writer.writerow(vaga)
+
 
 # ===========================
 # SITES CONFIGURADOS
@@ -112,6 +144,7 @@ def carregar_scroll_gupy(page):
         last_count = count
         page.mouse.wheel(0, 8000)
 
+
 def coletar_gupy(page, site):
     vagas = []
 
@@ -157,8 +190,18 @@ def coletar_gupy(page, site):
     print(f"📌 {site['empresa']} (GUPY): {len(vagas)} vagas coletadas")
     return vagas
 
+
+def filtrar_gupy_bahia(vagas):
+    filtradas = [
+        vaga for vaga in vagas
+        if any(p in vaga["titulo"].upper() for p in PALAVRAS_BA)
+    ]
+    print(f"📌 GUPY após filtro Bahia: {len(filtradas)}")
+    return filtradas
+
+
 # ===========================
-# WORKDAY (pesquisa por empresa)
+# WORKDAY
 # ===========================
 def coletar_workday(page, site):
     vagas = []
@@ -176,7 +219,6 @@ def coletar_workday(page, site):
         page.wait_for_load_state("networkidle")
         page.wait_for_timeout(5000)
 
-        # scroll para carregar todas as vagas
         for _ in range(20):
             page.mouse.wheel(0, 6000)
             page.wait_for_timeout(2000)
@@ -209,32 +251,15 @@ def coletar_workday(page, site):
     print(f"📌 {site['empresa']} (WORKDAY): {len(vagas)} vagas coletadas")
     return vagas
 
-# ===========================
-# FILTRO GUPY
-# ===========================
-def filtrar_gupy_bahia(vagas):
-    filtradas = [
-        vaga for vaga in vagas
-        if any(palavra in vaga["titulo"].upper() for palavra in PALAVRAS_BA)
-    ]
-    print(f"📌 GUPY após filtro Bahia: {len(filtradas)}")
-    return filtradas
-
-# ===========================
-# SALVAR CSV
-# ===========================
-def salvar_vagas(vagas):
-    with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=["id", "titulo", "empresa", "link"])
-        writer.writeheader()
-        for vaga in vagas:
-            writer.writerow(vaga)
 
 # ===========================
 # MAIN
 # ===========================
 def main():
-    todas_vagas = []
+    historico, links_existentes = carregar_historico()
+
+    novas_vagas_execucao = []
+    todas_vagas_coletadas = []
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -253,14 +278,30 @@ def main():
             else:
                 vagas = []
 
-            todas_vagas.extend(vagas)
+            todas_vagas_coletadas.extend(vagas)
 
         browser.close()
 
-    salvar_vagas(todas_vagas)
+    # ===========================
+    # IDENTIFICAR NOVAS VAGAS
+    # ===========================
+    agora = datetime.utcnow().isoformat()
+
+    for vaga in todas_vagas_coletadas:
+        if vaga["link"] not in links_existentes:
+            vaga["data_coleta"] = agora
+            novas_vagas_execucao.append(vaga)
+            historico.append(vaga)
+
+    # ===========================
+    # SALVAR ARQUIVOS
+    # ===========================
+    salvar_csv(CSV_HISTORICO, historico)
+    salvar_csv(CSV_NOVAS, novas_vagas_execucao)
 
     print("\n✅ Finalizado")
-    print(f"📌 Total salvo no CSV: {len(todas_vagas)}")
+    print(f"📌 Novas vagas encontradas: {len(novas_vagas_execucao)}")
+    print(f"📌 Total no histórico: {len(historico)}")
 
 
 if __name__ == "__main__":
