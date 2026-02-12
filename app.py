@@ -12,6 +12,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 CSV_FILE = "vagas.csv"
+VAGAS_POR_PAGINA = 100  # ✅ ADICIONADO
 
 # ==========================
 # CONTROLE DE USUÁRIOS ONLINE
@@ -56,6 +57,7 @@ def home():
     busca_nome = request.args.get("q", "").lower()
     filtro_empresa = request.args.get("empresa", "")
     ordem = request.args.get("ordem", "recentes")
+    page = int(request.args.get("page", 1))  # ✅ ADICIONADO
 
     # ==========================
     # APLICA FILTROS
@@ -76,14 +78,28 @@ def home():
     # ORDENAÇÃO
     # ==========================
     try:
-        vagas.sort(
-            key=lambda v: datetime.fromisoformat(v["data_coleta"]) if v.get("data_coleta") else datetime.min,
-            reverse=(ordem == "recentes")
-        )
+        # ✅ ORDEM ALFABÉTICA SOMENTE SE NÃO HOUVER FILTRO NEM ORDEM NA URL
+        if not busca_nome and not filtro_empresa and "ordem" not in request.args:
+            vagas.sort(key=lambda v: (v["empresa"].lower(), v["titulo"].lower()))
+        else:
+            vagas.sort(
+                key=lambda v: datetime.fromisoformat(v["data_coleta"]) if v.get("data_coleta") else datetime.min,
+                reverse=(ordem == "recentes")
+            )
     except:
         pass
 
     total_vagas = len(vagas)
+
+    # ==========================
+    # PAGINAÇÃO
+    # ==========================
+    inicio = (page - 1) * VAGAS_POR_PAGINA
+    fim = inicio + VAGAS_POR_PAGINA
+    vagas = vagas[inicio:fim]
+
+    total_paginas = (total_vagas + VAGAS_POR_PAGINA - 1) // VAGAS_POR_PAGINA
+
     empresas_unicas = sorted(set(v["empresa"] for v in vagas_ativas()))
     total_empresas = len(empresas_unicas)
 
@@ -159,6 +175,23 @@ def home():
                 margin-bottom: 12px;
                 border-radius: 8px;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            }
+
+            .paginacao {
+                margin-top: 20px;
+            }
+
+            .paginacao a {
+                padding: 8px 12px;
+                background: #0066cc;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                margin-right: 5px;
+            }
+
+            .paginacao a:hover {
+                background: #004999;
             }
 
             a.vaga-link {
@@ -242,6 +275,20 @@ def home():
             <p><em>Nenhuma vaga encontrada com esses filtros.</em></p>
         {% endif %}
 
+        <div class="paginacao">
+            {% if page > 1 %}
+                <a href="?page={{ page-1 }}&q={{ busca_nome }}&empresa={{ filtro_empresa }}&ordem={{ ordem }}">
+                    ← Anterior
+                </a>
+            {% endif %}
+
+            {% if page < total_paginas %}
+                <a href="?page={{ page+1 }}&q={{ busca_nome }}&empresa={{ filtro_empresa }}&ordem={{ ordem }}">
+                    Próxima →
+                </a>
+            {% endif %}
+        </div>
+
     </body>
     </html>
     """
@@ -255,7 +302,9 @@ def home():
         empresas_unicas=empresas_unicas,
         busca_nome=request.args.get("q", ""),
         filtro_empresa=filtro_empresa,
-        ordem=ordem
+        ordem=ordem,
+        page=page,
+        total_paginas=total_paginas
     )
 
 
