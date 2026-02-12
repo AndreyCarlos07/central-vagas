@@ -37,7 +37,6 @@ def home():
     # ==========================
     busca_nome = request.args.get("q", "").lower()
     filtro_empresa = request.args.get("empresa", "")
-    #ordem = request.args.get("ordem", "recentes")
     ordem = request.args.get("ordem", "padrao")
     page = int(request.args.get("page", 1))  # ✅ ADICIONADO
 
@@ -59,18 +58,6 @@ def home():
     # ==========================
     # ORDENAÇÃO
     # ==========================
-    #try:
-        # ✅ ORDEM ALFABÉTICA SOMENTE SE NÃO HOUVER FILTRO NEM ORDEM NA URL
-        #if not busca_nome and not filtro_empresa and "ordem" not in request.args:
-            #vagas.sort(key=lambda v: v["titulo"].lower())
-        #else:
-            #vagas.sort(
-                #key=lambda v: datetime.fromisoformat(v["data_coleta"]) if v.get("data_coleta") else datetime.min,
-                #reverse=(ordem == "recentes")
-            #)
-    #except:
-        #pass
-
     try:
         # ✅ ORDEM ALFABÉTICA SOMENTE SE NÃO HOUVER FILTRO NEM ORDEM NA URL
         if ordem == "padrao":
