@@ -139,6 +139,7 @@ def home():
                 border-radius: 5px;
                 border: 1px solid #ccc;
                 margin-right: 10px;
+                min-width: 180px;
             }
 
             button {
