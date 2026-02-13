@@ -77,7 +77,7 @@ SITES = [
     {"empresa": "WILSON SONS", "url": "https://wilsonsons.gupy.io", "tipo": "gupy"},
     {"empresa": "GLOBAL GROUP", "url": "https://globalgroup.gupy.io", "tipo": "gupy"},
     {"empresa": "CETREL", "url": "https://cetrel.gupy.io", "tipo": "gupy"},
-    {"empresa": "MOHAWK", "url": "https://mohawk.gupy.io, "tipo": "gupy"},
+    {"empresa": "MOHAWK", "url": "https://mohawk.gupy.io", "tipo": "gupy"},
     {"empresa": "MARTINS", "url": "https://logisticamartins.gupy.io", "tipo": "gupy"},
     {
         "empresa": "BRIDGESTONE",
