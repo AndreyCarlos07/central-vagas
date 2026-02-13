@@ -370,6 +370,11 @@ def coletar_eightfold(page, site):
 # ===========================
 # ORACLE CLOUD (FORD)
 # ===========================
+import uuid
+
+# ===========================
+# ORACLE CLOUD (FORD)
+# ===========================
 def coletar_oracle(page, site):
     vagas = []
     links_coletados = set()
@@ -410,15 +415,23 @@ def coletar_oracle(page, site):
 
             links_coletados.add(link_limpo)
 
-            # Extrai ID da vaga da URL
-            job_id = link_limpo.split("/job/")[1].split("/")[0]
+            # 🔥 ABRE A PÁGINA DA VAGA
+            page.goto(link_limpo, timeout=60000)
+            page.wait_for_load_state("networkidle")
+
+            # 🔥 PEGA O TÍTULO REAL
+            titulo = page.locator("h1.job-details__title").inner_text().strip()
 
             vagas.append({
-                "id": job_id,
-                "titulo": f"Vaga Ford {job_id}",
+                "id": str(uuid.uuid4())[:8],
+                "titulo": titulo,
                 "empresa": site["empresa"],
                 "link": link_limpo
             })
+
+            # volta para a listagem
+            page.go_back()
+            page.wait_for_load_state("networkidle")
 
         except Exception as e:
             print("Erro ao processar vaga:", e)
