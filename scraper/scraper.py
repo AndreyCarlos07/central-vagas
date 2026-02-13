@@ -321,7 +321,7 @@ def coletar_continental(page, site):
         except:
             continue
 
-    print(f"📌 {site['empresa']} (CONTINENTAL): {len(vagas)} vagas")
+    print(f"📌 {site['empresa']} (PORTAL PROPRIO): {len(vagas)} vagas")
     return vagas
     
 
