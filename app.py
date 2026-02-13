@@ -14,6 +14,21 @@ app = Flask(__name__)
 CSV_FILE = "vagas.csv"
 VAGAS_POR_PAGINA = 100  # ✅ ADICIONADO
 
+# ==========================
+# PALAVRAS BLOQUEADAS
+# ==========================
+PALAVRAS_BLOQUEADAS = {
+    "enfermagem",
+    "enfermeiro",
+    "vendedor",
+    "vendas",
+    "advogado",
+    "jurídico",
+    "cozinha",
+    "serviços gerais",
+    "cozinheiro",
+    "representante",
+}
 
 def vagas_ativas():
     vagas = []
@@ -21,7 +36,15 @@ def vagas_ativas():
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for vaga in reader:
+
+                titulo_lower = vaga["titulo"].lower()
+
+                # 🔎 verifica se contém palavra bloqueada
+                if any(p in titulo_lower for p in PALAVRAS_BLOQUEADAS):
+                    continue  # ignora essa vaga
+
                 vagas.append(vaga)
+
     except FileNotFoundError:
         pass
     return vagas
