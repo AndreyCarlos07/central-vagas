@@ -390,7 +390,7 @@ def coletar_oracle(page, site):
 
     print("URL carregada:", page.url)
 
-    cards = page.locator('a[href*="/job/"]')
+    cards = page.locator('a.job-list-item__link')
     total = cards.count()
 
     print("Total de links encontrados:", total)
@@ -398,26 +398,24 @@ def coletar_oracle(page, site):
     for i in range(total):
         try:
             card = cards.nth(i)
-
             link = card.get_attribute("href")
-            titulo = card.locator("span").first.inner_text().strip()
 
-            if not link or not titulo:
+            if not link:
                 continue
 
             link_limpo = link.split("?")[0]
-
-            if not link_limpo.startswith("http"):
-                link_limpo = "https://efds.fa.em5.oraclecloud.com" + link_limpo
 
             if link_limpo in links_coletados:
                 continue
 
             links_coletados.add(link_limpo)
 
+            # Extrai ID da vaga da URL
+            job_id = link_limpo.split("/job/")[1].split("/")[0]
+
             vagas.append({
-                "id": link_limpo.split("/")[-1],
-                "titulo": titulo,
+                "id": job_id,
+                "titulo": f"Vaga Ford {job_id}",
                 "empresa": site["empresa"],
                 "link": link_limpo
             })
