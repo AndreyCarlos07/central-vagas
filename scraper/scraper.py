@@ -10,6 +10,12 @@ import uuid
 import os
 from datetime import datetime
 
+# ===========================
+# DEBUG CONFIG
+# ===========================
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["MERCADO LIVRE", "FORD"]
+
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
 
@@ -439,6 +445,11 @@ def main():
         page = browser.new_page()
 
         for site in SITES:
+
+            # 🔥 FILTRO DEBUG AQUI
+            if MODO_DEBUG and site["empresa"] not in EMPRESAS_DEBUG:
+                continue
+
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
 
             if site["tipo"] == "gupy":
@@ -456,13 +467,14 @@ def main():
 
             elif site["tipo"] == "oracle":
                 vagas = coletar_oracle(page, site)
-     
+
             else:
                 vagas = []
 
             todas_vagas_coletadas.extend(vagas)
 
         browser.close()
+
 
     # ===========================
     # IDENTIFICAR NOVAS VAGAS
@@ -475,16 +487,30 @@ def main():
             novas_vagas_execucao.append(vaga)
             historico.append(vaga)
 
+
     # ===========================
     # SALVAR ARQUIVOS
     # ===========================
-    salvar_csv(CSV_HISTORICO, historico)
-    salvar_csv(CSV_NOVAS, novas_vagas_execucao)
+
+    if MODO_DEBUG:
+        print("\n🧪 MODO DEBUG ATIVO - Salvando apenas arquivo de teste")
+        salvar_csv("vagas_debug.csv", todas_vagas_coletadas)
+    else:
+        salvar_csv(CSV_HISTORICO, historico)
+        salvar_csv(CSV_NOVAS, novas_vagas_execucao)
 
     print("\n✅ Finalizado")
-    print(f"📌 Novas vagas encontradas: {len(novas_vagas_execucao)}")
-    print(f"📌 Total no histórico: {len(historico)}")
+
+    # ===========================
+    # RESUMO FINAL
+    # ===========================
+
+    if MODO_DEBUG:
+        print(f"📌 Total coletado no debug: {len(todas_vagas_coletadas)}")
+    else:
+        print(f"📌 Novas vagas encontradas: {len(novas_vagas_execucao)}")
+        print(f"📌 Total no histórico: {len(historico)}")
 
 
 if __name__ == "__main__":
-    main()
+    main()    
