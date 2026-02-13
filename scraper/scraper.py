@@ -14,7 +14,7 @@ from datetime import datetime
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["MERCADO LIVRE", "FORD"]
+EMPRESAS_DEBUG = ["MERCADO LIVRE", "FORD", "CONTINENTAL"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -321,7 +321,7 @@ def coletar_continental(page, site):
         except:
             continue
 
-    print(f"📌 {site['empresa']} (PORTAL PROPRIO): {len(vagas)} vagas")
+    print(f"📌 {site['empresa']} (CONTINENTAL): {len(vagas)} vagas")
     return vagas
     
 
@@ -363,6 +363,7 @@ def coletar_eightfold(page, site):
             "link": link
         })
 
+    print(f"📌 {site['empresa']} (EIGHTFOLD): {len(vagas)} vagas coletadas")
     return vagas
 
 
