@@ -444,6 +444,7 @@ def main():
 
     novas_vagas_execucao = []
     todas_vagas_coletadas = []
+    empresas_sucesso = set()  # 🔥 controla quem rodou corretamente
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -480,7 +481,9 @@ def main():
                     vagas = []
 
                 print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
+
                 todas_vagas_coletadas.extend(vagas)
+                empresas_sucesso.add(site["empresa"])  # ✅ marcou como sucesso
 
             except Exception as e:
                 print(f"❌ ERRO ao coletar {site['empresa']}")
@@ -493,20 +496,39 @@ def main():
     print("\n✅ Coleta finalizada")
     print(f"📊 Total coletado: {len(todas_vagas_coletadas)} vagas")
 
-    return todas_vagas_coletadas
+    # ===========================
+    # 🔥 SINCRONIZAÇÃO INTELIGENTE
+    # ===========================
 
+    agora = datetime.utcnow().isoformat()
+    links_atuais = {vaga["link"] for vaga in todas_vagas_coletadas}
+
+    historico_atualizado = []
+
+    for vaga in historico:
+        empresa = vaga["empresa"]
+
+        if empresa in empresas_sucesso:
+            # Empresa rodou corretamente
+            # Mantém só se ainda existir na coleta
+            if vaga["link"] in links_atuais:
+                historico_atualizado.append(vaga)
+        else:
+            # Empresa deu erro → mantém tudo dela
+            historico_atualizado.append(vaga)
+
+    # Atualiza conjunto após limpeza
+    links_existentes = {vaga["link"] for vaga in historico_atualizado}
 
     # ===========================
     # IDENTIFICAR NOVAS VAGAS
     # ===========================
-    agora = datetime.utcnow().isoformat()
 
     for vaga in todas_vagas_coletadas:
         if vaga["link"] not in links_existentes:
             vaga["data_coleta"] = agora
             novas_vagas_execucao.append(vaga)
-            historico.append(vaga)
-
+            historico_atualizado.append(vaga)
 
     # ===========================
     # SALVAR ARQUIVOS
@@ -516,21 +538,17 @@ def main():
         print("\n🧪 MODO DEBUG ATIVO - Salvando apenas arquivo de teste")
         salvar_csv("vagas_debug.csv", todas_vagas_coletadas)
     else:
-        salvar_csv(CSV_HISTORICO, historico)
+        salvar_csv(CSV_HISTORICO, historico_atualizado)
         salvar_csv(CSV_NOVAS, novas_vagas_execucao)
 
     print("\n✅ Finalizado")
-
-    # ===========================
-    # RESUMO FINAL
-    # ===========================
 
     if MODO_DEBUG:
         print(f"📌 Total coletado no debug: {len(todas_vagas_coletadas)}")
     else:
         print(f"📌 Novas vagas encontradas: {len(novas_vagas_execucao)}")
-        print(f"📌 Total no histórico: {len(historico)}")
+        print(f"📌 Total no histórico: {len(historico_atualizado)}")
 
 
 if __name__ == "__main__":
-    main()    
+    main()
