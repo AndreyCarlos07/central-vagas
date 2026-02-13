@@ -130,18 +130,18 @@ SITES = [
     },
     {
         "empresa": "CONTINENTAL",
-        "url": "https://careers.smartrecruiters.com/Continental?search=Cama%C3%A7ari",
-        "tipo": "smartrecruiters"
+        "url": "https://jobs.continental.com/pt/#/?location=%7B%22title%22:%22Cama%C3%A7ari-Bahia,%20Brasil%22,%22type%22:%22location%22,%22coordinates%22:%7B%22latitude%22:-12.6998,%22longitude%22:-38.3261%7D%7D",
+        "tipo": "continental"
     },
     {
-    "empresa": "MERCADO LIVRE",
-    "url": "https://mercadolibre.eightfold.ai/careers?la=pt&query=sim%C3%B5es+filho",
-    "tipo": "eightfold"
+        "empresa": "MERCADO LIVRE",
+        "url": "https://mercadolibre.eightfold.ai/careers?la=pt&query=sim%C3%B5es+filho",
+        "tipo": "eightfold"
     },
     {
-    "empresa": "FORD",
-    "url": "https://efds.fa.em5.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/jobs?location=Camacari%2C+BA%2C+Brazil",
-    "tipo": "oracle"
+        "empresa": "FORD",
+        "url": "https://efds.fa.em5.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/jobs?location=Camacari%2C+BA%2C+Brazil",
+        "tipo": "oracle"
     }
 ]
 
@@ -272,34 +272,50 @@ def coletar_workday(page, site):
 # ===========================
 # SMARTRECRUITERS
 # ===========================
-def coletar_smartrecruiters(page, site):
+def coletar_continental(page, site):
     vagas = []
+    links_coletados = set()
 
     page.goto(site["url"], timeout=60000)
-    page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(4000)
+    page.wait_for_selector('a[href*="detail-page"]', timeout=15000)
+    page.wait_for_load_state("networkidle")   
 
-    cards = page.locator('a[href*="/job/"]')
+    # Scroll para garantir carregamento
+    for _ in range(6):
+        page.mouse.wheel(0, 4000)
+        page.wait_for_timeout(1500)
+
+    cards = page.locator('a[href*="detail-page/job-detail"]')
 
     for i in range(cards.count()):
         el = cards.nth(i)
+
         try:
-            titulo = el.inner_text().strip()
             link = el.get_attribute("href")
 
             if not link.startswith("http"):
-                link = "https://careers.smartrecruiters.com" + link
+                link = "https://jobs.continental.com" + link
+
+            link_limpo = link.split("?")[0]
+
+            if link_limpo in links_coletados:
+                continue
+
+            links_coletados.add(link_limpo)
+
+            titulo = el.inner_text().strip()
 
             vagas.append({
                 "id": str(uuid.uuid4())[:8],
                 "titulo": titulo,
                 "empresa": site["empresa"],
-                "link": link
+                "link": link_limpo
             })
+
         except:
             continue
 
-    print(f"📌 {site['empresa']} (SMARTRECRUITERS): {len(vagas)} vagas coletadas")
+    print(f"📌 {site['empresa']} (PORTAL PROPRIO): {len(vagas)} vagas")
     return vagas
     
 
@@ -314,83 +330,57 @@ def coletar_eightfold(page, site):
     page.wait_for_load_state("networkidle")
     page.wait_for_timeout(5000)
 
-    # Scroll para carregar mais vagas (lazy loading)
-    for _ in range(10):
+    # Scroll para carregar tudo
+    for _ in range(8):
         page.mouse.wheel(0, 5000)
         page.wait_for_timeout(1500)
 
-    # Cada vaga normalmente fica dentro de um link com /job/
-    cards = page.locator('a[href*="/job/"]')
+    cards = page.locator('a[href*="/careers/job/"]')
 
     for i in range(cards.count()):
         el = cards.nth(i)
+
         try:
-            titulo = el.inner_text().strip()
             link = el.get_attribute("href")
 
             if not link.startswith("http"):
                 link = "https://mercadolibre.eightfold.ai" + link
 
-            if link in links_coletados:
+            link_limpo = link.split("?")[0]
+
+            if link_limpo in links_coletados:
                 continue
 
-            links_coletados.add(link)
+            links_coletados.add(link_limpo)
+
+            # Abre vaga para validar localização
+            page_vaga = page.context.new_page()
+            page_vaga.goto(link_limpo, timeout=60000)
+            page_vaga.wait_for_load_state("networkidle")
+            page_vaga.wait_for_timeout(3000)
+
+            titulo = page_vaga.locator("h1").first.inner_text().strip()
+
+            # Pegando texto completo da página
+            texto_pagina = page_vaga.locator("body").inner_text().lower()
+
+            page_vaga.close()
+
+            # FILTRO REAL DE LOCALIZAÇÃO
+            if "simões filho" not in texto_pagina and "bahia" not in texto_pagina and "ba" not in texto_pagina:
+                continue
 
             vagas.append({
                 "id": str(uuid.uuid4())[:8],
                 "titulo": titulo,
                 "empresa": site["empresa"],
-                "link": link
+                "link": link_limpo
             })
+
         except:
             continue
 
-    print(f"📌 {site['empresa']} (EIGHTFOLD): {len(vagas)} vagas coletadas")
-    return vagas
-
-# ===========================
-# ORACLE CLOUD (FORD)
-# ===========================
-def coletar_oracle(page, site):
-    vagas = []
-    links_coletados = set()
-
-    page.goto(site["url"], timeout=60000)
-    page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(5000)
-
-    # Scroll para carregar todas as vagas
-    for _ in range(15):
-        page.mouse.wheel(0, 6000)
-        page.wait_for_timeout(1500)
-
-    # Links das vagas normalmente contém "/job/"
-    cards = page.locator('a[href*="/job/"]')
-
-    for i in range(cards.count()):
-        el = cards.nth(i)
-        try:
-            titulo = el.inner_text().strip()
-            link = el.get_attribute("href")
-
-            if not link.startswith("http"):
-                link = "https://efds.fa.em5.oraclecloud.com" + link
-
-            if link in links_coletados:
-                continue
-
-            links_coletados.add(link)
-
-            vagas.append({
-                "id": str(uuid.uuid4())[:8],
-                "titulo": titulo,
-                "empresa": site["empresa"],
-                "link": link
-            })
-        except:
-            continue
-
-    print(f"📌 {site['empresa']} (ORACLE): {len(vagas)} vagas coletadas")
+    print(f"📌 {site['empresa']} (EIGHTFOLD): {len(vagas)} vagas filtradas")
     return vagas
 
 
