@@ -390,7 +390,6 @@ def coletar_oracle(page, site):
 
     print("URL carregada:", page.url)
 
-    # Cada vaga é um bloco clicável
     cards = page.locator('a[href*="/job/"]')
     total = cards.count()
 
@@ -401,7 +400,7 @@ def coletar_oracle(page, site):
             card = cards.nth(i)
 
             link = card.get_attribute("href")
-            titulo = card.inner_text().strip()
+            titulo = card.locator("span").first.inner_text().strip()
 
             if not link or not titulo:
                 continue
@@ -417,7 +416,7 @@ def coletar_oracle(page, site):
             links_coletados.add(link_limpo)
 
             vagas.append({
-                "id": link_limpo.split("/")[-1],  # usa ID real da vaga
+                "id": link_limpo.split("/")[-1],
                 "titulo": titulo,
                 "empresa": site["empresa"],
                 "link": link_limpo
