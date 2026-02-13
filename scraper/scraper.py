@@ -135,7 +135,7 @@ SITES = [
     },
     {
         "empresa": "MERCADO LIVRE",
-        "url": "https://mercadolibre.eightfold.ai/careers?la=pt&query=sim%C3%B5es+filho",
+        "url": "https://mercadolibre.eightfold.ai/careers",
         "tipo": "eightfold"
     },
     {
@@ -324,36 +324,84 @@ def coletar_continental(page, site):
 # ===========================
 def coletar_eightfold(page, site):
     vagas = []
+
+    page.goto("https://mercadolibre.eightfold.ai/careers", timeout=60000)
+    page.wait_for_load_state("networkidle")
+
+    # Espera o campo aparecer
+    page.wait_for_selector('input[data-testid="position-query-search-search"]', timeout=15000)
+
+    # Digita Simões Filho
+    page.fill('input[data-testid="position-query-search-search"]', "Simões Filho")
+    page.keyboard.press("Enter")
+
+    # Espera os resultados carregarem
+    page.wait_for_selector('a[href*="/careers/job/"]', timeout=15000)
+    page.wait_for_load_state("networkidle")
+
+    # Coleta links
+    links = page.locator('a[href*="/careers/job/"]')
+    total = links.count()
+
+    for i in range(total):
+        titulo = links.nth(i).inner_text()
+        link = links.nth(i).get_attribute("href")
+
+        if link and not link.startswith("http"):
+            link = "https://mercadolibre.eightfold.ai" + link
+
+        vagas.append({
+            "empresa": site["empresa"],
+            "titulo": titulo.strip(),
+            "link": link
+        })
+
+    return vagas
+    
+
+# ===========================
+# ORACLE CLOUD (FORD)
+# ===========================
+def coletar_oracle(page, site):
+    vagas = []
     links_coletados = set()
 
     page.goto(site["url"], timeout=60000)
     page.wait_for_load_state("networkidle")
     page.wait_for_timeout(5000)
 
-    # Scroll para carregar tudo
-    for _ in range(8):
+    # Scroll para garantir carregamento
+    for _ in range(10):
         page.mouse.wheel(0, 5000)
         page.wait_for_timeout(1500)
 
-    cards = page.locator('a[href*="/careers/job/"]')
+    # Pega TODOS os links da página
+    todos_links = page.locator("a")
 
-    for i in range(cards.count()):
-        el = cards.nth(i)
+    for i in range(todos_links.count()):
+        el = todos_links.nth(i)
 
         try:
             link = el.get_attribute("href")
 
-            if not link.startswith("http"):
-                link = "https://mercadolibre.eightfold.ai" + link
+            if not link:
+                continue
 
+            if "/job/" not in link:
+                continue
+
+            # Remove parâmetros tipo ?utm_
             link_limpo = link.split("?")[0]
+
+            if not link_limpo.startswith("http"):
+                link_limpo = "https://efds.fa.em5.oraclecloud.com" + link_limpo
 
             if link_limpo in links_coletados:
                 continue
 
             links_coletados.add(link_limpo)
 
-            # Abre vaga para validar localização
+            # Agora vamos abrir a vaga para pegar o título real
             page_vaga = page.context.new_page()
             page_vaga.goto(link_limpo, timeout=60000)
             page_vaga.wait_for_load_state("networkidle")
@@ -361,14 +409,7 @@ def coletar_eightfold(page, site):
 
             titulo = page_vaga.locator("h1").first.inner_text().strip()
 
-            # Pegando texto completo da página
-            texto_pagina = page_vaga.locator("body").inner_text().lower()
-
             page_vaga.close()
-
-            # FILTRO REAL DE LOCALIZAÇÃO
-            if "simões filho" not in texto_pagina and "bahia" not in texto_pagina and "ba" not in texto_pagina:
-                continue
 
             vagas.append({
                 "id": str(uuid.uuid4())[:8],
@@ -380,7 +421,7 @@ def coletar_eightfold(page, site):
         except:
             continue
 
-    print(f"📌 {site['empresa']} (EIGHTFOLD): {len(vagas)} vagas filtradas")
+    print(f"📌 {site['empresa']} (ORACLE): {len(vagas)} vagas coletadas")
     return vagas
 
 
