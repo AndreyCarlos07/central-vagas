@@ -370,11 +370,6 @@ def coletar_eightfold(page, site):
 # ===========================
 # ORACLE CLOUD (FORD)
 # ===========================
-import uuid
-
-# ===========================
-# ORACLE CLOUD (FORD)
-# ===========================
 def coletar_oracle(page, site):
     vagas = []
     links_coletados = set()
@@ -456,34 +451,49 @@ def main():
 
         for site in SITES:
 
-            # 🔥 FILTRO DEBUG AQUI
+            # 🔥 FILTRO DEBUG
             if MODO_DEBUG and site["empresa"] not in EMPRESAS_DEBUG:
                 continue
 
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
 
-            if site["tipo"] == "gupy":
-                vagas = coletar_gupy(page, site)
-                vagas = filtrar_gupy_bahia(vagas)
+            try:
 
-            elif site["tipo"] == "workday":
-                vagas = coletar_workday(page, site)
+                if site["tipo"] == "gupy":
+                    vagas = coletar_gupy(page, site)
+                    vagas = filtrar_gupy_bahia(vagas)
 
-            elif site["tipo"] == "continental":
-                vagas = coletar_continental(page, site)
+                elif site["tipo"] == "workday":
+                    vagas = coletar_workday(page, site)
 
-            elif site["tipo"] == "eightfold":
-                vagas = coletar_eightfold(page, site)
+                elif site["tipo"] == "continental":
+                    vagas = coletar_continental(page, site)
 
-            elif site["tipo"] == "oracle":
-                vagas = coletar_oracle(page, site)
+                elif site["tipo"] == "eightfold":
+                    vagas = coletar_eightfold(page, site)
 
-            else:
-                vagas = []
+                elif site["tipo"] == "oracle":
+                    vagas = coletar_oracle(page, site)
 
-            todas_vagas_coletadas.extend(vagas)
+                else:
+                    print("⚠️ Tipo não reconhecido")
+                    vagas = []
+
+                print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
+                todas_vagas_coletadas.extend(vagas)
+
+            except Exception as e:
+                print(f"❌ ERRO ao coletar {site['empresa']}")
+                print(f"Motivo: {e}")
+                print("⏭️ Pulando para próxima empresa...")
+                continue
 
         browser.close()
+
+    print("\n✅ Coleta finalizada")
+    print(f"📊 Total coletado: {len(todas_vagas_coletadas)} vagas")
+
+    return todas_vagas_coletadas
 
 
     # ===========================
