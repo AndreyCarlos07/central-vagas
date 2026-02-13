@@ -270,7 +270,7 @@ def coletar_workday(page, site):
     return vagas
 
 # ===========================
-# SMARTRECRUITERS
+# CONTINENTAL
 # ===========================
 def coletar_continental(page, site):
     vagas = []
@@ -407,8 +407,8 @@ def main():
             elif site["tipo"] == "workday":
                 vagas = coletar_workday(page, site)
 
-            elif site["tipo"] == "smartrecruiters":
-                vagas = coletar_smartrecruiters(page, site)
+            elif site["tipo"] == "continental":
+                vagas = coletar_continental(page, site)
 
             elif site["tipo"] == "eightfold":
                 vagas = coletar_eightfold(page, site)
