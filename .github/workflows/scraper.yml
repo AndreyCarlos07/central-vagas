@@ -29,6 +29,6 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add vagas.csv vagas_novas.csv
+          git add vagas.csv vagas_novas.csv vagas_debug.csv
           git diff --cached --quiet || git commit -m "auto: atualiza vagas"
           git push
