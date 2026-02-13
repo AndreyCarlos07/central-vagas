@@ -374,7 +374,6 @@ def coletar_oracle(page, site):
     vagas = []
     links_coletados = set()
 
-    # 🔥 URL já com filtro aplicado (evita autocomplete instável)
     url_com_filtro = (
         site["url"]
         + "?location=Camacari%252C+BA%252C+Brazil"
@@ -391,23 +390,24 @@ def coletar_oracle(page, site):
 
     print("URL carregada:", page.url)
 
-    # 🔎 Coleta todos os links de vagas
-    links = page.locator('a[href*="/job/"]')
-    total = links.count()
+    # Cada vaga é um bloco clicável
+    cards = page.locator('a[href*="/job/"]')
+    total = cards.count()
 
     print("Total de links encontrados:", total)
 
     for i in range(total):
         try:
-            link = links.nth(i).get_attribute("href")
+            card = cards.nth(i)
 
-            if not link:
+            link = card.get_attribute("href")
+            titulo = card.inner_text().strip()
+
+            if not link or not titulo:
                 continue
 
-            # Remove parâmetros extras
             link_limpo = link.split("?")[0]
 
-            # Garante link absoluto
             if not link_limpo.startswith("http"):
                 link_limpo = "https://efds.fa.em5.oraclecloud.com" + link_limpo
 
@@ -416,17 +416,8 @@ def coletar_oracle(page, site):
 
             links_coletados.add(link_limpo)
 
-            # 🔥 Abre a vaga para pegar título real
-            page_vaga = page.context.new_page()
-            page_vaga.goto(link_limpo, timeout=60000)
-            page_vaga.wait_for_load_state("networkidle")
-
-            titulo = page_vaga.locator("h1").first.inner_text().strip()
-
-            page_vaga.close()
-
             vagas.append({
-                "id": str(uuid.uuid4())[:8],
+                "id": link_limpo.split("/")[-1],  # usa ID real da vaga
                 "titulo": titulo,
                 "empresa": site["empresa"],
                 "link": link_limpo
