@@ -369,48 +369,60 @@ def coletar_eightfold(page, site):
 
 # ===========================
 # ORACLE CLOUD (FORD)
-# ===========================    
+# ===========================
 def coletar_oracle(page, site):
     vagas = []
     links_coletados = set()
 
-    page.goto(site["url"], timeout=60000)
-    page.wait_for_load_state("networkidle")
+    # 🔥 URL já com filtro aplicado (evita autocomplete instável)
+    url_com_filtro = (
+        site["url"]
+        + "?location=Camacari%252C+BA%252C+Brazil"
+        + "&locationId=300000842085609"
+        + "&locationLevel=city"
+        + "&mode=location"
+        + "&radius=25"
+        + "&radiusUnit=KM"
+    )
 
-    # 1️⃣ Digita localização
-    page.fill('input[data-qa="searchLocationInput"]', "Camacari, BA, Brazil")
-    page.wait_for_timeout(2000)
-
-    # 2️⃣ Clica na sugestão que aparece
-    page.locator('#suggestions-locations li').first.click()
+    page.goto(url_com_filtro, timeout=60000)
     page.wait_for_load_state("networkidle")
     page.wait_for_timeout(5000)
 
-    # 3️⃣ Agora sim as vagas carregaram
+    print("URL carregada:", page.url)
+
+    # 🔎 Coleta todos os links de vagas
     links = page.locator('a[href*="/job/"]')
+    total = links.count()
 
-    for i in range(links.count()):
-        link = links.nth(i).get_attribute("href")
+    print("Total de links encontrados:", total)
 
-        if not link:
-            continue
-
-        link_limpo = link.split("?")[0]
-
-        if not link_limpo.startswith("http"):
-            link_limpo = "https://efds.fa.em5.oraclecloud.com" + link_limpo
-
-        if link_limpo in links_coletados:
-            continue
-
-        links_coletados.add(link_limpo)
-
+    for i in range(total):
         try:
+            link = links.nth(i).get_attribute("href")
+
+            if not link:
+                continue
+
+            # Remove parâmetros extras
+            link_limpo = link.split("?")[0]
+
+            # Garante link absoluto
+            if not link_limpo.startswith("http"):
+                link_limpo = "https://efds.fa.em5.oraclecloud.com" + link_limpo
+
+            if link_limpo in links_coletados:
+                continue
+
+            links_coletados.add(link_limpo)
+
+            # 🔥 Abre a vaga para pegar título real
             page_vaga = page.context.new_page()
             page_vaga.goto(link_limpo, timeout=60000)
             page_vaga.wait_for_load_state("networkidle")
 
             titulo = page_vaga.locator("h1").first.inner_text().strip()
+
             page_vaga.close()
 
             vagas.append({
@@ -420,7 +432,8 @@ def coletar_oracle(page, site):
                 "link": link_limpo
             })
 
-        except:
+        except Exception as e:
+            print("Erro ao processar vaga:", e)
             continue
 
     print(f"📌 {site['empresa']} (ORACLE): {len(vagas)} vagas coletadas")
