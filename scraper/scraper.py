@@ -157,7 +157,8 @@ SITES = [
     "empresa": "BRASKEM",
     "url": "https://epiw.fa.la1.oraclecloud.com/hcmUI/CandidateExperience/pt-BR/sites/CX_1001/jobs",
     "tipo": "oracle",
-    "filtro": {
+    "filtro": [
+    {
         "location": "CAMACARI%2C+BA%2C+Brasil",
         "locationId": "300000014753730"
     },
@@ -165,7 +166,8 @@ SITES = [
         "location": "SALVADOR%252C+BA%252C+Brasil",
         "locationId": "300000014749824"
     }
-    }
+    ]
+        }
 ]
 
 # 📍 filtro Bahia (somente GUPY)
