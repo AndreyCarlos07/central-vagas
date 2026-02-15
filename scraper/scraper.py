@@ -522,7 +522,7 @@ def coletar_recrutai(page, site):
             page.goto(link_completo, timeout=60000)
             page.wait_for_load_state("networkidle")
 
-            titulo = page.locator("h1").first.inner_text().strip()
+            titulo = page.locator("h3").first.inner_text().strip()
 
             vagas.append({
                 "id": str(uuid.uuid4())[:8],
