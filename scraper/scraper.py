@@ -14,7 +14,7 @@ from datetime import datetime
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["BRASKEM"]
+EMPRESAS_DEBUG = ["BRASKEM, FORD"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -160,6 +160,10 @@ SITES = [
     "filtro": {
         "location": "CAMACARI%2C+BA%2C+Brasil",
         "locationId": "300000014753730"
+    },
+    {
+        "location": "SALVADOR%252C+BA%252C+Brasil",
+        "locationId": "300000014749824"
     }
     }
 ]
