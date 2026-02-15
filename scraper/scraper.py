@@ -482,24 +482,24 @@ def coletar_recrutai(page, site):
 
     page.goto(site["url"], timeout=60000)
     page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(4000)
+    page.wait_for_timeout(5000)
 
     print("🔎 ACELEN selecionando cidade...")
 
-    # 🔥 CLICA NO DROPDOWN DE LOCALIDADES
-    page.click("span.filter-option.pull-left")
+    # 🔥 CLICA NO DROPDOWN CERTO (LOCALIDADES)
+    page.locator("button.dropdown-toggle").nth(1).click()
     page.wait_for_timeout(1000)
 
     # 🔥 SELECIONA SÃO FRANCISCO DO CONDE / BA
     page.click("text=São Francisco do Conde / BA")
     page.wait_for_timeout(1000)
 
-    # 🔥 CLICA NO BOTÃO FILTRAR
+    # 🔥 CLICA EM FILTRAR
     page.click('button[type="submit"]')
     page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(4000)
+    page.wait_for_timeout(5000)
 
-    # 🔥 PEGA LINKS DAS VAGAS
+    # 🔥 COLETA LINKS
     cards = page.locator('a[href^="job/"]')
     total = cards.count()
 
@@ -520,7 +520,7 @@ def coletar_recrutai(page, site):
 
             links_coletados.add(link_completo)
 
-            # 🔥 TÍTULO VEM NO CARD (PEGA O TEXTO ANTERIOR)
+            # 🔥 PEGA O TÍTULO PELO CARD
             titulo = card.locator("xpath=ancestor::div[contains(@class,'opening')]//h3").inner_text().strip()
 
             vagas.append({
