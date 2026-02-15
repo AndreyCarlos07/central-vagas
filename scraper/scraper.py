@@ -14,7 +14,7 @@ from datetime import datetime
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["FORD", "BRASKEM"]
+EMPRESAS_DEBUG = ["BRASKEM", "ACELEN"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -169,7 +169,12 @@ SITES = [
         "locationId": "300000014749824"
     }
     ]
-        }
+    },
+    {
+    "empresa": "ACELEN",
+    "url": "https://acelen.jobs.recrut.ai/#openings",
+    "tipo": "recrutai"
+    }
 ]
 
 # 📍 filtro Bahia (somente GUPY)
@@ -468,6 +473,70 @@ def coletar_oracle(page, site):
     print(f"📌 {site['empresa']} (ORACLE): {len(vagas)} vagas coletadas")
     return vagas
 
+# ===========================
+# RECRUT.AI (ACELEN)
+# ===========================
+def coletar_recrutai(page, site):
+    vagas = []
+    links_coletados = set()
+
+    page.goto(site["url"], timeout=60000)
+    page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(4000)
+
+    print("🔎 ACELEN selecionando cidade...")
+
+    # 🔥 CLICA NO DROPDOWN DE LOCALIDADES
+    page.click("span.filter-option.pull-left")
+    page.wait_for_timeout(1000)
+
+    # 🔥 SELECIONA SÃO FRANCISCO DO CONDE / BA
+    page.click("text=São Francisco do Conde / BA")
+    page.wait_for_timeout(1000)
+
+    # 🔥 CLICA NO BOTÃO FILTRAR
+    page.click('button[type="submit"]')
+    page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(4000)
+
+    # 🔥 PEGA LINKS DAS VAGAS
+    cards = page.locator('a[href^="job/"]')
+    total = cards.count()
+
+    print("Total de vagas encontradas:", total)
+
+    for i in range(total):
+        try:
+            card = cards.nth(i)
+            link = card.get_attribute("href")
+
+            if not link:
+                continue
+
+            link_completo = "https://acelen.jobs.recrut.ai/" + link
+
+            if link_completo in links_coletados:
+                continue
+
+            links_coletados.add(link_completo)
+
+            # 🔥 TÍTULO VEM NO CARD (PEGA O TEXTO ANTERIOR)
+            titulo = card.locator("xpath=ancestor::div[contains(@class,'opening')]//h3").inner_text().strip()
+
+            vagas.append({
+                "id": str(uuid.uuid4())[:8],
+                "titulo": titulo,
+                "empresa": site["empresa"],
+                "link": link_completo
+            })
+
+        except Exception as e:
+            print("Erro ao processar vaga:", e)
+            continue
+
+    print(f"📌 {site['empresa']} (RECRUT.AI): {len(vagas)} vagas coletadas")
+    return vagas
+
 
 # ===========================
 # MAIN
@@ -508,6 +577,9 @@ def main():
 
                 elif site["tipo"] == "oracle":
                     vagas = coletar_oracle(page, site)
+
+                elif site["tipo"] == "recrutai":
+                    vagas = coletar_recrutai(page, site)
 
                 else:
                     print("⚠️ Tipo não reconhecido")
