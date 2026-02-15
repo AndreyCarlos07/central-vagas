@@ -13,8 +13,8 @@ from datetime import datetime
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["MERCADO LIVRE", "FORD", "CONTINENTAL"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["BRASKEM"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -145,9 +145,22 @@ SITES = [
         "tipo": "eightfold"
     },
     {
-        "empresa": "FORD",
-        "url": "https://efds.fa.em5.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/jobs",
-        "tipo": "oracle"
+    "empresa": "FORD",
+    "url": "https://efds.fa.em5.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/jobs",
+    "tipo": "oracle",
+    "filtro": {
+        "location": "Camacari%252C+BA%252C+Brazil",
+        "locationId": "300000842085609"
+    }
+    },
+    {
+    "empresa": "BRASKEM",
+    "url": "https://epiw.fa.la1.oraclecloud.com/hcmUI/CandidateExperience/pt-BR/sites/CX_1001/jobs",
+    "tipo": "oracle",
+    "filtro": {
+        "location": "Camacari%252C+BA%252C+Brazil",
+        "locationId": "300000842085609"
+    }
     }
 ]
 
@@ -368,69 +381,75 @@ def coletar_eightfold(page, site):
 
 
 # ===========================
-# ORACLE CLOUD (FORD)
+# ORACLE CLOUD
 # ===========================
 def coletar_oracle(page, site):
     vagas = []
     links_coletados = set()
 
-    url_com_filtro = (
-        site["url"]
-        + "?location=Camacari%252C+BA%252C+Brazil"
-        + "&locationId=300000842085609"
-        + "&locationLevel=city"
-        + "&mode=location"
-        + "&radius=25"
-        + "&radiusUnit=KM"
-    )
+    # 🔥 Monta URL com filtro dinâmico
+    if "filtro" in site:
+        url_com_filtro = (
+            site["url"]
+            + f"?location={site['filtro']['location']}"
+            + f"&locationId={site['filtro']['locationId']}"
+            + "&locationLevel=city"
+            + "&mode=location"
+            + "&radius=25"
+            + "&radiusUnit=KM"
+        )
+    else:
+        url_com_filtro = site["url"]
 
-    page.goto(url_com_filtro, timeout=60000)
-    page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(5000)
+    try:
+        page.goto(url_com_filtro, timeout=60000)
+        page.wait_for_load_state("networkidle")
+        page.wait_for_timeout(5000)
 
-    print("URL carregada:", page.url)
+        print("URL carregada:", page.url)
 
-    cards = page.locator('a.job-list-item__link')
-    total = cards.count()
+        cards = page.locator("a.job-list-item__link")
+        total = cards.count()
 
-    print("Total de links encontrados:", total)
+        print("Total de links encontrados:", total)
 
-    for i in range(total):
-        try:
-            card = cards.nth(i)
-            link = card.get_attribute("href")
+        for i in range(total):
+            try:
+                card = cards.nth(i)
+                link = card.get_attribute("href")
 
-            if not link:
+                if not link:
+                    continue
+
+                link_limpo = link.split("?")[0]
+
+                if link_limpo in links_coletados:
+                    continue
+
+                links_coletados.add(link_limpo)
+
+                # 🔥 Abre página da vaga
+                page.goto(link_limpo, timeout=60000)
+                page.wait_for_load_state("networkidle")
+
+                titulo = page.locator("h1.job-details__title").inner_text().strip()
+
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo,
+                    "empresa": site["empresa"],
+                    "link": link_limpo
+                })
+
+                page.go_back()
+                page.wait_for_load_state("networkidle")
+
+            except Exception as e:
+                print("Erro ao processar vaga:", e)
                 continue
 
-            link_limpo = link.split("?")[0]
-
-            if link_limpo in links_coletados:
-                continue
-
-            links_coletados.add(link_limpo)
-
-            # 🔥 ABRE A PÁGINA DA VAGA
-            page.goto(link_limpo, timeout=60000)
-            page.wait_for_load_state("networkidle")
-
-            # 🔥 PEGA O TÍTULO REAL
-            titulo = page.locator("h1.job-details__title").inner_text().strip()
-
-            vagas.append({
-                "id": str(uuid.uuid4())[:8],
-                "titulo": titulo,
-                "empresa": site["empresa"],
-                "link": link_limpo
-            })
-
-            # volta para a listagem
-            page.go_back()
-            page.wait_for_load_state("networkidle")
-
-        except Exception as e:
-            print("Erro ao processar vaga:", e)
-            continue
+    except Exception as e:
+        print(f"Erro ao acessar Oracle {site['empresa']}:", e)
 
     print(f"📌 {site['empresa']} (ORACLE): {len(vagas)} vagas coletadas")
     return vagas
