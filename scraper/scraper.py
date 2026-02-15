@@ -14,7 +14,7 @@ from datetime import datetime
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["BRASKEM", "FORD"]
+EMPRESAS_DEBUG = ["FORD", "BRASKEM"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -393,69 +393,75 @@ def coletar_oracle(page, site):
     vagas = []
     links_coletados = set()
 
-    # 🔥 Monta URL com filtro dinâmico
-    if "filtro" in site:
-        url_com_filtro = (
-            site["url"]
-            + f"?location={site['filtro']['location']}"
-            + f"&locationId={site['filtro']['locationId']}"
-            + "&locationLevel=city"
-            + "&mode=location"
-            + "&radius=25"
-            + "&radiusUnit=KM"
-        )
-    else:
-        url_com_filtro = site["url"]
+    filtros = site.get("filtros", [])
 
-    try:
-        page.goto(url_com_filtro, timeout=60000)
-        page.wait_for_load_state("networkidle")
-        page.wait_for_timeout(5000)
+    if not filtros:
+        filtros = [None]  # caso não tenha filtro
 
-        print("URL carregada:", page.url)
+    for filtro in filtros:
 
-        cards = page.locator("a.job-list-item__link")
-        total = cards.count()
+        if filtro:
+            url_com_filtro = (
+                site["url"]
+                + f"?location={filtro['location']}"
+                + f"&locationId={filtro['locationId']}"
+                + "&locationLevel=city"
+                + "&mode=location"
+                + "&radius=25"
+                + "&radiusUnit=KM"
+            )
+        else:
+            url_com_filtro = site["url"]
 
-        print("Total de links encontrados:", total)
+        try:
+            page.goto(url_com_filtro, timeout=60000)
+            page.wait_for_load_state("networkidle")
+            page.wait_for_timeout(4000)
 
-        for i in range(total):
-            try:
-                card = cards.nth(i)
-                link = card.get_attribute("href")
+            print("URL carregada:", page.url)
 
-                if not link:
+            cards = page.locator("a.job-list-item__link")
+            total = cards.count()
+
+            print("Total de links encontrados:", total)
+
+            for i in range(total):
+                try:
+                    card = cards.nth(i)
+                    link = card.get_attribute("href")
+
+                    if not link:
+                        continue
+
+                    link_limpo = link.split("?")[0]
+
+                    if link_limpo in links_coletados:
+                        continue
+
+                    links_coletados.add(link_limpo)
+
+                    page.goto(link_limpo, timeout=60000)
+                    page.wait_for_load_state("networkidle")
+
+                    titulo = page.locator("h1.job-details__title").inner_text().strip()
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": site["empresa"],
+                        "link": link_limpo
+                    })
+
+                    page.go_back()
+                    page.wait_for_load_state("networkidle")
+
+                except Exception as e:
+                    print("Erro ao processar vaga:", e)
                     continue
 
-                link_limpo = link.split("?")[0]
-
-                if link_limpo in links_coletados:
-                    continue
-
-                links_coletados.add(link_limpo)
-
-                # 🔥 Abre página da vaga
-                page.goto(link_limpo, timeout=60000)
-                page.wait_for_load_state("networkidle")
-
-                titulo = page.locator("h1.job-details__title").inner_text().strip()
-
-                vagas.append({
-                    "id": str(uuid.uuid4())[:8],
-                    "titulo": titulo,
-                    "empresa": site["empresa"],
-                    "link": link_limpo
-                })
-
-                page.go_back()
-                page.wait_for_load_state("networkidle")
-
-            except Exception as e:
-                print("Erro ao processar vaga:", e)
-                continue
-
-    except Exception as e:
-        print(f"Erro ao acessar Oracle {site['empresa']}:", e)
+        except Exception as e:
+            print(f"Erro ao acessar Oracle {site['empresa']}:", e)
+            continue
 
     print(f"📌 {site['empresa']} (ORACLE): {len(vagas)} vagas coletadas")
     return vagas
