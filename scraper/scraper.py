@@ -486,20 +486,19 @@ def coletar_recrutai(page, site):
 
     print("🔎 ACELEN selecionando cidade...")
 
-    # 🔥 CLICA NO DROPDOWN CERTO (LOCALIDADES)
+    # 🔥 Dropdown Localidades
     page.locator("button.dropdown-toggle").nth(1).click()
     page.wait_for_timeout(1000)
 
-    # 🔥 SELECIONA SÃO FRANCISCO DO CONDE / BA
     page.click("text=São Francisco do Conde / BA")
     page.wait_for_timeout(1000)
 
-    # 🔥 CLICA EM FILTRAR
+    # 🔥 Filtrar
     page.click('button[type="submit"]')
     page.wait_for_load_state("networkidle")
     page.wait_for_timeout(5000)
 
-    # 🔥 COLETA LINKS
+    # 🔥 Coleta links
     cards = page.locator('a[href^="job/"]')
     total = cards.count()
 
@@ -507,8 +506,7 @@ def coletar_recrutai(page, site):
 
     for i in range(total):
         try:
-            card = cards.nth(i)
-            link = card.get_attribute("href")
+            link = cards.nth(i).get_attribute("href")
 
             if not link:
                 continue
@@ -520,8 +518,11 @@ def coletar_recrutai(page, site):
 
             links_coletados.add(link_completo)
 
-            # 🔥 PEGA O TÍTULO PELO CARD
-            titulo = card.locator("xpath=ancestor::div[contains(@class,'opening')]//h3").inner_text().strip()
+            # 🔥 Abre página da vaga
+            page.goto(link_completo, timeout=60000)
+            page.wait_for_load_state("networkidle")
+
+            titulo = page.locator("h1").first.inner_text().strip()
 
             vagas.append({
                 "id": str(uuid.uuid4())[:8],
@@ -529,6 +530,10 @@ def coletar_recrutai(page, site):
                 "empresa": site["empresa"],
                 "link": link_completo
             })
+
+            # 🔥 Volta para listagem
+            page.go_back()
+            page.wait_for_load_state("networkidle")
 
         except Exception as e:
             print("Erro ao processar vaga:", e)
