@@ -158,8 +158,8 @@ SITES = [
     "url": "https://epiw.fa.la1.oraclecloud.com/hcmUI/CandidateExperience/pt-BR/sites/CX_1001/jobs",
     "tipo": "oracle",
     "filtro": {
-        "location": "Camacari%252C+BA%252C+Brazil",
-        "locationId": "300000842085609"
+        "location": "CAMACARI%2C+BA%2C+Brasil",
+        "locationId": "300000014753730"
     }
     }
 ]
