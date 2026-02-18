@@ -149,14 +149,14 @@ def home():
 
             .filtro-box {
                 background: white;
-                padding: 25px;
+                padding: 15px;
                 border-radius: 8px;
                 margin-bottom: 20px;
                 box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             }
 
             input, select {
-                padding: 8px;
+                padding: 12px;
                 border-radius: 5px;
                 border: 1px solid #ccc;
                 margin-right: 10px;
@@ -210,7 +210,7 @@ def home():
     </head>
     <body>
 
-        <h1>Central de Vagas - Engenharia / Tech</h1>
+        <h1>Central de Vagas - Engenharia / BA</h1>
 
         <div class="top-bar">
 
