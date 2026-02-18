@@ -60,7 +60,7 @@ def home():
     # ==========================
     busca_nome = request.args.get("q", "").lower()
     filtro_empresa = request.args.get("empresa", "")
-    ordem = request.args.get("ordem", "padrao")
+    ordem = request.args.get("ordem", "recentes")
     page = int(request.args.get("page", 1))  # ✅ ADICIONADO
 
     # ==========================
