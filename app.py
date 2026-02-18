@@ -164,7 +164,7 @@ def home():
             }
 
             button {
-                padding: 8px 15px;
+                padding: 12px 15px;
                 border-radius: 5px;
                 border: none;
                 background: #0066cc;
