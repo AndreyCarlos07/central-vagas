@@ -12,7 +12,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 CSV_FILE = "vagas.csv"
-VAGAS_POR_PAGINA = 100  # ✅ ADICIONADO
+VAGAS_POR_PAGINA = 10  # ✅ ADICIONADO
 
 # ==========================
 # PALAVRAS BLOQUEADAS
