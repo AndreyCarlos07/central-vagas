@@ -619,9 +619,8 @@ def coletar_heineken(page, site):
         page.fill("#input-date-year", "1993")
 
         page.click("#input-date-submit")
-        # Espera navegação terminar
         page.wait_for_load_state("networkidle")
-        # Espera campo de localização existir
+        page.goto("https://careers.theheinekencompany.com/Brazil")
         page.wait_for_selector("#location", timeout=30000)
 
     else:
