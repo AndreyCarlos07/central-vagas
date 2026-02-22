@@ -14,7 +14,7 @@ from datetime import datetime
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["HEINEKEN"]
+EMPRESAS_DEBUG = ["HEINEKEN", "YPE"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -602,6 +602,7 @@ def coletar_jobconvo(page, site):
 def coletar_heineken(page, site):
     vagas = []
     links_coletados = set()
+    total_empresa = 0  # 👈 contador geral real
 
     page.goto(site["url"], timeout=60000)
     page.wait_for_load_state("networkidle")
@@ -635,6 +636,8 @@ def coletar_heineken(page, site):
     for cidade in cidades:
 
         print(f"📍 Filtrando cidade: {cidade}")
+
+        vagas_cidade = 0  # 👈 contador REAL dessa cidade
 
         try:
             page.fill("#location", cidade)
@@ -677,15 +680,20 @@ def coletar_heineken(page, site):
                         "link": link_limpo
                     })
 
+                    vagas_cidade += 1
+                    total_empresa += 1
+
                 except Exception as e:
                     print("Erro ao processar vaga:", e)
                     continue
+
+            print(f"Total coletado em {cidade}: {vagas_cidade}")
 
         except Exception as e:
             print(f"Erro ao filtrar {cidade}:", e)
             continue
 
-    print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
+    print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
     return vagas
 
 
