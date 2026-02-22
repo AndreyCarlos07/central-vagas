@@ -182,7 +182,7 @@ SITES = [
     },
     {
         "empresa": "HEINEKEN",
-        "url": "https://careers.theheinekencompany.com/Brazil", 
+        "url": "https://careers.theheinekencompany.com/Brazil/search", 
         "tipo": "heineken"
     }
 ]
@@ -620,7 +620,7 @@ def coletar_heineken(page, site):
 
         page.click("#input-date-submit")
         page.wait_for_load_state("networkidle")
-        page.goto("https://careers.theheinekencompany.com/Brazil")
+        page.goto("https://careers.theheinekencompany.com/Brazil/search")
         page.wait_for_selector("#location", timeout=30000)
 
     else:
