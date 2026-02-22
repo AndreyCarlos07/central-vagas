@@ -182,7 +182,7 @@ SITES = [
     },
     {
         "empresa": "HEINEKEN",
-        "url": "https://careers.theheinekencompany.com/Brazil/?locale=pt_BR",
+        "url": "https://careers.theheinekencompany.com/Brazil",
         "tipo": "heineken"
     }
 ]
