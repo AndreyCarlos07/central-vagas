@@ -13,8 +13,8 @@ from datetime import datetime
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["BRASKEM", "ACELEN", "SOTREQ"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["HEINEKEN", "SOTREQ"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -171,15 +171,20 @@ SITES = [
     ]
     },
     {
-    "empresa": "ACELEN",
-    "url": "https://acelen.jobs.recrut.ai/#openings",
-    "tipo": "recrutai"
+        "empresa": "ACELEN",
+        "url": "https://acelen.jobs.recrut.ai/#openings",
+        "tipo": "recrutai"
     },
     {
-    "empresa": "SOTREQ",
-    "url": "https://app.jobconvo.com/pt-br/careers/Sotreq/f6adee26-687e-4320-89a9-6ef13602f81d/?title=&state=&city=SIM%C3%95ES+FILHO",
-    "tipo": "jobconvo"
-}
+        "empresa": "SOTREQ",
+        "url": "https://app.jobconvo.com/pt-br/careers/Sotreq/f6adee26-687e-4320-89a9-6ef13602f81d/?title=&state=&city=SIM%C3%95ES+FILHO",
+        "tipo": "jobconvo"
+    },
+    {
+        "empresa": "HEINEKEN",
+        "url": "https://careers.theheinekencompany.com/Brazil/?locale=pt_BR",
+        "tipo": "heineken"
+    }
 ]
 
 # 📍 filtro Bahia (somente GUPY)
@@ -590,6 +595,97 @@ def coletar_jobconvo(page, site):
     print(f"📌 {site['empresa']} (JOBCONVO): {len(vagas)} vagas coletadas")
     return vagas
 
+# ===========================
+# HEINEKEN
+# ===========================
+def coletar_heineken(page, site):
+    vagas = []
+    links_coletados = set()
+
+    page.goto(site["url"], timeout=60000)
+    page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(3000)
+
+    print("🔎 Verificando age gate...")
+
+    # ===========================
+    # 1️⃣ VERIFICA AGE GATE
+    # ===========================
+    if page.locator("#input-date-day").count() > 0:
+        print("🔐 Age gate detectado. Preenchendo data...")
+
+        page.fill("#input-date-day", "23")
+        page.fill("#input-date-month", "09")
+        page.fill("#input-date-year", "1993")
+
+        page.click("#input-date-submit")
+        page.wait_for_load_state("networkidle")
+        page.wait_for_timeout(3000)
+
+    else:
+        print("✅ Age gate não apareceu.")
+
+    # ===========================
+    # 2️⃣ CIDADES PARA FILTRAR
+    # ===========================
+    cidades = ["Alagoinhas", "Salvador"]
+
+    for cidade in cidades:
+
+        print(f"📍 Filtrando cidade: {cidade}")
+
+        try:
+            page.fill("#location", cidade)
+            page.click("#searchfilter-submit")
+            page.wait_for_load_state("networkidle")
+            page.wait_for_timeout(3000)
+
+            # ===========================
+            # 3️⃣ COLETAR LINKS
+            # ===========================
+            links = page.locator("a[href*='/job/']")
+            total = links.count()
+
+            print(f"Total encontrado em {cidade}: {total}")
+
+            for i in range(total):
+                try:
+                    link = links.nth(i).get_attribute("href")
+
+                    if not link:
+                        continue
+
+                    if link.startswith("/"):
+                        link = "https://careers.theheinekencompany.com" + link
+
+                    link_limpo = link.split("?")[0]
+
+                    if link_limpo in links_coletados:
+                        continue
+
+                    links_coletados.add(link_limpo)
+
+                    # título direto da listagem
+                    titulo = links.nth(i).inner_text().strip()
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": site["empresa"],
+                        "link": link_limpo
+                    })
+
+                except Exception as e:
+                    print("Erro ao processar vaga:", e)
+                    continue
+
+        except Exception as e:
+            print(f"Erro ao filtrar {cidade}:", e)
+            continue
+
+    print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
+    return vagas
+
 
 # ===========================
 # MAIN
@@ -637,6 +733,9 @@ def main():
                 elif site["tipo"] == "jobconvo":
                     vagas = coletar_jobconvo(page, site)
 
+                elif site["tipo"] == "heineken":
+                    vagas = coletar_heineken(page, site)
+                
                 else:
                     print("⚠️ Tipo não reconhecido")
                     vagas = []
