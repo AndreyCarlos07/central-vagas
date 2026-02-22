@@ -679,7 +679,7 @@ def coletar_heineken(page, site):
                     })
 
                     vagas_cidade += 1
-                    #total_empresa += 1
+                    total_empresa += 1
 
                 except Exception as e:
                     print("Erro ao processar vaga:", e)
