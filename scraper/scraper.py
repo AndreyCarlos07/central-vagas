@@ -182,7 +182,7 @@ SITES = [
     },
     {
         "empresa": "HEINEKEN",
-        "url": "https://agegate.theheinekencompany.com/br/agegateway", #https://careers.theheinekencompany.com/Brazil
+        "url": "https://careers.theheinekencompany.com/Brazil", 
         "tipo": "heineken"
     }
 ]
@@ -619,8 +619,10 @@ def coletar_heineken(page, site):
         page.fill("#input-date-year", "1993")
 
         page.click("#input-date-submit")
+        # Espera navegação terminar
         page.wait_for_load_state("networkidle")
-        page.wait_for_timeout(3000)
+        # Espera campo de localização existir
+        page.wait_for_selector("#location", timeout=30000)
 
     else:
         print("✅ Age gate não apareceu.")
