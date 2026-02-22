@@ -14,7 +14,7 @@ from datetime import datetime
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["HEINEKEN", "SOTREQ"]
+EMPRESAS_DEBUG = ["HEINEKEN"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -85,6 +85,7 @@ SITES = [
     {"empresa": "CETREL", "url": "https://cetrel.gupy.io", "tipo": "gupy"},
     {"empresa": "MOHAWK", "url": "https://mohawk.gupy.io", "tipo": "gupy"},
     {"empresa": "MARTINS", "url": "https://logisticamartins.gupy.io", "tipo": "gupy"},
+    {"empresa": "YPE", "url": "https://carreirasype.gupy.io", "tipo": "gupy"},
     {
         "empresa": "BRIDGESTONE",
         "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers",
