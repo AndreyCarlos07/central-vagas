@@ -602,7 +602,7 @@ def coletar_jobconvo(page, site):
 def coletar_heineken(page, site):
     vagas = []
     links_coletados = set()
-    total_empresa = 0  # 👈 contador geral real
+    #total_empresa = 0  # 👈 contador geral real
 
     page.goto(site["url"], timeout=60000)
     page.wait_for_load_state("networkidle")
@@ -679,7 +679,7 @@ def coletar_heineken(page, site):
                     })
 
                     vagas_cidade += 1
-                    total_empresa += 1
+                    #total_empresa += 1
 
                 except Exception as e:
                     print("Erro ao processar vaga:", e)
