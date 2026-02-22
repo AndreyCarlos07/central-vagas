@@ -651,8 +651,6 @@ def coletar_heineken(page, site):
             links = page.locator("a[href*='/job/']")
             total = links.count()
 
-            print(f"Total encontrado em {cidade}: {total}")
-
             for i in range(total):
                 try:
                     link = links.nth(i).get_attribute("href")
