@@ -182,7 +182,7 @@ SITES = [
     },
     {
         "empresa": "HEINEKEN",
-        "url": "https://careers.theheinekencompany.com/Brazil",
+        "url": "https://agegate.theheinekencompany.com/br/agegateway", #https://careers.theheinekencompany.com/Brazil
         "tipo": "heineken"
     }
 ]
