@@ -33,6 +33,10 @@ def postar():
 
     df = pd.read_csv(CSV_FILE)
 
+    if df.empty:
+        print("Nenhuma vaga para postar.")
+        return
+
     print("Total de vagas:", len(df))
 
     with sync_playwright() as p:
@@ -42,7 +46,10 @@ def postar():
             args=["--disable-blink-features=AutomationControlled"]
         )
 
-        context = browser.new_context()
+        # USER AGENT (reduz detecção de automação)
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        )
 
         # ===============================
         # LOGIN VIA COOKIE LI_AT
@@ -63,15 +70,12 @@ def postar():
 
         print("Abrindo LinkedIn...")
 
-        page.goto("https://www.linkedin.com/")
-        page.wait_for_timeout(5000)
+        # IR DIRETO AO FEED (evita redirect)
+        page.goto("https://www.linkedin.com/feed/")
+        page.wait_for_load_state("domcontentloaded")
+        page.wait_for_timeout(6000)
 
         print("Sessão carregada!")
-
-        page.goto("https://www.linkedin.com/feed/")
-        page.wait_for_load_state("networkidle")
-
-        print("Login via sessão realizado!")
 
         for _, vaga in df.iterrows():
 
@@ -88,12 +92,13 @@ def postar():
                 page.wait_for_load_state("domcontentloaded")
                 page.wait_for_timeout(5000)
 
-                page.mouse.wheel(0, 500)
+                # scroll humano
+                page.mouse.wheel(0, 600)
 
                 page.wait_for_selector("text=Começar publicação", timeout=60000)
                 page.locator("text=Começar publicação").first.click()
 
-                page.wait_for_selector("div[role='textbox']")
+                page.wait_for_selector("div[role='textbox']", timeout=20000)
 
                 page.locator("div[role='textbox']").first.fill(texto)
 
@@ -105,12 +110,14 @@ def postar():
 
                     print("Adicionando logo:", logo_path)
 
+                    page.wait_for_selector("input[type=file]", timeout=10000)
+
                     page.set_input_files(
                         "input[type=file]",
                         logo_path
                     )
 
-                    page.wait_for_timeout(4000)
+                    page.wait_for_timeout(5000)
 
                 else:
 
@@ -120,7 +127,9 @@ def postar():
                 # PUBLICAR POST
                 # ===============================
 
-                page.click("button:has-text('Publicar')")
+                page.wait_for_selector("button:has-text('Publicar')", timeout=20000)
+
+                page.locator("button:has-text('Publicar')").first.click()
 
                 print("Post publicado!")
 
