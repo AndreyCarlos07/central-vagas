@@ -53,14 +53,23 @@ def postar():
         email = os.environ["LINKEDIN_EMAIL"]
         password = os.environ["LINKEDIN_PASSWORD"]
 
+        # espera os campos carregarem
+        page.wait_for_selector("#username", timeout=60000)
+
         page.fill("#username", email)
         page.fill("#password", password)
 
         page.click("button[type=submit]")
 
-        page.wait_for_url("**/feed/**", timeout=60000)
+        # espera login terminar
+        page.wait_for_load_state("networkidle")
 
-        print("Login realizado com sucesso!")
+        print("Logado com sucesso!")
+
+        print("Indo para o feed...")
+
+        page.goto("https://www.linkedin.com/feed/")
+        page.wait_for_load_state("networkidle")
 
         for _, vaga in df.iterrows():
 
@@ -86,7 +95,7 @@ def postar():
 
                 page.wait_for_selector("div[role='textbox']")
 
-                page.fill("div[role='textbox']", texto)
+                page.locator("div[role='textbox']").first.fill(texto)
 
                 if os.path.exists(logo_path):
 
