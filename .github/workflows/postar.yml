@@ -25,7 +25,7 @@ jobs:
 
       - name: Criar sessão LinkedIn
         run: |
-          printf "%s" "${{ secrets.LINKEDIN_SESSION }}" > linkedin_session.json
+          printf '%s' "${{ secrets.LINKEDIN_SESSION }}" > linkedin_session.json
 
       - name: Rodar script
         run: python postar_vagas.py
