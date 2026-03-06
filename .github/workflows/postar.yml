@@ -24,8 +24,11 @@ jobs:
           pip install -r postar/requirements.txt
           playwright install --with-deps
 
-      - name: Criar sessão do LinkedIn
-        run: echo '${{ secrets.LINKEDIN_SESSION }}' > linkedin_session.json
+     - name: Criar sessão LinkedIn
+        run: |
+          cat <<EOF > linkedin_session.json
+          ${{ secrets.LINKEDIN_SESSION }}
+          EOF
 
       - name: Rodar script
         run: python postar_vagas.py
