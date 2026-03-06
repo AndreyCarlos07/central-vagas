@@ -1,0 +1,27 @@
+name: Postar vagas linkedin
+
+on:
+  schedule:
+    - cron: '0 21 * * *'   # 18h Brasil (UTC-3)
+
+jobs:
+  run-script:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repo
+        uses: actions/checkout@v4
+
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar libs
+        run: |
+          pip install -r postar/requirements.txt
+          playwright install --with-deps
+
+      - name: Rodar script
+        run: python postar_vagas.py
