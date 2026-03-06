@@ -99,6 +99,12 @@ def postar():
                 page.wait_for_load_state("domcontentloaded")
                 page.wait_for_timeout(5000)
 
+                # VERIFICAR SE ESTA LOGADO
+                if "linkedin.com/feed" not in page.url:
+                    print("Sessão inválida ou expirada.")
+                    browser.close()
+                    return
+
                 # scroll humano
                 page.mouse.wheel(0, 600)
 
