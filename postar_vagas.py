@@ -45,10 +45,10 @@ def postar():
         context = browser.new_context()
 
         # ===============================
-        # LOGIN VIA SESSION COOKIE
+        # LOGIN VIA COOKIE LI_AT
         # ===============================
 
-        linkedin_session = os.environ["linkedin_session"]
+        linkedin_session = os.environ["LINKEDIN_LI_AT"]
 
         context.add_cookies([
             {
@@ -62,6 +62,11 @@ def postar():
         page = context.new_page()
 
         print("Abrindo LinkedIn...")
+
+        page.goto("https://www.linkedin.com/")
+        page.wait_for_timeout(5000)
+
+        print("Sessão carregada!")
 
         page.goto("https://www.linkedin.com/feed/")
         page.wait_for_load_state("networkidle")
