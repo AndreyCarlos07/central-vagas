@@ -2,7 +2,7 @@ name: Postar vagas linkedin
 
 on:
   schedule:
-    - cron: '0 21 * * *'   # 18h Brasil (UTC-3)
+    - cron: '0 21 * * *'
   workflow_dispatch:
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
           pip install -r postar/requirements.txt
           playwright install --with-deps
 
-     - name: Criar sessão LinkedIn
+      - name: Criar sessão LinkedIn
         run: |
           cat <<EOF > linkedin_session.json
           ${{ secrets.LINKEDIN_SESSION }}
