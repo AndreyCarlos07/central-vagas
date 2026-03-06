@@ -7,7 +7,6 @@ on:
 
 jobs:
   run-script:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -32,3 +31,9 @@ jobs:
 
       - name: Rodar script
         run: python postar_vagas.py
+
+      - name: Upload screenshot
+        uses: actions/upload-artifact@v3
+        with:
+          name: debug-screenshot
+          path: debug_screenshot.png
