@@ -87,12 +87,8 @@ def postar():
                 page.goto("https://www.linkedin.com/feed/")
                 page.wait_for_timeout(5000)
 
-                page.wait_for_selector(
-                    "div.share-box-feed-entry__trigger",
-                    timeout=60000
-                )
-
-                page.click("div.share-box-feed-entry__trigger")
+                page.wait_for_selector("button:has-text('Começar publicação')", timeout=60000)
+                page.click("button:has-text('Começar publicação')")
 
                 page.wait_for_selector("div[role='textbox']")
 
