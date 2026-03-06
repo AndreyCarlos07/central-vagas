@@ -88,32 +88,23 @@ def postar():
                 page.goto("https://www.linkedin.com/feed/")
                 page.wait_for_timeout(5000)
 
-                # scroll humano
+                # scroll humano para carregar botão
                 page.mouse.wheel(0, 700)
                 page.wait_for_timeout(2000)
+                page.mouse.wheel(0, 300)
+                page.wait_for_timeout(2000)
 
-                # =========================
-                # BOTÃO CRIAR PUBLICAÇÃO
-                # =========================
+                # botão criar publicação (PT / EN)
+                try:
+                    page.wait_for_selector("button:has-text('Começar publicação')", timeout=15000)
+                    page.locator("button:has-text('Começar publicação')").first.click()
+                except:
+                    page.wait_for_selector("button:has-text('Start a post')", timeout=15000)
+                    page.locator("button:has-text('Start a post')").first.click()
 
-                page.wait_for_selector(
-                    "text=Começar publicação, text=Start a post, div.share-box-feed-entry__trigger",
-                    timeout=60000
-                )
-
-                page.locator(
-                    "text=Começar publicação, text=Start a post, div.share-box-feed-entry__trigger"
-                ).first.click()
-
-                page.wait_for_timeout(3000)
-
-                # =========================
-                # CAIXA DE TEXTO DO POST
-                # =========================
-
-                page.wait_for_selector("div[contenteditable='true']", timeout=20000)
-
-                page.locator("div[contenteditable='true']").first.fill(texto)
+                # caixa de texto
+                page.wait_for_selector("div[role='textbox'], div[contenteditable='true']", timeout=20000)
+                page.locator("div[role='textbox'], div[contenteditable='true']").first.fill(texto)
 
                 # =========================
                 # ADICIONAR LOGO
@@ -140,14 +131,8 @@ def postar():
                 # PUBLICAR
                 # =========================
 
-                page.wait_for_selector(
-                    "button:has-text('Publicar'), button:has-text('Post')",
-                    timeout=20000
-                )
-
-                page.locator(
-                    "button:has-text('Publicar'), button:has-text('Post')"
-                ).first.click()
+                page.wait_for_selector("button:has-text('Publicar'), button:has-text('Post')", timeout=20000)
+                page.locator("button:has-text('Publicar'), button:has-text('Post')").first.click()
 
                 print("Post publicado!")
 
