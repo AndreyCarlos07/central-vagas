@@ -8,7 +8,6 @@ LOGO_FOLDER = "logos"
 
 
 def gerar_texto(vaga):
-
     titulo = str(vaga["titulo"]).replace("\n", " ").upper()
     empresa = str(vaga["empresa"]).strip()
     link = vaga["link"]
@@ -26,8 +25,27 @@ Obs: Não tenho qualquer envolvimento com a vaga, apenas divulgando no trabalho 
 
 Sucesso
 """
-
     return texto
+
+
+def clicar_botao_criar_post(page):
+    """
+    Tenta clicar no botão de criar publicação em PT e EN.
+    """
+    selectors = [
+        "button:has-text('Começar publicação')",
+        "button:has-text('Start a post')",
+        "div.share-box-feed-entry__trigger"
+    ]
+
+    for sel in selectors:
+        try:
+            page.wait_for_selector(sel, timeout=30000)  # 30s
+            page.locator(sel).first.click()
+            return True
+        except:
+            continue
+    return False
 
 
 def postar():
@@ -51,21 +69,20 @@ def postar():
             args=["--disable-blink-features=AutomationControlled"]
         )
 
-        # USAR STORAGE STATE (sessão salva do LinkedIn)
         context = browser.new_context(
             storage_state="linkedin_session.json",
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         )
 
         page = context.new_page()
-
         print("Abrindo LinkedIn...")
 
         page.goto("https://www.linkedin.com/feed/")
         page.wait_for_load_state("domcontentloaded")
-        page.wait_for_timeout(8000)
+        page.wait_for_timeout(10000)  # esperar feed carregar
+        page.mouse.wheel(0, 800)
+        page.wait_for_timeout(2000)
 
-        # verificar login
         if "feed" not in page.url:
             print("Sessão do LinkedIn inválida.")
             browser.close()
@@ -74,73 +91,45 @@ def postar():
         print("Sessão carregada com sucesso!")
 
         for _, vaga in df.iterrows():
-
             try:
-
                 titulo = vaga["titulo"]
                 print("Postando vaga:", titulo)
 
                 texto = gerar_texto(vaga)
-
                 empresa = str(vaga["empresa"]).strip()
                 logo_path = f"{LOGO_FOLDER}/{empresa}.png"
 
                 page.goto("https://www.linkedin.com/feed/")
                 page.wait_for_timeout(5000)
-
-                # scroll humano para carregar botão
                 page.mouse.wheel(0, 700)
                 page.wait_for_timeout(2000)
-                page.mouse.wheel(0, 300)
-                page.wait_for_timeout(2000)
 
-                # botão criar publicação (PT / EN)
-                try:
-                    page.wait_for_selector("button:has-text('Começar publicação')", timeout=15000)
-                    page.locator("button:has-text('Começar publicação')").first.click()
-                except:
-                    page.wait_for_selector("button:has-text('Start a post')", timeout=15000)
-                    page.locator("button:has-text('Start a post')").first.click()
+                # clicar no botão criar post
+                if not clicar_botao_criar_post(page):
+                    print("Não encontrou botão de criar publicação!")
+                    continue
 
                 # caixa de texto
                 page.wait_for_selector("div[role='textbox'], div[contenteditable='true']", timeout=20000)
                 page.locator("div[role='textbox'], div[contenteditable='true']").first.fill(texto)
 
-                # =========================
-                # ADICIONAR LOGO
-                # =========================
-
+                # adicionar logo
                 if os.path.exists(logo_path):
-
                     print("Adicionando logo:", logo_path)
-
                     page.wait_for_selector("input[type=file]", timeout=15000)
-
-                    page.set_input_files(
-                        "input[type=file]",
-                        logo_path
-                    )
-
+                    page.set_input_files("input[type=file]", logo_path)
                     page.wait_for_timeout(5000)
-
                 else:
-
                     print("Logo não encontrada:", empresa)
 
-                # =========================
-                # PUBLICAR
-                # =========================
-
+                # publicar
                 page.wait_for_selector("button:has-text('Publicar'), button:has-text('Post')", timeout=20000)
                 page.locator("button:has-text('Publicar'), button:has-text('Post')").first.click()
 
                 print("Post publicado!")
-
-                # delay anti-bloqueio
                 time.sleep(40)
 
             except Exception as e:
-
                 print("Erro ao postar vaga:", e)
 
         browser.close()
