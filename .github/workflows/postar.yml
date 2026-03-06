@@ -3,6 +3,7 @@ name: Postar vagas linkedin
 on:
   schedule:
     - cron: '0 21 * * *'   # 18h Brasil (UTC-3)
+  workflow_dispatch:
 
 jobs:
   run-script:
