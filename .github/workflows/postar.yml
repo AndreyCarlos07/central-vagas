@@ -25,4 +25,6 @@ jobs:
           playwright install --with-deps
 
       - name: Rodar script
+        env:
+          LINKEDIN_LI_AT: ${{ secrets.LINKEDIN_LI_AT }}
         run: python postar_vagas.py
