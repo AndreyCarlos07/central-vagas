@@ -45,7 +45,7 @@ def postar():
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
-            headless=False,  # Mudar para False para debug
+            headless=True,  # Mudar para False para debug
             args=["--disable-blink-features=AutomationControlled"]
         )
 
