@@ -85,10 +85,13 @@ def postar():
             try:
 
                 page.goto("https://www.linkedin.com/feed/")
+                page.wait_for_load_state("domcontentloaded")
                 page.wait_for_timeout(5000)
 
-                page.wait_for_selector("button:has-text('Começar publicação')", timeout=60000)
-                page.click("button:has-text('Começar publicação')")
+                page.mouse.wheel(0, 500)
+
+                page.wait_for_selector("text=Começar publicação", timeout=60000)
+                page.locator("text=Começar publicação").first.click()
 
                 page.wait_for_selector("div[role='textbox']")
 
