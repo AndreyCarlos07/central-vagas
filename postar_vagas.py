@@ -48,7 +48,7 @@ def postar():
         # LOGIN VIA SESSION COOKIE
         # ===============================
 
-        linkedin_session = os.environ["LINKEDIN_SESSION"]
+        linkedin_session = os.environ["linkedin_session"]
 
         context.add_cookies([
             {
