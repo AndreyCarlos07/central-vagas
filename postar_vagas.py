@@ -5,18 +5,18 @@ import os
 
 CSV_FILE = "vagas_novas.csv"
 LOGO_FOLDER = "logos"
+SESSION_FILE = "linkedin_session.json"
+
 
 def gerar_texto(vaga):
-    
-    titulo = vaga['titulo'].upper()
-    empresa = vaga['empresa']
-    link = vaga['link']
 
-    texto = f"""
-{titulo}
+    titulo = str(vaga["titulo"]).upper()
+    empresa = vaga["empresa"]
+    link = vaga["link"]
+
+    texto = f"""{titulo}
 
 EMPRESA: {empresa}
-
 INSCREVA-SE:
 {link}
 
@@ -31,46 +31,78 @@ Sucesso
 
 
 def postar():
-    
+
     df = pd.read_csv(CSV_FILE)
+
+    print("Total de vagas:", len(df))
 
     with sync_playwright() as p:
 
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context(storage_state="linkedin_session.json")
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--disable-blink-features=AutomationControlled"]
+        )
+
+        context = browser.new_context(storage_state=SESSION_FILE)
+
         page = context.new_page()
+
+        print("Abrindo LinkedIn...")
 
         page.goto("https://www.linkedin.com/feed/")
 
-        time.sleep(5)
+        page.wait_for_load_state("networkidle")
+
+        print("Página carregada:", page.url)
 
         for _, vaga in df.iterrows():
 
             texto = gerar_texto(vaga)
 
-            empresa = vaga["empresa"].upper()
+            empresa = str(vaga["empresa"]).upper()
             logo_path = f"{LOGO_FOLDER}/{empresa}.png"
 
-            print("Postando:", vaga["titulo"])
+            print("Postando vaga:", vaga["titulo"])
 
-            page.click("button[aria-label='Start a post']")
+            try:
 
-            time.sleep(2)
-
-            page.fill("div[role='textbox']", texto)
-
-            if os.path.exists(logo_path):
-
-                page.set_input_files(
-                    "input[type=file]",
-                    logo_path
+                page.wait_for_selector(
+                    "div.share-box-feed-entry__trigger",
+                    timeout=60000
                 )
 
-            time.sleep(2)
+                page.click("div.share-box-feed-entry__trigger")
 
-            page.click("button:has-text('Post')")
+                time.sleep(3)
 
-            time.sleep(15)
+                page.wait_for_selector("div[role='textbox']")
+
+                page.fill("div[role='textbox']", texto)
+
+                if os.path.exists(logo_path):
+
+                    print("Adicionando logo:", logo_path)
+
+                    page.set_input_files(
+                        "input[type=file]",
+                        logo_path
+                    )
+
+                    time.sleep(3)
+
+                else:
+
+                    print("Logo não encontrada:", logo_path)
+
+                page.click("button:has-text('Post')")
+
+                print("Post publicado!")
+
+                time.sleep(30)
+
+            except Exception as e:
+
+                print("Erro ao postar vaga:", e)
 
         browser.close()
 
