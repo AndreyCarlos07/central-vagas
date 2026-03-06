@@ -3,7 +3,7 @@ from playwright.sync_api import sync_playwright
 import time
 import os
 
-CSV_FILE = "vagas.csv"
+CSV_FILE = "vagas_novas.csv"
 LOGO_FOLDER = "logos"
 
 def gerar_texto(vaga):
