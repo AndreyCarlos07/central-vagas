@@ -5,13 +5,12 @@ import os
 
 CSV_FILE = "vagas_novas.csv"
 LOGO_FOLDER = "logos"
-SESSION_FILE = "linkedin_session.json"
 
 
 def gerar_texto(vaga):
 
-    titulo = str(vaga["titulo"]).upper()
-    empresa = vaga["empresa"]
+    titulo = str(vaga["titulo"]).replace("\n", " ").upper()
+    empresa = str(vaga["empresa"]).strip()
     link = vaga["link"]
 
     texto = f"""{titulo}
@@ -43,28 +42,38 @@ def postar():
             args=["--disable-blink-features=AutomationControlled"]
         )
 
-        context = browser.new_context(storage_state=SESSION_FILE)
-
+        context = browser.new_context()
         page = context.new_page()
 
         print("Abrindo LinkedIn...")
 
-        page.goto("https://www.linkedin.com/feed/")
+        page.goto("https://www.linkedin.com/login")
 
-        page.wait_for_load_state("networkidle")
+        # LOGIN AUTOMÁTICO
+        email = os.environ["LINKEDIN_EMAIL"]
+        password = os.environ["LINKEDIN_PASSWORD"]
 
-        print("Página carregada:", page.url)
+        page.fill("#username", email)
+        page.fill("#password", password)
+
+        page.click("button[type=submit]")
+
+        page.wait_for_url("**/feed/**", timeout=60000)
+
+        print("Login realizado com sucesso!")
 
         for _, vaga in df.iterrows():
 
             texto = gerar_texto(vaga)
 
-            empresa = str(vaga["empresa"]).upper()
+            empresa = str(vaga["empresa"]).strip()
             logo_path = f"{LOGO_FOLDER}/{empresa}.png"
 
             print("Postando vaga:", vaga["titulo"])
 
             try:
+
+                page.goto("https://www.linkedin.com/feed/")
 
                 page.wait_for_selector(
                     "div.share-box-feed-entry__trigger",
@@ -98,7 +107,8 @@ def postar():
 
                 print("Post publicado!")
 
-                time.sleep(30)
+                # Delay para evitar bloqueio do LinkedIn
+                time.sleep(45)
 
             except Exception as e:
 
