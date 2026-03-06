@@ -117,7 +117,7 @@ def postar():
                 # PUBLICAR POST
                 # ===============================
 
-                page.click("button:has-text('Post')")
+                page.click("button:has-text('Publicar')")
 
                 print("Post publicado!")
 
