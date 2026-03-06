@@ -25,7 +25,9 @@ jobs:
 
       - name: Criar sessão LinkedIn
         run: |
-          echo "${{ secrets.LINKEDIN_SESSION }}" > linkedin_session.json
+          cat <<'EOF' > linkedin_session.json
+          ${{ secrets.LINKEDIN_SESSION }}
+          EOF
 
       - name: Rodar script
         run: python postar_vagas.py
