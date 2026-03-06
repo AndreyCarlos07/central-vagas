@@ -108,8 +108,8 @@ def postar():
                 # scroll humano
                 page.mouse.wheel(0, 600)
 
-                page.wait_for_selector("text=Começar publicação", timeout=60000)
-                page.locator("text=Começar publicação").first.click()
+                page.wait_for_selector("button:has-text('Começar publicação')", timeout=60000)
+                page.locator("button:has-text('Começar publicação')").first.click()
 
                 page.wait_for_selector("div[role='textbox']", timeout=20000)
 
