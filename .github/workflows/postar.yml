@@ -26,6 +26,3 @@ jobs:
 
       - name: Rodar script
         run: python postar_vagas.py
-        env:
-          LINKEDIN_EMAIL: ${{ secrets.LINKEDIN_EMAIL }}
-          LINKEDIN_PASSWORD: ${{ secrets.LINKEDIN_PASSWORD }}
