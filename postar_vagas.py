@@ -43,33 +43,30 @@ def postar():
         )
 
         context = browser.new_context()
+
+        # ===============================
+        # LOGIN VIA SESSION COOKIE
+        # ===============================
+
+        linkedin_session = os.environ["LINKEDIN_SESSION"]
+
+        context.add_cookies([
+            {
+                "name": "li_at",
+                "value": linkedin_session,
+                "domain": ".linkedin.com",
+                "path": "/"
+            }
+        ])
+
         page = context.new_page()
 
         print("Abrindo LinkedIn...")
 
-        page.goto("https://www.linkedin.com/login")
-
-        # LOGIN AUTOMÁTICO
-        email = os.environ["LINKEDIN_EMAIL"]
-        password = os.environ["LINKEDIN_PASSWORD"]
-
-        # espera os campos carregarem
-        page.wait_for_selector("#username", timeout=60000)
-
-        page.fill("#username", email)
-        page.fill("#password", password)
-
-        page.click("button[type=submit]")
-
-        # espera login terminar
-        page.wait_for_load_state("networkidle")
-
-        print("Logado com sucesso!")
-
-        print("Indo para o feed...")
-
         page.goto("https://www.linkedin.com/feed/")
         page.wait_for_load_state("networkidle")
+
+        print("Login via sessão realizado!")
 
         for _, vaga in df.iterrows():
 
@@ -83,6 +80,7 @@ def postar():
             try:
 
                 page.goto("https://www.linkedin.com/feed/")
+                page.wait_for_timeout(5000)
 
                 page.wait_for_selector(
                     "div.share-box-feed-entry__trigger",
@@ -91,11 +89,13 @@ def postar():
 
                 page.click("div.share-box-feed-entry__trigger")
 
-                time.sleep(3)
-
                 page.wait_for_selector("div[role='textbox']")
 
                 page.locator("div[role='textbox']").first.fill(texto)
+
+                # ===============================
+                # ADICIONAR LOGO
+                # ===============================
 
                 if os.path.exists(logo_path):
 
@@ -106,17 +106,21 @@ def postar():
                         logo_path
                     )
 
-                    time.sleep(3)
+                    page.wait_for_timeout(4000)
 
                 else:
 
                     print("Logo não encontrada:", logo_path)
 
+                # ===============================
+                # PUBLICAR POST
+                # ===============================
+
                 page.click("button:has-text('Post')")
 
                 print("Post publicado!")
 
-                # Delay para evitar bloqueio do LinkedIn
+                # Delay para evitar bloqueio
                 time.sleep(45)
 
             except Exception as e:
