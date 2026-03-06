@@ -92,20 +92,28 @@ def postar():
                 page.mouse.wheel(0, 700)
                 page.wait_for_timeout(2000)
 
-                # botão criar publicação
+                # =========================
+                # BOTÃO CRIAR PUBLICAÇÃO
+                # =========================
+
                 page.wait_for_selector(
-                    "button:has-text('Começar publicação'), div.share-box-feed-entry__trigger",
+                    "text=Começar publicação, text=Start a post, div.share-box-feed-entry__trigger",
                     timeout=60000
                 )
 
                 page.locator(
-                    "button:has-text('Começar publicação'), div.share-box-feed-entry__trigger"
+                    "text=Começar publicação, text=Start a post, div.share-box-feed-entry__trigger"
                 ).first.click()
 
-                # caixa de texto
-                page.wait_for_selector("div[role='textbox']", timeout=20000)
+                page.wait_for_timeout(3000)
 
-                page.locator("div[role='textbox']").first.fill(texto)
+                # =========================
+                # CAIXA DE TEXTO DO POST
+                # =========================
+
+                page.wait_for_selector("div[contenteditable='true']", timeout=20000)
+
+                page.locator("div[contenteditable='true']").first.fill(texto)
 
                 # =========================
                 # ADICIONAR LOGO
@@ -132,9 +140,14 @@ def postar():
                 # PUBLICAR
                 # =========================
 
-                page.wait_for_selector("button:has-text('Publicar')", timeout=20000)
+                page.wait_for_selector(
+                    "button:has-text('Publicar'), button:has-text('Post')",
+                    timeout=20000
+                )
 
-                page.locator("button:has-text('Publicar')").first.click()
+                page.locator(
+                    "button:has-text('Publicar'), button:has-text('Post')"
+                ).first.click()
 
                 print("Post publicado!")
 
