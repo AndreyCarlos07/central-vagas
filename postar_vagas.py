@@ -56,11 +56,18 @@ def postar():
         # ===============================
 
         linkedin_session = os.environ["LINKEDIN_LI_AT"]
+        linkedin_jsession = os.environ["LINKEDIN_JSESSIONID"]
 
         context.add_cookies([
             {
                 "name": "li_at",
                 "value": linkedin_session,
+                "domain": ".linkedin.com",
+                "path": "/"
+            },
+            {
+                "name": "JSESSIONID",
+                "value": linkedin_jsession,
                 "domain": ".linkedin.com",
                 "path": "/"
             }
