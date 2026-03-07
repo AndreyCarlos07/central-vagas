@@ -9,6 +9,7 @@ DEBUG_SCREENSHOT = "debug_screenshot.png"
 
 
 def gerar_texto(vaga):
+
     titulo = str(vaga["titulo"]).replace("\n", " ").upper()
     empresa = str(vaga["empresa"]).strip()
     link = vaga["link"]
@@ -26,6 +27,7 @@ Obs: Não tenho qualquer envolvimento com a vaga, apenas divulgando no trabalho 
 
 Sucesso
 """
+
     return texto
 
 
@@ -66,6 +68,7 @@ def postar():
         # ===============================
 
         try:
+
             page.wait_for_selector(
                 "button:has-text('Continuar'), button:has-text('Continue'), button:has-text('Entrar')",
                 timeout=5000
@@ -76,20 +79,39 @@ def postar():
             ).first
 
             if botao_login.is_visible():
+
                 print("Tela 'Olá novamente' detectada. Clicando para continuar login...")
+
                 botao_login.click()
-                page.wait_for_timeout(6000)
+
+                page.wait_for_load_state("networkidle")
+                page.wait_for_timeout(5000)
 
         except:
+
             print("Nenhuma tela de 'Olá novamente'. Seguindo normal.")
 
         # ===============================
-        # VERIFICAR SE LOGIN FUNCIONOU
+        # CONFIRMAR SE LOGIN FUNCIONOU
         # ===============================
 
-        if "feed" not in page.url:
-            print("Sessão do LinkedIn inválida.")
+        try:
+
+            page.wait_for_selector(
+                "div.share-box-feed-entry__trigger",
+                timeout=15000
+            )
+
+            print("Login confirmado. Feed carregado.")
+
+        except:
+
+            print("Login NÃO foi concluído.")
+
+            page.screenshot(path="login_error.png")
+
             browser.close()
+
             return
 
         print("Sessão carregada com sucesso!")
@@ -115,7 +137,8 @@ def postar():
 
                 # scroll humano
                 for _ in range(5):
-                    page.mouse.wheel(0, 500)
+
+                    page.mouse.wheel(0, 600)
                     page.wait_for_timeout(1500)
 
                 # screenshot debug
@@ -133,12 +156,15 @@ def postar():
                     ).first
 
                     button.wait_for(state="visible", timeout=30000)
+
                     button.click()
 
                     print("Botão de criar publicação clicado!")
 
                 except Exception:
+
                     print("Não encontrou botão de criar publicação!")
+
                     continue
 
                 # ===============================
@@ -146,6 +172,7 @@ def postar():
                 # ===============================
 
                 page.wait_for_selector("div[role='textbox']", timeout=20000)
+
                 page.locator("div[role='textbox']").first.fill(texto)
 
                 # ===============================
@@ -157,6 +184,7 @@ def postar():
                     print("Adicionando logo:", logo_path)
 
                     page.wait_for_selector("input[type=file]", timeout=15000)
+
                     page.set_input_files("input[type=file]", logo_path)
 
                     page.wait_for_timeout(5000)
@@ -180,6 +208,7 @@ def postar():
 
                 print("Post publicado!")
 
+                # delay anti bloqueio
                 time.sleep(40)
 
             except Exception as e:
