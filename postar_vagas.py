@@ -6,7 +6,6 @@ import os
 CSV_FILE = "vagas_novas_postar.csv"
 LOGO_FOLDER = "logos"
 SESSION_FILE = "linkedin_session.json"
-
 DEBUG_SCREENSHOT = "debug_screenshot.png"
 
 
