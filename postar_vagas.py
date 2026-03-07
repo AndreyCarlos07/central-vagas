@@ -5,7 +5,7 @@ import os
 
 CSV_FILE = "vagas_novas_postar.csv"
 LOGO_FOLDER = "logos"
-DEBUG_SCREENSHOT = "debug_screenshot.png"
+DEBUG_SCREENSHOT = "debug_action.png"
 
 
 def gerar_texto(vaga):
@@ -15,10 +15,8 @@ def gerar_texto(vaga):
     link = vaga["link"]
 
     texto = f"""{titulo}
-
 EMPRESA: {empresa}
-INSCREVA-SE:
-{link}
+INSCREVA-SE: {link}
 
 Acesse pelo centralizador, todas as vagas abertas:
 https://lnkd.in/ePRiUbXt
@@ -34,193 +32,140 @@ Sucesso
 def postar():
 
     if not os.path.exists(CSV_FILE):
-        print("Arquivo CSV não encontrado.")
+        print("CSV não encontrado:", CSV_FILE)
         return
 
     df = pd.read_csv(CSV_FILE)
 
     if df.empty:
-        print("Nenhuma vaga para postar.")
+        print("CSV vazio.")
         return
 
     print("Total de vagas:", len(df))
 
+    linkedin_session = os.getenv("LINKEDIN_SESSION")
+
+    if not linkedin_session:
+        print("LINKEDIN_SESSION não encontrado nos Secrets.")
+        return
+
     with sync_playwright() as p:
 
         browser = p.chromium.launch(
-            headless=True,
-            args=["--disable-blink-features=AutomationControlled"]
+            headless=True
         )
 
-        context = browser.new_context(
-            storage_state="linkedin_session.json",
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36"
-        )
+        context = browser.new_context()
+
+        context.add_cookies([
+            {
+                "name": "li_at",
+                "value": linkedin_session,
+                "domain": ".linkedin.com",
+                "path": "/"
+            }
+        ])
 
         page = context.new_page()
 
         print("Abrindo LinkedIn...")
-        page.goto("https://www.linkedin.com/feed/", wait_until="domcontentloaded")
-        page.wait_for_timeout(8000)
+        page.goto("https://www.linkedin.com/feed/")
 
-        # ===============================
-        # DETECTAR TELA "OLÁ NOVAMENTE"
-        # ===============================
+        page.wait_for_timeout(5000)
 
+        page.screenshot(path=DEBUG_SCREENSHOT)
+        print("Screenshot inicial salva")
+
+        # detectar tela "Olá novamente"
         try:
 
-            page.wait_for_selector(
-                "button:has-text('Continuar'), button:has-text('Continue'), button:has-text('Entrar')",
-                timeout=5000
-            )
-
-            botao_login = page.locator(
+            botao = page.locator(
                 "button:has-text('Continuar'), button:has-text('Continue'), button:has-text('Entrar')"
             ).first
 
-            if botao_login.is_visible():
+            if botao.is_visible():
 
-                print("Tela 'Olá novamente' detectada. Clicando para continuar login...")
+                print("Tela 'Olá novamente' detectada")
 
-                botao_login.click()
+                botao.click()
 
                 page.wait_for_load_state("networkidle")
-                page.wait_for_timeout(5000)
 
         except:
 
-            print("Nenhuma tela de 'Olá novamente'. Seguindo normal.")
+            print("Nenhuma tela de login detectada")
 
-        # ===============================
-        # CONFIRMAR SE LOGIN FUNCIONOU
-        # ===============================
-
+        # confirmar feed
         try:
 
             page.wait_for_selector(
                 "div.share-box-feed-entry__trigger",
-                timeout=15000
+                timeout=20000
             )
 
-            print("Login confirmado. Feed carregado.")
+            print("Feed carregado com sucesso!")
 
         except:
 
-            print("Login NÃO foi concluído.")
-
-            page.screenshot(path="login_error.png")
-
+            print("Feed não carregou")
+            page.screenshot(path="erro_feed.png")
             browser.close()
-
             return
-
-        print("Sessão carregada com sucesso!")
-
-        # ===============================
-        # LOOP DAS VAGAS
-        # ===============================
 
         for _, vaga in df.iterrows():
 
-            try:
+            titulo = vaga["titulo"]
+            empresa = str(vaga["empresa"]).strip()
 
-                titulo = vaga["titulo"]
-                empresa = str(vaga["empresa"]).strip()
+            print("Postando:", titulo)
 
-                print("Postando vaga:", titulo)
+            texto = gerar_texto(vaga)
 
-                texto = gerar_texto(vaga)
-                logo_path = f"{LOGO_FOLDER}/{empresa}.png"
+            logo_path = os.path.join(LOGO_FOLDER, f"{empresa}.png")
 
-                page.goto("https://www.linkedin.com/feed/")
-                page.wait_for_timeout(5000)
+            page.goto("https://www.linkedin.com/feed/")
 
-                # scroll humano
-                for _ in range(5):
+            page.wait_for_timeout(4000)
 
-                    page.mouse.wheel(0, 600)
-                    page.wait_for_timeout(1500)
+            page.mouse.wheel(0, 800)
 
-                # screenshot debug
-                page.screenshot(path=DEBUG_SCREENSHOT)
-                print("Screenshot salva:", DEBUG_SCREENSHOT)
+            page.wait_for_timeout(2000)
 
-                # ===============================
-                # CLICAR CRIAR PUBLICAÇÃO
-                # ===============================
+            # abrir caixa de postagem
+            button = page.locator(
+                "button:has-text('Começar publicação'), button:has-text('Start a post'), div.share-box-feed-entry__trigger"
+            ).first
 
-                try:
+            button.click()
 
-                    button = page.locator(
-                        "button:has-text('Começar publicação'), button:has-text('Start a post'), div.share-box-feed-entry__trigger"
-                    ).first
+            page.wait_for_selector("div[role='textbox']")
 
-                    button.wait_for(state="visible", timeout=30000)
+            page.locator("div[role='textbox']").first.fill(texto)
 
-                    button.click()
+            if os.path.exists(logo_path):
 
-                    print("Botão de criar publicação clicado!")
+                print("Adicionando logo:", logo_path)
 
-                except Exception:
-
-                    print("Não encontrou botão de criar publicação!")
-
-                    continue
-
-                # ===============================
-                # ESCREVER TEXTO
-                # ===============================
-
-                page.wait_for_selector("div[role='textbox']", timeout=20000)
-
-                page.locator("div[role='textbox']").first.fill(texto)
-
-                # ===============================
-                # ADICIONAR LOGO
-                # ===============================
-
-                if os.path.exists(logo_path):
-
-                    print("Adicionando logo:", logo_path)
-
-                    page.wait_for_selector("input[type=file]", timeout=15000)
-
-                    page.set_input_files("input[type=file]", logo_path)
-
-                    page.wait_for_timeout(5000)
-
-                else:
-
-                    print("Logo não encontrada:", empresa)
-
-                # ===============================
-                # PUBLICAR
-                # ===============================
-
-                page.wait_for_selector(
-                    "button:has-text('Publicar'), button:has-text('Post')",
-                    timeout=20000
+                page.set_input_files(
+                    "input[type=file]",
+                    logo_path
                 )
 
-                page.locator(
-                    "button:has-text('Publicar'), button:has-text('Post')"
-                ).first.click()
+                page.wait_for_timeout(4000)
 
-                print("Post publicado!")
+            else:
 
-                # delay anti bloqueio
-                time.sleep(40)
+                print("Logo não encontrada:", empresa)
 
-            except Exception as e:
+            page.locator(
+                "button:has-text('Publicar'), button:has-text('Post')"
+            ).first.click()
 
-                print("Erro ao postar vaga:", e)
+            print("Post publicado!")
 
-                page.screenshot(path="erro_post.png")
-
-                print("Screenshot do erro salva: erro_post.png")
+            time.sleep(10)
 
         browser.close()
 
 
-if __name__ == "__main__":
-    postar()
+postar()
