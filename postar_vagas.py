@@ -5,6 +5,7 @@ import os
 
 CSV_FILE = "vagas_novas_postar.csv"
 LOGO_FOLDER = "logos"
+SESSION_FILE = "linkedin_session.json"
 DEBUG_SCREENSHOT = "debug_action.png"
 
 
@@ -43,11 +44,16 @@ def postar():
 
     print("Total de vagas:", len(df))
 
-    linkedin_session = os.getenv("LINKEDIN_SESSION")
+    # pegar session do secrets
+    session_data = os.getenv("LINKEDIN_SESSION")
 
-    if not linkedin_session:
-        print("LINKEDIN_SESSION não encontrado nos Secrets.")
+    if not session_data:
+        print("LINKEDIN_SESSION não encontrado nos Secrets")
         return
+
+    # salvar JSON temporário
+    with open(SESSION_FILE, "w", encoding="utf-8") as f:
+        f.write(session_data)
 
     with sync_playwright() as p:
 
@@ -55,16 +61,9 @@ def postar():
             headless=True
         )
 
-        context = browser.new_context()
-
-        context.add_cookies([
-            {
-                "name": "li_at",
-                "value": linkedin_session,
-                "domain": ".linkedin.com",
-                "path": "/"
-            }
-        ])
+        context = browser.new_context(
+            storage_state=SESSION_FILE
+        )
 
         page = context.new_page()
 
@@ -76,7 +75,7 @@ def postar():
         page.screenshot(path=DEBUG_SCREENSHOT)
         print("Screenshot inicial salva")
 
-        # detectar tela "Olá novamente"
+        # detectar tela olá novamente
         try:
 
             botao = page.locator(
@@ -146,10 +145,7 @@ def postar():
 
                 print("Adicionando logo:", logo_path)
 
-                page.set_input_files(
-                    "input[type=file]",
-                    logo_path
-                )
+                page.set_input_files("input[type=file]", logo_path)
 
                 page.wait_for_timeout(4000)
 
