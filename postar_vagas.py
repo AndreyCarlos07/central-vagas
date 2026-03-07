@@ -6,7 +6,8 @@ import os
 CSV_FILE = "vagas_novas_postar.csv"
 LOGO_FOLDER = "logos"
 SESSION_FILE = "linkedin_session.json"
-DEBUG_SCREENSHOT = "debug_action.png"
+
+DEBUG_SCREENSHOT = "debug_screenshot.png"
 
 
 def gerar_texto(vaga):
@@ -44,17 +45,6 @@ def postar():
 
     print("Total de vagas:", len(df))
 
-    # pegar session do secrets
-    session_data = os.getenv("LINKEDIN_SESSION")
-
-    if not session_data:
-        print("LINKEDIN_SESSION não encontrado nos Secrets")
-        return
-
-    # salvar JSON temporário
-    with open(SESSION_FILE, "w", encoding="utf-8") as f:
-        f.write(session_data)
-
     with sync_playwright() as p:
 
         browser = p.chromium.launch(
@@ -75,41 +65,55 @@ def postar():
         page.screenshot(path=DEBUG_SCREENSHOT)
         print("Screenshot inicial salva")
 
-        # detectar tela olá novamente
+        # -------------------
+        # LOGIN RÁPIDO
+        # -------------------
+
+        print("Verificando tela de login rápido...")
+
+        perfil = page.locator("i.profile__pic--ghost")
+
+        if perfil.count() > 0:
+
+            print("Perfil salvo detectado. Clicando para entrar...")
+
+            perfil.first.click()
+
+            page.wait_for_timeout(6000)
+
+            page.goto("https://www.linkedin.com/feed/")
+
+            page.wait_for_timeout(5000)
+
+        else:
+
+            print("Nenhum perfil salvo detectado.")
+
+        # -------------------
+        # CONFIRMAR FEED
+        # -------------------
+
+        print("Aguardando feed carregar...")
+
         try:
 
-            botao = page.locator(
-                "button:has-text('Continuar'), button:has-text('Continue'), button:has-text('Entrar')"
-            ).first
-
-            if botao.is_visible():
-
-                print("Tela 'Olá novamente' detectada")
-
-                botao.click()
-
-                page.wait_for_load_state("networkidle")
-
-        except:
-
-            print("Nenhuma tela de login detectada")
-
-        # confirmar feed
-        try:
-
-            page.wait_for_selector(
-                "div.share-box-feed-entry__trigger",
-                timeout=20000
-            )
+            page.wait_for_selector("div[role='main']", timeout=30000)
 
             print("Feed carregado com sucesso!")
 
         except:
 
             print("Feed não carregou")
+
             page.screenshot(path="erro_feed.png")
+
             browser.close()
+
             return
+
+        # -------------------
+        # LOOP DE POSTAGEM
+        # -------------------
 
         for _, vaga in df.iterrows():
 
@@ -124,28 +128,81 @@ def postar():
 
             page.goto("https://www.linkedin.com/feed/")
 
-            page.wait_for_timeout(4000)
+            page.wait_for_timeout(5000)
 
             page.mouse.wheel(0, 800)
 
             page.wait_for_timeout(2000)
 
-            # abrir caixa de postagem
-            button = page.locator(
-                "button:has-text('Começar publicação'), button:has-text('Start a post'), div.share-box-feed-entry__trigger"
+            # -------------------
+            # ABRIR POST
+            # -------------------
+
+            print("Procurando botão de nova publicação...")
+
+            botao_post = page.locator(
+                "div[componentkey='draft-text-replaceable-component']"
             ).first
 
-            button.click()
+            botao_post.wait_for(timeout=20000)
+
+            botao_post.click()
+
+            # -------------------
+            # DIGITAR TEXTO
+            # -------------------
+
+            print("Abrindo caixa de texto...")
 
             page.wait_for_selector("div[role='textbox']")
 
             page.locator("div[role='textbox']").first.fill(texto)
 
+            page.wait_for_timeout(3000)
+
+            # -------------------
+            # FECHAR PREVIEW DO LINK
+            # -------------------
+
+            print("Tentando fechar preview do link...")
+
+            try:
+
+                fechar_preview = page.locator("use[href='#close-small']").first
+
+                if fechar_preview.count() > 0:
+
+                    fechar_preview.click()
+
+                    print("Preview fechado")
+
+                    page.wait_for_timeout(2000)
+
+            except:
+
+                print("Preview não encontrado")
+
+            # -------------------
+            # ADICIONAR LOGO
+            # -------------------
+
             if os.path.exists(logo_path):
 
                 print("Adicionando logo:", logo_path)
 
+                page.locator(
+                    "button[aria-label='Adicionar mídia']"
+                ).first.click()
+
+                page.wait_for_timeout(2000)
+
                 page.set_input_files("input[type=file]", logo_path)
+
+                page.wait_for_timeout(3000)
+
+                page.locator(
+                    "button:has-text('Avançar')"
+                ).first.click()
 
                 page.wait_for_timeout(4000)
 
@@ -153,13 +210,23 @@ def postar():
 
                 print("Logo não encontrada:", empresa)
 
-            page.locator(
-                "button:has-text('Publicar'), button:has-text('Post')"
-            ).first.click()
+            # -------------------
+            # PUBLICAR
+            # -------------------
+
+            print("Publicando...")
+
+            botao_publicar = page.locator(
+                "button:has(span:has-text('Publicar'))"
+            ).first
+
+            botao_publicar.wait_for(timeout=10000)
+
+            botao_publicar.click()
 
             print("Post publicado!")
 
-            time.sleep(10)
+            time.sleep(12)
 
         browser.close()
 
