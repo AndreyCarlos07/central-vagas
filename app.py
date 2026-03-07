@@ -28,6 +28,9 @@ PALAVRAS_BLOQUEADAS = {
     "serviços gerais",
     "cozinheiro",
     "representante",
+    "eusébio"
+    "motorista"
+    "jaboatão"
 }
 
 def vagas_ativas():
