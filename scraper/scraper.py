@@ -85,7 +85,10 @@ SITES = [
     {"empresa": "CETREL", "url": "https://cetrel.gupy.io", "tipo": "gupy"},
     {"empresa": "MOHAWK", "url": "https://mohawk.gupy.io", "tipo": "gupy"},
     {"empresa": "MARTINS", "url": "https://logisticamartins.gupy.io", "tipo": "gupy"},
-    {"empresa": "YPE", "url": "https://carreirasype.gupy.io", "tipo": "gupy"},
+    {"empresa": "YPÊ", "url": "https://carreirasype.gupy.io", "tipo": "gupy"},
+    {"empresa": "3CORAÇÕES", "url": "https://3coracoes.gupy.io", "tipo": "gupy"},
+    {"empresa": "ALVOAR LÁCTEOS", "url": "https://alvoarlacteos.gupy.io", "tipo": "gupy"},
+    {"empresa": "GRUPO MARATÁ", "url": "https://grupomarata.gupy.io", "tipo": "gupy"},
     {
         "empresa": "BRIDGESTONE",
         "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers",
