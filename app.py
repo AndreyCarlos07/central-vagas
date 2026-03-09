@@ -31,6 +31,7 @@ PALAVRAS_BLOQUEADAS = {
     "eusébio",
     "motorista",
     "jaboatão",
+    "Técnica ou Técnico de Segurança do Trabalho I - Paracatu/MG",
 }
 
 def vagas_ativas():
