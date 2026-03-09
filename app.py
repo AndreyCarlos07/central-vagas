@@ -31,7 +31,7 @@ PALAVRAS_BLOQUEADAS = {
     "eusébio",
     "motorista",
     "jaboatão",
-    "mg efetivo",
+    "mg",
 }
 
 def vagas_ativas():
