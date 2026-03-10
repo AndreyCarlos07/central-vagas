@@ -842,7 +842,7 @@ def main():
                     vagas = coletar_heineken(page, site)
 
                 elif site["tipo"] == "inhire":
-                vagas = coletar_inhire(page, site)
+                    vagas = coletar_inhire(page, site)
                 
                 else:
                     print("⚠️ Tipo não reconhecido")
