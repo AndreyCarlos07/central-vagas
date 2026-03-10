@@ -738,6 +738,8 @@ def coletar_inhire(page, site):
         vagas_cidade = 0
 
         try:
+            # espera carregar o dropdown
+            page.wait_for_selector("div.react-dropdown-select", timeout=20000)
             # abre dropdown
             page.click("div.react-dropdown-select")
 
