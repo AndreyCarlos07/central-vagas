@@ -32,7 +32,8 @@ PALAVRAS_BLOQUEADAS = {
     "motorista",
     "jaboatão",
     "mg",
-    "ufrj"
+    "ufrj",
+    "beleza"
 }
 
 def vagas_ativas():
