@@ -13,8 +13,8 @@ from datetime import datetime
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["HEINEKEN", "YPE"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["MFX, "PRINER", "INFOTEC BRASIL"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -188,6 +188,21 @@ SITES = [
         "empresa": "HEINEKEN",
         "url": "https://careers.theheinekencompany.com/Brazil/search", 
         "tipo": "heineken"
+    },
+    {
+    "empresa": "MFX",
+    "url": "https://mfx.inhire.app/vagas",
+    "tipo": "inhire"
+    },
+    {
+    "empresa": "PRINER",
+    "url": "https://priner.inhire.app/vagas",
+    "tipo": "inhire"
+    },
+    {
+    "empresa": "INFOTEC BRASIL",
+    "url": "https://infotecbrasil.inhire.app/vagas",
+    "tipo": "inhire"
     }
 ]
 
@@ -697,6 +712,85 @@ def coletar_heineken(page, site):
     print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
     return vagas
 
+# ===========================
+# INHIRE
+# ===========================
+def coletar_inhire(page, site):
+
+    vagas = []
+    links_coletados = set()
+
+    page.goto(site["url"], timeout=60000)
+    page.wait_for_load_state("domcontentloaded")
+    page.wait_for_timeout(2000)
+
+    cidades = [
+        "Salvador, BA, BR",
+        "Candeias, BA, BR",
+        "Camaçari, BA, BR",
+        "Catu, BA, BR"
+    ]
+
+    for cidade in cidades:
+
+        print(f"📍 Filtrando cidade: {cidade}")
+
+        vagas_cidade = 0
+
+        try:
+            # abre dropdown
+            page.click("div.react-dropdown-select")
+
+            page.wait_for_timeout(1000)
+
+            # seleciona cidade
+            page.click(f"span[title='{cidade}']")
+
+            page.wait_for_timeout(2000)
+
+            # espera lista aparecer
+            page.wait_for_selector("a[data-component-name='job-position-link']")
+
+            links = page.locator("a[data-component-name='job-position-link']")
+            total = links.count()
+
+            print(f"Total encontrado em {cidade}: {total}")
+
+            for i in range(total):
+
+                link = links.nth(i).get_attribute("href")
+
+                if not link:
+                    continue
+
+                link_completo = f"https://mfx.inhire.app{link}"
+
+                if link_completo in links_coletados:
+                    continue
+
+                links_coletados.add(link_completo)
+
+                titulo = links.nth(i).locator("div.css-uormui").inner_text().strip()
+
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo,
+                    "empresa": site["empresa"],
+                    "link": link_completo
+                })
+
+                vagas_cidade += 1
+
+            print(f"Total coletado em {cidade}: {vagas_cidade}")
+
+        except Exception as e:
+            print(f"Erro ao filtrar {cidade}: {e}")
+            continue
+
+    print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
+
+    return vagas
+
 
 # ===========================
 # MAIN
@@ -746,6 +840,9 @@ def main():
 
                 elif site["tipo"] == "heineken":
                     vagas = coletar_heineken(page, site)
+
+                elif site["tipo"] == "inhire":
+                vagas = coletar_inhire(page, site)
                 
                 else:
                     print("⚠️ Tipo não reconhecido")
