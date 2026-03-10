@@ -738,14 +738,20 @@ def coletar_inhire(page, site):
         vagas_cidade = 0
 
         try:
+            # abre dropdown
             page.wait_for_selector("[aria-label='Dropdown select']", timeout=20000)
-
             page.click("[aria-label='Dropdown select']")
 
-            page.wait_for_timeout(1000)
+            # espera campo pesquisar
+            page.wait_for_selector("input[placeholder='Pesquisar']")
+
+            # digita cidade
+            page.fill("input[placeholder='Pesquisar']", cidade)
+
+            page.wait_for_timeout(1500)
 
             # seleciona cidade
-            page.click(f"span[title='{cidade}']")
+            page.click(f"button[data-option-value='{cidade}']")
 
             page.wait_for_timeout(2000)
 
