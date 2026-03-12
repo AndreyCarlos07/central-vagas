@@ -14,6 +14,9 @@ app = Flask(__name__)
 CSV_FILE = "vagas.csv"
 VAGAS_POR_PAGINA = 10  # ✅ ADICIONADO
 
+ARQUIVO_OCULTAS = "vagas_ocultas.txt"
+ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN")
+
 # ==========================
 # PALAVRAS BLOQUEADAS
 # ==========================
@@ -38,12 +41,42 @@ PALAVRAS_BLOQUEADAS = {
     "loja"
 }
 
+# ==========================
+# VAGAS OCULTAS
+# ==========================
+def vagas_ocultas():
+    try:
+        with open(ARQUIVO_OCULTAS, "r") as f:
+            return set(l.strip() for l in f.readlines())
+    except:
+        return set()
+
+def ocultar_vaga(id):
+    with open(ARQUIVO_OCULTAS, "a") as f:
+        f.write(id + "\n")
+
+def restaurar_vaga(id):
+    ocultas = vagas_ocultas()
+
+    if id in ocultas:
+        ocultas.remove(id)
+
+    with open(ARQUIVO_OCULTAS, "w") as f:
+        for v in ocultas:
+            f.write(v + "\n")
+
+
 def vagas_ativas():
     vagas = []
+    ocultas = vagas_ocultas()
+
     try:
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for vaga in reader:
+
+                if vaga["id"] in ocultas:
+                    continue
 
                 titulo_lower = vaga["titulo"].lower()
 
@@ -61,6 +94,8 @@ def vagas_ativas():
 @app.route("/")
 def home():
     vagas = vagas_ativas()
+
+    admin = request.args.get("admin") == ADMIN_TOKEN
 
 
     # ==========================
@@ -284,6 +319,13 @@ def home():
                     <div class="empresa">
                         Empresa: {{ vaga.empresa }}
                     </div>
+
+                    {% if admin %}
+                    <a href="/ocultar/{{ vaga.id }}?admin={{token}}" style="color:red;font-size:12px;">
+                    ocultar
+                    </a>
+                    {% endif %}
+
                 </div>
             {% endfor %}
         {% else %}
@@ -318,8 +360,32 @@ def home():
         filtro_empresa=filtro_empresa,
         ordem=ordem,
         page=page,
-        total_paginas=total_paginas
+        total_paginas=total_paginas,
+        admin=admin,
+        token=ADMIN_TOKEN
     )
+
+
+@app.route("/ocultar/<id>")
+def ocultar(id):
+
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    ocultar_vaga(id)
+
+    return redirect("/?admin=" + ADMIN_TOKEN)
+
+
+@app.route("/restaurar/<id>")
+def restaurar(id):
+
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    restaurar_vaga(id)
+
+    return redirect("/?admin=" + ADMIN_TOKEN)
 
 
 @app.route("/vaga/<id>")
