@@ -14,8 +14,27 @@ app = Flask(__name__)
 CSV_FILE = "vagas.csv"
 VAGAS_POR_PAGINA = 10  # ✅ ADICIONADO
 
-ARQUIVO_OCULTAS = "vagas_ocultas.txt"
 ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN")
+
+import sqlite3
+
+# ==========================
+# BANCO SQLITE
+# ==========================
+def init_db():
+    conn = sqlite3.connect("vagas.db")
+    c = conn.cursor()
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS vagas_ocultas (
+        id TEXT PRIMARY KEY
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+init_db()
 
 # ==========================
 # PALAVRAS BLOQUEADAS
@@ -45,26 +64,45 @@ PALAVRAS_BLOQUEADAS = {
 # VAGAS OCULTAS
 # ==========================
 def vagas_ocultas():
-    try:
-        with open(ARQUIVO_OCULTAS, "r") as f:
-            return set(l.strip() for l in f.readlines())
-    except:
-        return set()
+
+    conn = sqlite3.connect("vagas.db")
+    c = conn.cursor()
+
+    c.execute("SELECT id FROM vagas_ocultas")
+
+    ocultas = {row[0] for row in c.fetchall()}
+
+    conn.close()
+
+    return ocultas
+
 
 def ocultar_vaga(id):
-    with open(ARQUIVO_OCULTAS, "a") as f:
-        f.write(id + "\n")
+
+    conn = sqlite3.connect("vagas.db")
+    c = conn.cursor()
+
+    c.execute(
+        "INSERT OR IGNORE INTO vagas_ocultas (id) VALUES (?)",
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
 
 def restaurar_vaga(id):
-    ocultas = vagas_ocultas()
 
-    if id in ocultas:
-        ocultas.remove(id)
+    conn = sqlite3.connect("vagas.db")
+    c = conn.cursor()
 
-    with open(ARQUIVO_OCULTAS, "w") as f:
-        for v in ocultas:
-            f.write(v + "\n")
+    c.execute(
+        "DELETE FROM vagas_ocultas WHERE id=?",
+        (id,)
+    )
 
+    conn.commit()
+    conn.close()
 
 def vagas_ativas():
     vagas = []
@@ -255,6 +293,14 @@ def home():
 
         <h1>Central de Vagas - Engenharia / BA</h1>
 
+        {% if admin %}
+        <p>
+        <a href="/admin/ocultas?admin={{token}}" style="font-size:14px;">
+        ⚙️ Ver vagas ocultas
+        </a>
+        </p>
+        {% endif %}
+
         <div class="top-bar">
 
             <a href="https://www.linkedin.com/in/engandreycarlos/" target="_blank" class="linkedin-btn">
@@ -321,7 +367,7 @@ def home():
                     </div>
 
                     {% if admin %}
-                    <a href="/ocultar/{{ vaga.id }}?admin={{token}}" style="color:red;font-size:12px;">
+                    <a href="/ocultar/{{ vaga.id }}?admin={{token}}&page={{page}}&q={{busca_nome}}&empresa={{filtro_empresa}}&ordem={{ordem}}" style="color:red;font-size:12px;">
                     ocultar
                     </a>
                     {% endif %}
@@ -374,7 +420,12 @@ def ocultar(id):
 
     ocultar_vaga(id)
 
-    return redirect("/?admin=" + ADMIN_TOKEN)
+    page = request.args.get("page", 1)
+    q = request.args.get("q", "")
+    empresa = request.args.get("empresa", "")
+    ordem = request.args.get("ordem", "recentes")
+
+    return redirect(f"/?admin={ADMIN_TOKEN}&page={page}&q={q}&empresa={empresa}&ordem={ordem}")
 
 
 @app.route("/restaurar/<id>")
@@ -386,6 +437,71 @@ def restaurar(id):
     restaurar_vaga(id)
 
     return redirect("/?admin=" + ADMIN_TOKEN)
+    
+
+@app.route("/admin/ocultas")
+def admin_ocultas():
+
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    ocultas = vagas_ocultas()
+    vagas = []
+
+    try:
+        with open(CSV_FILE, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+
+            for vaga in reader:
+                if vaga["id"] in ocultas:
+                    vagas.append(vaga)
+
+    except:
+        pass
+
+    html = """
+    <html>
+    <head>
+        <title>Vagas Ocultas</title>
+    </head>
+    <body>
+
+    <h2>Vagas ocultadas</h2>
+
+    <a href="/?admin={{token}}">← voltar</a>
+
+    <hr>
+
+    {% for vaga in vagas %}
+
+        <p>
+
+        <strong>{{ vaga.titulo }}</strong><br>
+        Empresa: {{ vaga.empresa }}<br>
+
+        <a href="/restaurar/{{vaga.id}}?admin={{token}}" style="color:green;">
+        restaurar
+        </a>
+
+        </p>
+
+        <hr>
+
+    {% endfor %}
+
+    {% if not vagas %}
+    <p>Nenhuma vaga ocultada.</p>
+    {% endif %}
+
+    </body>
+    </html>
+    """
+
+    return render_template_string(
+        html,
+        vagas=vagas,
+        token=ADMIN_TOKEN
+    )
 
 
 @app.route("/vaga/<id>")
