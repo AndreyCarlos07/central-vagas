@@ -7,6 +7,9 @@ import os
 import csv
 import time
 from flask import Flask, redirect, render_template_string, request
+import json
+import base64
+import requests
 from datetime import datetime
 
 app = Flask(__name__)
@@ -16,25 +19,11 @@ VAGAS_POR_PAGINA = 10  # ✅ ADICIONADO
 
 ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN")
 
-import sqlite3
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 
-# ==========================
-# BANCO SQLITE
-# ==========================
-def init_db():
-    conn = sqlite3.connect("vagas.db")
-    c = conn.cursor()
+REPO = "AndreyCarlos07/central-vagas"
+ARQUIVO_OCULTAS = "vagas_ocultas.json"
 
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS vagas_ocultas (
-        id TEXT PRIMARY KEY
-    )
-    """)
-
-    conn.commit()
-    conn.close()
-
-init_db()
 
 # ==========================
 # PALAVRAS BLOQUEADAS
@@ -60,49 +49,76 @@ PALAVRAS_BLOQUEADAS = {
     "loja"
 }
 
-# ==========================
-# VAGAS OCULTAS
-# ==========================
+def carregar_ocultas():
+
+    url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_OCULTAS}"
+
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}"
+    }
+
+    r = requests.get(url, headers=headers)
+
+    if r.status_code != 200:
+        return set()
+
+    data = r.json()
+
+    conteudo = base64.b64decode(data["content"]).decode()
+
+    json_data = json.loads(conteudo)
+
+    return set(json_data.get("ocultas", []))
+
+
+def salvar_ocultas(lista_ids):
+
+    url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_OCULTAS}"
+
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}"
+    }
+
+    r = requests.get(url, headers=headers)
+
+    sha = None
+    if r.status_code == 200:
+        sha = r.json()["sha"]
+
+    conteudo = json.dumps({"ocultas": list(lista_ids)}, indent=2)
+
+    encoded = base64.b64encode(conteudo.encode()).decode()
+
+    payload = {
+        "message": "Atualizando vagas ocultas",
+        "content": encoded,
+        "sha": sha
+    }
+
+    requests.put(url, headers=headers, json=payload)
+
+
 def vagas_ocultas():
-
-    conn = sqlite3.connect("vagas.db")
-    c = conn.cursor()
-
-    c.execute("SELECT id FROM vagas_ocultas")
-
-    ocultas = {row[0] for row in c.fetchall()}
-
-    conn.close()
-
-    return ocultas
+    return carregar_ocultas()
 
 
 def ocultar_vaga(id):
 
-    conn = sqlite3.connect("vagas.db")
-    c = conn.cursor()
+    ocultas = carregar_ocultas()
 
-    c.execute(
-        "INSERT OR IGNORE INTO vagas_ocultas (id) VALUES (?)",
-        (id,)
-    )
+    ocultas.add(id)
 
-    conn.commit()
-    conn.close()
+    salvar_ocultas(ocultas)
 
 
 def restaurar_vaga(id):
 
-    conn = sqlite3.connect("vagas.db")
-    c = conn.cursor()
+    ocultas = carregar_ocultas()
 
-    c.execute(
-        "DELETE FROM vagas_ocultas WHERE id=?",
-        (id,)
-    )
+    ocultas.discard(id)
 
-    conn.commit()
-    conn.close()
+    salvar_ocultas(ocultas)
+    
 
 def vagas_ativas():
     vagas = []
