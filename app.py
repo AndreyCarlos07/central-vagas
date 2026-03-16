@@ -54,9 +54,9 @@ def carregar_ocultas():
     url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_OCULTAS}"
 
     headers = {
-        "Authorization": f"token {GITHUB_TOKEN}"
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github+json"
     }
-
     r = requests.get(url, headers=headers)
 
     if r.status_code != 200:
