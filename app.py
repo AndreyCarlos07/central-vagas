@@ -380,16 +380,17 @@ def home():
 
         <div class="paginacao">
             {% if page > 1 %}
-                <a href="?admin={{token}}&page={{ page-1 }}&q={{ busca_nome }}&empresa={{ filtro_empresa }}&ordem={{ ordem }}">
+                <a href="?{% if admin %}admin={{token}}&{% endif %}page={{ page-1 }}&q={{ busca_nome }}&empresa={{ filtro_empresa }}&ordem={{ ordem }}">
                     ← Anterior
                 </a>
             {% endif %}
 
             {% if page < total_paginas %}
-                <a href="?admin={{token}}&page={{ page+1 }}&q={{ busca_nome }}&empresa={{ filtro_empresa }}&ordem={{ ordem }}">
+                <a href="?{% if admin %}admin={{token}}&{% endif %}page={{ page+1 }}&q={{ busca_nome }}&empresa={{ filtro_empresa }}&ordem={{ ordem }}">
                     Próxima →
                 </a>
             {% endif %}
+            
         </div>
 
     </body>
