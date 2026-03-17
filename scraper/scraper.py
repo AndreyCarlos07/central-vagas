@@ -513,9 +513,9 @@ def coletar_recrutai(page, site):
 
     cidade = site.get("cidade")
 
-        if cidade:
-            page.click(f"text={cidade}")
-            page.wait_for_timeout(1000)
+    if cidade:
+        page.click(f"text={cidade}")
+        page.wait_for_timeout(1000)
 
     # 🔥 Filtrar
     page.click('button[type="submit"]')
