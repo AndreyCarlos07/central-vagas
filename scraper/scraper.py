@@ -498,89 +498,92 @@ def coletar_oracle(page, site):
 # RECRUT.AI
 # ===========================
 def coletar_recrutai(page, site):
+
     vagas = []
     links_coletados = set()
 
     page.goto(site["url"], timeout=60000)
     page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(5000)
+    page.wait_for_timeout(4000)
 
-    print(f"🔎 {site['empresa']} selecionando cidade...")
-
-    # 🔥 Dropdown Localidades
-    page.locator("button.dropdown-toggle").nth(1).click()
-    page.wait_for_timeout(1000)
-
-    # 🔥 Dropdown Localidades
     cidades = site.get("cidade")
 
-    if cidades:
+    if isinstance(cidades, str):
+        cidades = [cidades]
 
-        if isinstance(cidades, str):
-            cidades = [cidades]
+    for cidade in cidades:
 
-        for cidade in cidades:
+        print(f"🔎 {site['empresa']} filtrando cidade: {cidade}")
+
+        try:
 
             # abre dropdown
-            page.locator('button[data-id="inputAddr"]').click()
-
-            # clica na cidade
-            page.locator(f"li:has-text('{cidade}')").first.click()
-
+            page.locator("button.dropdown-toggle").nth(1).click()
             page.wait_for_timeout(800)
 
-    # 🔥 Filtrar
-    page.click('button[type="submit"]')
-    page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(5000)
+            # seleciona cidade
+            page.locator(f"text={cidade}").first.click()
+            page.wait_for_timeout(800)
 
-    # 🔥 Coleta links
-    cards = page.locator('a[href^="job/"]')
-    total = cards.count()
-
-    print("Total de vagas encontradas:", total)
-
-    for i in range(total):
-        try:
-            link = cards.nth(i).get_attribute("href")
-
-            if not link:
-                continue
-
-            base_url = site["url"].split("#")[0]
-
-            if not base_url.endswith("/"):
-                base_url += "/"
-
-            link_completo = base_url + link
-
-            if link_completo in links_coletados:
-                continue
-
-            links_coletados.add(link_completo)
-
-            # 🔥 Abre página da vaga
-            page.goto(link_completo, timeout=60000)
+            # clicar filtrar
+            page.click('button[type="submit"]')
             page.wait_for_load_state("networkidle")
+            page.wait_for_timeout(3000)
 
-            titulo = page.locator("h3").first.inner_text().strip()
+            # coleta vagas da cidade
+            cards = page.locator('a[href*="job/"]')
+            total = cards.count()
 
-            vagas.append({
-                "id": str(uuid.uuid4())[:8],
-                "titulo": titulo,
-                "empresa": site["empresa"],
-                "link": link_completo
-            })
+            print(f"Total de vagas em {cidade}: {total}")
 
-            # 🔥 Volta para listagem
-            page.go_back()
-            page.wait_for_load_state("networkidle")
+            for i in range(total):
+
+                try:
+
+                    link = cards.nth(i).get_attribute("href")
+
+                    if not link:
+                        continue
+
+                    base_url = site["url"].split("#")[0]
+
+                    if not base_url.endswith("/"):
+                        base_url += "/"
+
+                    link_completo = base_url + link
+
+                    if link_completo in links_coletados:
+                        continue
+
+                    links_coletados.add(link_completo)
+
+                    # abre vaga
+                    page.goto(link_completo, timeout=60000)
+                    page.wait_for_load_state("networkidle")
+
+                    titulo = page.locator("h3").first.inner_text().strip()
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": site["empresa"],
+                        "link": link_completo
+                    })
+
+                    # volta para lista
+                    page.go_back()
+                    page.wait_for_load_state("networkidle")
+
+                except Exception as e:
+                    print("Erro ao processar vaga:", e)
+                    continue
 
         except Exception as e:
-            print("Erro ao processar vaga:", e)
+            print("Erro ao filtrar cidade:", e)
             continue
 
     print(f"📌 {site['empresa']} (RECRUT.AI): {len(vagas)} vagas coletadas")
+
     return vagas
 
 # ===========================
