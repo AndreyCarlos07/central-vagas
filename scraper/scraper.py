@@ -184,7 +184,7 @@ SITES = [
         "empresa": "MDC ENERGIA",
         "url": "https://mdcnossostalentos.jobs.recrut.ai/#openings",
         "tipo": "recrutai",
-        "cidade": "Camaçari / BA"
+        "cidade": ["Camaçari / BA", "Salvador / BA"]
     },
     {
         "empresa": "SOTREQ",
@@ -511,11 +511,16 @@ def coletar_recrutai(page, site):
     page.locator("button.dropdown-toggle").nth(1).click()
     page.wait_for_timeout(1000)
 
-    cidade = site.get("cidade")
+    cidades = site.get("cidade")
 
-    if cidade:
-        page.click(f"text={cidade}")
-        page.wait_for_timeout(1000)
+    if cidades:
+
+        if isinstance(cidades, str):
+            cidades = [cidades]
+
+        for cidade in cidades:
+            page.click(f"text={cidade}")
+            page.wait_for_timeout(1000)
 
     # 🔥 Filtrar
     page.click('button[type="submit"]')
