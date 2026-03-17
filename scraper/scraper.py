@@ -514,23 +514,23 @@ def coletar_recrutai(page, site):
     # 🔥 Dropdown Localidades
     cidades = site.get("cidade")
 
-        if cidades:
+    if cidades:
 
-            if isinstance(cidades, str):
-                cidades = [cidades]
+        if isinstance(cidades, str):
+             cidades = [cidades]
 
-            for cidade in cidades:
+        for cidade in cidades:
 
-            # abre dropdown
-            page.locator('button[data-id="inputAddr"]').click()
+        # abre dropdown
+        page.locator('button[data-id="inputAddr"]').click()
 
-            # espera opções aparecerem
-            page.wait_for_selector(".dropdown-menu.open")
+        # espera opções aparecerem
+        page.wait_for_selector(".dropdown-menu.open")
 
-            # clica na cidade
-            page.locator(f".dropdown-menu.open li:has-text('{cidade}')").first.click()
+        # clica na cidade
+        page.locator(f".dropdown-menu.open li:has-text('{cidade}')").first.click()
 
-            page.wait_for_timeout(800)
+        page.wait_for_timeout(800)
 
     # 🔥 Filtrar
     page.click('button[type="submit"]')
