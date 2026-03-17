@@ -521,11 +521,13 @@ def coletar_recrutai(page, site):
 
         for cidade in cidades:
 
-            # abre dropdown novamente
+            # abre dropdown
             page.locator("button.dropdown-toggle").nth(1).click()
-            page.wait_for_timeout(800)
+            page.wait_for_selector("ul.dropdown-menu.show")
 
-            page.locator(f"text={cidade}").first.click()
+            opcao = page.locator("li", has_text=cidade)
+            opcao.first.click()
+
             page.wait_for_timeout(800)
 
     # 🔥 Filtrar
