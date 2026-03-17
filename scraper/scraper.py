@@ -13,8 +13,8 @@ from datetime import datetime
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["MFX", "PRINER", "INFOTEC BRASIL"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["ACELEN", "MDC Energia"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -177,7 +177,14 @@ SITES = [
     {
         "empresa": "ACELEN",
         "url": "https://acelen.jobs.recrut.ai/#openings",
-        "tipo": "recrutai"
+        "tipo": "recrutai",
+        "cidade": "São Francisco do Conde / BA"
+    },
+    {
+        "empresa": "MDC ENERGIA",
+        "url": "https://mdcnossostalentos.jobs.recrut.ai/#openings",
+        "tipo": "recrutai",
+        "cidade": "Camaçari / BA"
     },
     {
         "empresa": "SOTREQ",
@@ -488,7 +495,7 @@ def coletar_oracle(page, site):
     return vagas
 
 # ===========================
-# RECRUT.AI (ACELEN)
+# RECRUT.AI
 # ===========================
 def coletar_recrutai(page, site):
     vagas = []
@@ -498,14 +505,17 @@ def coletar_recrutai(page, site):
     page.wait_for_load_state("networkidle")
     page.wait_for_timeout(5000)
 
-    print("🔎 ACELEN selecionando cidade...")
+    print(f"🔎 {site['empresa']} selecionando cidade...")
 
     # 🔥 Dropdown Localidades
     page.locator("button.dropdown-toggle").nth(1).click()
     page.wait_for_timeout(1000)
 
-    page.click("text=São Francisco do Conde / BA")
-    page.wait_for_timeout(1000)
+    cidade = site.get("cidade")
+
+    if cidade:
+        page.click(f"text={cidade}")
+        page.wait_for_timeout(1000)
 
     # 🔥 Filtrar
     page.click('button[type="submit"]')
@@ -525,7 +535,12 @@ def coletar_recrutai(page, site):
             if not link:
                 continue
 
-            link_completo = "https://acelen.jobs.recrut.ai/" + link
+            base_url = site["url"].split("#")[0]
+
+            if not base_url.endswith("/"):
+                base_url += "/"
+
+            link_completo = base_url + link
 
             if link_completo in links_coletados:
                 continue
