@@ -517,18 +517,15 @@ def coletar_recrutai(page, site):
     if cidades:
 
         if isinstance(cidades, str):
-             cidades = [cidades]
+            cidades = [cidades]
 
         for cidade in cidades:
 
             # abre dropdown
             page.locator('button[data-id="inputAddr"]').click()
 
-            # espera opções aparecerem
-            page.wait_for_selector(".dropdown-menu.open")
-
             # clica na cidade
-            page.locator(f".dropdown-menu.open li:has-text('{cidade}')").first.click()
+            page.locator(f"li:has-text('{cidade}')").first.click()
 
             page.wait_for_timeout(800)
 
