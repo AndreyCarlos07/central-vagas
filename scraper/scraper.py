@@ -184,7 +184,7 @@ SITES = [
         "empresa": "MDC ENERGIA",
         "url": "https://mdcnossostalentos.jobs.recrut.ai/#openings",
         "tipo": "recrutai",
-        "cidade": "Camaçari / BA"
+        "cidade": "Salvador / BA"
     },
     {
         "empresa": "SOTREQ",
