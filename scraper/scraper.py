@@ -509,8 +509,8 @@ def coletar_recrutai(page, site):
 
     # 🔥 Dropdown Localidades
     page.locator("button.dropdown-toggle").nth(1).click()
-    page.wait_for_timeout(1000)
-
+    page.wait_for_selector(".dropdown-menu.show", timeout=10000)
+            
     cidades = site.get("cidade")
 
     if cidades:
@@ -519,7 +519,12 @@ def coletar_recrutai(page, site):
             cidades = [cidades]
 
         for cidade in cidades:
-            page.click(f"text={cidade}")
+
+            opcao = page.locator(f"text={cidade}").first
+
+            opcao.scroll_into_view_if_needed()
+            opcao.click()
+
             page.wait_for_timeout(1000)
 
     # 🔥 Filtrar
