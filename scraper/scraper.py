@@ -392,25 +392,20 @@ def coletar_gerdau(page, site):
 
     page.goto(site["url"], timeout=60000)
 
-    # espera a página carregar minimamente
+    page.wait_for_load_state("domcontentloaded")
+
+    # 🔥 força carregamento
+    page.mouse.move(500, 500)
+    page.mouse.wheel(0, 3000)
     page.wait_for_timeout(5000)
 
-    # 🔥 tenta achar vagas por até 30s
-    cards = None
-    for _ in range(15):  # 15 tentativas (~30s)
-        cards = page.locator('a.jobTitle-link')
+    cards = page.locator('a.jobTitle-link')
 
-        if cards.count() > 0:
-            break
+    print("DEBUG vagas:", cards.count())
 
-        print("⏳ aguardando vagas...")
-        page.wait_for_timeout(2000)
-
-    if not cards or cards.count() == 0:
+    if cards.count() == 0:
         print("❌ nenhuma vaga encontrada")
         return vagas
-
-    print("✅ vagas encontradas:", cards.count())
 
     for i in range(cards.count()):
         el = cards.nth(i)
