@@ -152,7 +152,7 @@ SITES = [
     },
     {
         "empresa": "GERDAU",
-        "url": "https://jobs.continental.com/pt/#/?location=%7B%22title%22:%22Cama%C3%A7ari-Bahia,%20Brasil%22,%22type%22:%22location%22,%22coordinates%22:%7B%22latitude%22:-12.6998,%22longitude%22:-38.3261%7D%7D",
+        "url": "https://jobs.gerdau.com/search/?searchby=location&createNewAlert=false&q=&locationsearch=sim%C3%B5es+filho&geolocation=&optionsFacetsDD_country=&optionsFacetsDD_location=&optionsFacetsDD_title=&optionsFacetsDD_state=&optionsFacetsDD_city=&optionsFacetsDD_department=&optionsFacetsDD_customfield5=",
         "tipo": "gerdau"
     },
     {
