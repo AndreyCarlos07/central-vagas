@@ -392,34 +392,32 @@ def coletar_gerdau(page, site):
 
     page.goto(site["url"], timeout=60000)
 
+    # espera a página carregar minimamente
     page.wait_for_timeout(5000)
 
-    # 🔎 pegar frame correto
-    frame = None
-    for f in page.frames:
-        if "gerdau.com" in f.url and "search" in f.url:
-            frame = f
+    # 🔥 tenta achar vagas por até 30s
+    cards = None
+    for _ in range(15):  # 15 tentativas (~30s)
+        cards = page.locator('a.jobTitle-link')
+
+        if cards.count() > 0:
             break
 
-    if not frame:
-        print("❌ Frame não encontrado")
+        print("⏳ aguardando vagas...")
+        page.wait_for_timeout(2000)
+
+    if not cards or cards.count() == 0:
+        print("❌ nenhuma vaga encontrada")
         return vagas
 
-    # agora sim espera dentro do frame
-    frame.wait_for_selector('li.job-tile', timeout=20000)
-
-    cards = frame.locator('li.job-tile')
-
-    print("DEBUG cards:", cards.count())
+    print("✅ vagas encontradas:", cards.count())
 
     for i in range(cards.count()):
         el = cards.nth(i)
 
         try:
-            link_el = el.locator('a.jobTitle-link')
-
-            link = link_el.get_attribute("href")
-            titulo = link_el.inner_text().strip()
+            link = el.get_attribute("href")
+            titulo = el.inner_text().strip()
 
             if not link or not titulo:
                 continue
@@ -444,7 +442,7 @@ def coletar_gerdau(page, site):
         except:
             continue
 
-    print(f"📌 {site['empresa']} (JOBS): {len(vagas)} vagas")
+    print(f"📌 {site['empresa']} (SCRAPING): {len(vagas)} vagas")
     return vagas
     
 
