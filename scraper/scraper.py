@@ -13,8 +13,8 @@ from datetime import datetime
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["ACELEN", "MDC ENERGIA"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["INDORAMA VENTURES", "GERDAU"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -139,9 +139,21 @@ SITES = [
         "pesquisas": ["Camaçari", "Alagoinhas"]
     },
     {
+        "empresa": "INDORAMA VENTURES",
+        "url": "https://ivlglobaliod.wd1.myworkdayjobs.com/pt-BR/Indovinya",
+        "tipo": "workday",
+        "base": "https://ivlglobaliod.wd1.myworkdayjobs.com",
+        "pesquisas": ["Camaçari"]
+    },
+    {
         "empresa": "CONTINENTAL",
         "url": "https://jobs.continental.com/pt/#/?location=%7B%22title%22:%22Cama%C3%A7ari-Bahia,%20Brasil%22,%22type%22:%22location%22,%22coordinates%22:%7B%22latitude%22:-12.6998,%22longitude%22:-38.3261%7D%7D",
         "tipo": "continental"
+    },
+    {
+        "empresa": "GERDAU",
+        "url": "https://jobs.continental.com/pt/#/?location=%7B%22title%22:%22Cama%C3%A7ari-Bahia,%20Brasil%22,%22type%22:%22location%22,%22coordinates%22:%7B%22latitude%22:-12.6998,%22longitude%22:-38.3261%7D%7D",
+        "tipo": "gerdau"
     },
     {
         "empresa": "MERCADO LIVRE",
@@ -369,6 +381,54 @@ def coletar_continental(page, site):
             continue
 
     print(f"📌 {site['empresa']} (PORTAL PROPRIO): {len(vagas)} vagas")
+    return vagas
+
+# ===========================
+# GERDAU
+# ===========================
+def coletar_gerdau(page, site):
+    vagas = []
+    links_coletados = set()
+
+    page.goto(site["url"], timeout=60000)
+    page.wait_for_load_state("networkidle")
+
+    # scroll (caso tenha lazy load)
+    for _ in range(5):
+        page.mouse.wheel(0, 4000)
+        page.wait_for_timeout(1500)
+
+    cards = page.locator('a[href*="/job/"]')
+
+    for i in range(cards.count()):
+        el = cards.nth(i)
+
+        try:
+            link = el.get_attribute("href")
+
+            if not link.startswith("http"):
+                link = "https://jobs.gerdau.com" + link
+
+            link_limpo = link.split("?")[0]
+
+            if link_limpo in links_coletados:
+                continue
+
+            links_coletados.add(link_limpo)
+
+            titulo = el.inner_text().strip()
+
+            vagas.append({
+                "id": str(uuid.uuid4())[:8],
+                "titulo": titulo,
+                "empresa": site["empresa"],
+                "link": link_limpo
+            })
+
+        except:
+            continue
+
+    print(f"📌 {site['empresa']} (JOBS): {len(vagas)} vagas")
     return vagas
     
 
@@ -761,6 +821,9 @@ def main():
 
                 elif site["tipo"] == "continental":
                     vagas = coletar_continental(page, site)
+
+                elif site["tipo"] == "gerdau":
+                    vagas = coletar_gerdau(page, site)
 
                 elif site["tipo"] == "eightfold":
                     vagas = coletar_eightfold(page, site)
