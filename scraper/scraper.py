@@ -392,10 +392,23 @@ def coletar_gerdau(page, site):
 
     page.goto(site["url"], timeout=60000)
 
-    # ESSENCIAL: esperar o container real
-    page.wait_for_selector('ul#job-tile-list li.job-tile', timeout=20000)
+    page.wait_for_timeout(5000)
 
-    cards = page.locator('li.job-tile')
+    # 🔎 pegar frame correto
+    frame = None
+    for f in page.frames:
+        if "gerdau.com" in f.url and "search" in f.url:
+            frame = f
+            break
+
+    if not frame:
+        print("❌ Frame não encontrado")
+        return vagas
+
+    # agora sim espera dentro do frame
+    frame.wait_for_selector('li.job-tile', timeout=20000)
+
+    cards = frame.locator('li.job-tile')
 
     print("DEBUG cards:", cards.count())
 
