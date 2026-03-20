@@ -391,20 +391,30 @@ def coletar_gerdau(page, site):
     links_coletados = set()
 
     page.goto(site["url"], timeout=60000)
-    page.wait_for_load_state("networkidle")
 
-    # scroll (caso tenha lazy load)
-    for _ in range(5):
-        page.mouse.wheel(0, 4000)
-        page.wait_for_timeout(1500)
+    # tempo inicial pra JS carregar
+    page.wait_for_timeout(5000)
+
+    # espera aparecer pelo menos 1 vaga
+    page.wait_for_selector('a[href*="/job/"]', timeout=20000)
+
+    # scroll
+    for _ in range(8):
+        page.mouse.wheel(0, 3000)
+        page.wait_for_timeout(2000)
 
     cards = page.locator('a[href*="/job/"]')
+
+    print("DEBUG - encontrados:", cards.count())
 
     for i in range(cards.count()):
         el = cards.nth(i)
 
         try:
             link = el.get_attribute("href")
+
+            if not link:
+                continue
 
             if not link.startswith("http"):
                 link = "https://jobs.gerdau.com" + link
@@ -417,6 +427,9 @@ def coletar_gerdau(page, site):
             links_coletados.add(link_limpo)
 
             titulo = el.inner_text().strip()
+
+            if not titulo:
+                continue
 
             vagas.append({
                 "id": str(uuid.uuid4())[:8],
