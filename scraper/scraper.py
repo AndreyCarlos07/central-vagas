@@ -386,50 +386,60 @@ def coletar_continental(page, site):
 # ===========================
 # GERDAU
 # ===========================
-import json
+import time
+
 def coletar_gerdau(page, site):
     vagas = []
     links_coletados = set()
 
     print(f"🔎 Buscando vagas da {site['empresa']}")
 
-    page.goto(site["url"], timeout=60000)
-    page.wait_for_load_state("networkidle")
-
     try:
+        page.goto(site["url"], timeout=60000)
+        page.wait_for_load_state("networkidle")
+
         # 🔥 preenche localização
         input_local = page.locator('input[name="locationsearch"]')
         input_local.fill("simões filho")
 
+        # 🔥 clica no botão buscar
         botao_buscar = page.locator('input.keywordsearchbutton')
+        botao_buscar.click()
 
-        # 🔥 captura resposta da API
-        with page.expect_response(lambda r: "search" in r.url and r.status == 200) as response_info:
-            botao_buscar.click()
+        # 🔥 espera carregar resultados
+        page.wait_for_timeout(5000)
 
-        response = response_info.value
+        # 🔥 scroll pra carregar vagas
+        for _ in range(6):
+            page.mouse.wheel(0, 3000)
+            page.wait_for_timeout(1500)
 
-        # 🔥 pega JSON da resposta
-        data = response.json()
-
-        # DEBUG opcional
-        print("DEBUG JSON KEYS:", data.keys())
-
-        # 🔥 aqui depende da estrutura (vou tratar genérico)
-        jobs = []
-
-        if "results" in data:
-            jobs = data["results"]
-        elif "data" in data:
-            jobs = data["data"]
-        else:
-            print("⚠️ estrutura desconhecida")
-            return vagas
-
-        for job in jobs:
+        # 🔥 tenta clicar em "ver mais resultados"
+        while True:
             try:
-                titulo = job.get("title") or job.get("jobTitle") or ""
-                link = job.get("url") or job.get("applyUrl") or ""
+                botao = page.locator("#tile-more-results")
+                if botao.is_visible():
+                    botao.click()
+                    page.wait_for_timeout(3000)
+                else:
+                    break
+            except:
+                break
+
+        # 🔥 espera elementos aparecerem
+        page.wait_for_selector("li.job-tile", timeout=15000)
+
+        jobs = page.locator("li.job-tile")
+        total = jobs.count()
+
+        print("DEBUG vagas encontradas:", total)
+
+        for i in range(total):
+            try:
+                job = jobs.nth(i)
+
+                titulo = job.locator("a.jobTitle-link").inner_text()
+                link = job.locator("a.jobTitle-link").get_attribute("href")
 
                 if not titulo or not link:
                     continue
@@ -458,7 +468,7 @@ def coletar_gerdau(page, site):
         print("❌ erro geral:", e)
         return vagas
 
-    print(f"📌 {site['empresa']} (NETWORK): {len(vagas)} vagas")
+    print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
     return vagas
     
 
