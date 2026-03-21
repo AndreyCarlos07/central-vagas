@@ -428,7 +428,7 @@ def coletar_gerdau(page, site):
             break
 
     # 🔥 coleta
-    cards = page.locator("a.jobTitle-link")
+    cards = page.locator("li.job-tile a")
 
     total = cards.count()
     print("DEBUG vagas:", total)
