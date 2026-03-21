@@ -151,6 +151,11 @@ SITES = [
         "tipo": "continental"
     },
     {
+        "empresa": "GERDAU",
+        "url": "https://jobs.gerdau.com/search/?searchby=location&createNewAlert=false&q=&locationsearch=sim%C3%B5es+filho&geolocation=&optionsFacetsDD_country=&optionsFacetsDD_location=&optionsFacetsDD_title=&optionsFacetsDD_state=&optionsFacetsDD_city=&optionsFacetsDD_department=&optionsFacetsDD_customfield5=",
+        "tipo": "gerdau"
+    },
+    {
         "empresa": "MERCADO LIVRE",
         "url": "https://mercadolibre.eightfold.ai/careers",
         "tipo": "eightfold"
@@ -376,6 +381,97 @@ def coletar_continental(page, site):
             continue
 
     print(f"📌 {site['empresa']} (PORTAL PROPRIO): {len(vagas)} vagas")
+    return vagas
+
+# ===========================
+# GERDAU
+# ===========================
+import uuid
+
+def coletar_gerdau(page, site):
+    vagas = []
+    links_coletados = set()
+
+    page.goto(site["url"], timeout=60000)
+
+    page.wait_for_load_state("domcontentloaded")
+
+    # 🔥 espera aparecer algo da lista
+    try:
+        page.wait_for_selector("ul#job-tile-list, a.jobTitle-link", timeout=15000)
+    except:
+        print("⚠️ carregamento inicial lento")
+
+    # 🔥 força render inicial
+    for _ in range(3):
+        page.mouse.wheel(0, 3000)
+        page.wait_for_timeout(1500)
+
+    # 🔥 clicar em "Mais resultados"
+    while True:
+        try:
+            botao = page.locator("#tile-more-results")
+
+            if botao.count() > 0 and botao.is_visible():
+                print("🔄 clicando em 'Mais resultados'")
+
+                botao.click()
+                page.wait_for_timeout(2500)
+
+                # força carregar mais
+                page.mouse.wheel(0, 3000)
+                page.wait_for_timeout(1500)
+            else:
+                break
+
+        except Exception as e:
+            print("⚠️ erro ao clicar mais resultados:", e)
+            break
+
+    # 🔥 pega todas as vagas depois de carregar tudo
+    cards = page.locator("a.jobTitle-link")
+
+    total = cards.count()
+    print("DEBUG vagas:", total)
+
+    if total == 0:
+        print("❌ nenhuma vaga encontrada")
+        return vagas
+
+    for i in range(total):
+        el = cards.nth(i)
+
+        try:
+            link = el.get_attribute("href")
+            titulo = el.inner_text().strip()
+
+            if not link or not titulo:
+                continue
+
+            # 🔥 base dinâmica (funciona pra qualquer empresa Workday)
+            if not link.startswith("http"):
+                base = site["url"].split("/go/")[0]
+                link = base + link
+
+            link_limpo = link.split("?")[0]
+
+            if link_limpo in links_coletados:
+                continue
+
+            links_coletados.add(link_limpo)
+
+            vagas.append({
+                "id": str(uuid.uuid4())[:8],
+                "titulo": titulo,
+                "empresa": site["empresa"],
+                "link": link_limpo
+            })
+
+        except Exception as e:
+            print("erro vaga:", e)
+            continue
+
+    print(f"📌 {site['empresa']} (SCRAPING): {len(vagas)} vagas")
     return vagas
     
 
@@ -769,6 +865,9 @@ def main():
                 elif site["tipo"] == "continental":
                     vagas = coletar_continental(page, site)
 
+                elif site["tipo"] == "gerdau":
+                    vagas = coletar_gerdau(page, site)
+                
                 elif site["tipo"] == "eightfold":
                     vagas = coletar_eightfold(page, site)
 
