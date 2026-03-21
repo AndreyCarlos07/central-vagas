@@ -390,30 +390,30 @@ def coletar_gerdau(page, site):
     vagas = []
     links_coletados = set()
 
-    # 🔥 entra na página base (SEM filtro)
-    page.goto("https://jobs.gerdau.com/search", timeout=60000)
+    page.goto(site["url"], timeout=60000)
 
     page.wait_for_load_state("networkidle")
     page.wait_for_timeout(3000)
 
     # 🔥 digita localização
     input_local = page.locator('input[name="locationsearch"]')
-
     input_local.wait_for(timeout=20000)
     input_local.fill("simões filho")
 
-    # 🔥 simula ENTER (ESSENCIAL)
     page.keyboard.press("Enter")
 
-    # 🔥 espera resultado carregar
-    page.wait_for_selector("a.jobTitle-link", timeout=20000)
+    # 🔥 ESPERA CORRETA (ESSA É A CHAVE)
+    page.wait_for_selector("a.jobTitle-link", state="attached", timeout=30000)
 
-    # 🔥 força render (Workday...)
+    # 🔥 espera extra pra renderizar
+    page.wait_for_timeout(3000)
+
+    # 🔥 scroll
     for _ in range(3):
         page.mouse.wheel(0, 4000)
         page.wait_for_timeout(1500)
 
-    # 🔥 clicar em "Mais resultados"
+    # 🔥 mais resultados
     while True:
         try:
             botao = page.locator("#tile-more-results")
