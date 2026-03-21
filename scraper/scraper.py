@@ -410,6 +410,8 @@ def coletar_gerdau(page, site):
         with page.expect_response(lambda response: "search" in response.url and response.status == 200):
             botao_buscar.click()
 
+        print("HTML snippet:", page.content()[:2000])
+
         # 🔥 espera carregar resultados
         page.wait_for_timeout(5000)
 
@@ -437,7 +439,7 @@ def coletar_gerdau(page, site):
             break
 
     # 🔥 coleta vagas
-    cards = page.locator("li.job-tile a")
+    cards = page.locator("div.job-tile-cell a.jobTitle-link")
 
     total = cards.count()
     print("DEBUG vagas:", total)
