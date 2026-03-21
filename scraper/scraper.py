@@ -383,9 +383,8 @@ def coletar_continental(page, site):
     print(f"📌 {site['empresa']} (PORTAL PROPRIO): {len(vagas)} vagas")
     return vagas
 
-# ===========================
-# GERDAU
-# ===========================
+import uuid
+
 def coletar_gerdau(page, site):
     vagas = []
     links_coletados = set()
@@ -393,6 +392,9 @@ def coletar_gerdau(page, site):
     print(f"🔎 Buscando vagas da {site['empresa']}")
 
     page.goto(site["url"], timeout=60000)
+
+    # 🔥 força layout desktop
+    page.set_viewport_size({"width": 1920, "height": 1080})
 
     page.wait_for_load_state("networkidle")
     page.wait_for_timeout(3000)
@@ -403,28 +405,33 @@ def coletar_gerdau(page, site):
         input_local.wait_for(timeout=20000)
         input_local.fill("simões filho")
 
-        # 🔥 clica no botão Buscar vagas (ESSENCIAL)
+        # 🔥 botão buscar
         botao_buscar = page.locator('input.keywordsearchbutton')
         botao_buscar.wait_for(timeout=20000)
 
-        with page.expect_response(lambda response: "search" in response.url and response.status == 200):
+        # 🔥 espera resposta da busca
+        with page.expect_response(lambda r: "search" in r.url and r.status == 200):
             botao_buscar.click()
 
-        print("HTML snippet:", page.content()[:2000])
-
-        # 🔥 espera carregar resultados
+        # 🔥 espera forte
+        page.wait_for_load_state("networkidle")
         page.wait_for_timeout(5000)
+
+        # 🔥 força render (SCROLL)
+        for _ in range(5):
+            page.mouse.wheel(0, 3000)
+            page.wait_for_timeout(1000)
+
+        # 🔥 DEBUG DO HTML
+        html = page.content()
+        print("TEM jobTitle-link?", "jobTitle-link" in html)
+        print("TEM job-tile-cell?", "job-tile-cell" in html)
 
     except Exception as e:
         print("⚠️ erro ao buscar vagas:", e)
         return vagas
 
-    # 🔥 scroll pra garantir render
-    for _ in range(3):
-        page.mouse.wheel(0, 4000)
-        page.wait_for_timeout(1500)
-
-    # 🔥 clicar em "mais resultados" se existir
+    # 🔥 tentar clicar em "mais resultados"
     while True:
         try:
             botao = page.locator("#tile-more-results")
@@ -438,7 +445,7 @@ def coletar_gerdau(page, site):
         except:
             break
 
-    # 🔥 coleta vagas
+    # 🔥 seletor mais confiável baseado no HTML que você trouxe
     cards = page.locator("div.job-tile-cell a.jobTitle-link")
 
     total = cards.count()
