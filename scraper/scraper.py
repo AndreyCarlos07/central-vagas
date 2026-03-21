@@ -390,30 +390,39 @@ def coletar_gerdau(page, site):
     vagas = []
     links_coletados = set()
 
+    print(f"🔎 Buscando vagas da {site['empresa']}")
+
     page.goto(site["url"], timeout=60000)
 
     page.wait_for_load_state("networkidle")
     page.wait_for_timeout(3000)
 
-    # 🔥 digita localização
-    input_local = page.locator('input[name="locationsearch"]')
-    input_local.wait_for(timeout=20000)
-    input_local.fill("simões filho")
+    try:
+        # 🔥 preenche localização
+        input_local = page.locator('input[name="locationsearch"]')
+        input_local.wait_for(timeout=20000)
+        input_local.fill("simões filho")
 
-    page.keyboard.press("Enter")
+        # 🔥 clica no botão Buscar vagas (ESSENCIAL)
+        botao_buscar = page.locator('input.keywordsearchbutton')
+        botao_buscar.wait_for(timeout=20000)
 
-    # 🔥 ESPERA CORRETA (ESSA É A CHAVE)
-    page.wait_for_selector("li.job-tile", state="attached", timeout=30000)
+        with page.expect_response(lambda response: "search" in response.url and response.status == 200):
+            botao_buscar.click()
 
-    # 🔥 espera extra pra renderizar
-    page.wait_for_timeout(3000)
+        # 🔥 espera carregar resultados
+        page.wait_for_timeout(5000)
 
-    # 🔥 scroll
+    except Exception as e:
+        print("⚠️ erro ao buscar vagas:", e)
+        return vagas
+
+    # 🔥 scroll pra garantir render
     for _ in range(3):
         page.mouse.wheel(0, 4000)
         page.wait_for_timeout(1500)
 
-    # 🔥 mais resultados
+    # 🔥 clicar em "mais resultados" se existir
     while True:
         try:
             botao = page.locator("#tile-more-results")
@@ -427,7 +436,7 @@ def coletar_gerdau(page, site):
         except:
             break
 
-    # 🔥 coleta
+    # 🔥 coleta vagas
     cards = page.locator("li.job-tile a")
 
     total = cards.count()
