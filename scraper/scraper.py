@@ -394,42 +394,42 @@ def coletar_gerdau(page, site):
 
     page.goto(site["url"], timeout=60000)
 
-    page.wait_for_load_state("domcontentloaded")
+    print(page.frames)
 
-    # 🔥 espera aparecer algo da lista
-    try:
-        page.wait_for_selector("ul#job-tile-list, a.jobTitle-link", timeout=15000)
-    except:
-        print("⚠️ carregamento inicial lento")
+    # 🔥 espera total da rede (ESSENCIAL)
+    page.wait_for_load_state("networkidle")
 
-    # 🔥 força render inicial
-    for _ in range(3):
-        page.mouse.wheel(0, 3000)
-        page.wait_for_timeout(1500)
+    # 🔥 espera extra (Workday precisa)
+    page.wait_for_timeout(5000)
 
-    # 🔥 clicar em "Mais resultados"
+    # 🔥 scroll pesado pra forçar render
+    for _ in range(5):
+        page.mouse.wheel(0, 5000)
+        page.wait_for_timeout(2000)
+
+    # 🔥 tenta clicar em "Mais resultados"
     while True:
         try:
             botao = page.locator("#tile-more-results")
 
             if botao.count() > 0 and botao.is_visible():
                 print("🔄 clicando em 'Mais resultados'")
-
                 botao.click()
-                page.wait_for_timeout(2500)
-
-                # força carregar mais
-                page.mouse.wheel(0, 3000)
-                page.wait_for_timeout(1500)
+                page.wait_for_timeout(3000)
             else:
                 break
-
-        except Exception as e:
-            print("⚠️ erro ao clicar mais resultados:", e)
+        except:
             break
 
-    # 🔥 pega todas as vagas depois de carregar tudo
+    # 🔥 DEBUG: ver HTML (opcional)
+    # print(page.content())
+
+    # 🔥 tenta múltiplos seletores (anti-fragil)
     cards = page.locator("a.jobTitle-link")
+
+    if cards.count() == 0:
+        print("⚠️ fallback seletor")
+        cards = page.locator("li.job-tile a")
 
     total = cards.count()
     print("DEBUG vagas:", total)
@@ -448,7 +448,6 @@ def coletar_gerdau(page, site):
             if not link or not titulo:
                 continue
 
-            # 🔥 base dinâmica (funciona pra qualquer empresa Workday)
             if not link.startswith("http"):
                 base = site["url"].split("/go/")[0]
                 link = base + link
@@ -469,7 +468,6 @@ def coletar_gerdau(page, site):
 
         except Exception as e:
             print("erro vaga:", e)
-            continue
 
     print(f"📌 {site['empresa']} (SCRAPING): {len(vagas)} vagas")
     return vagas
