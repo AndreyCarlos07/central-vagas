@@ -386,8 +386,6 @@ def coletar_continental(page, site):
 # ===========================
 # GERDAU
 # ===========================
-import time
-
 def coletar_gerdau(page, site):
     vagas = []
     links_coletados = set()
@@ -399,43 +397,39 @@ def coletar_gerdau(page, site):
         page.wait_for_load_state("networkidle")
 
         # 🔥 preenche localização
-        input_local = page.locator('input[name="locationsearch"]')
-        input_local.fill("simões filho")
+        page.locator('input[name="locationsearch"]').fill("simões filho")
 
-        # 🔥 clica no botão buscar
-        botao_buscar = page.locator('input.keywordsearchbutton')
-        botao_buscar.click()
+        # 🔥 clica buscar
+        page.locator('input.keywordsearchbutton').click()
 
-        # 🔥 espera carregar resultados
         page.wait_for_timeout(5000)
 
-        print(page.frames)
-
-        # 🔥 scroll pra carregar vagas
-        for _ in range(6):
-            page.mouse.wheel(0, 3000)
-            page.wait_for_timeout(1500)
-
-        # 🔥 tenta clicar em "ver mais resultados"
-        while True:
-            try:
-                botao = page.locator("#tile-more-results")
-                if botao.is_visible():
-                    botao.click()
-                    page.wait_for_timeout(3000)
-                else:
-                    break
-            except:
+        # 🔥 pega o frame certo
+        frame_principal = None
+        for f in page.frames:
+            if "jobs.gerdau.com/search" in f.url:
+                frame_principal = f
                 break
 
-        # 🔥 espera elementos aparecerem
-        page.wait_for_selector("#job-tile-result-container", timeout=20000)
+        if not frame_principal:
+            print("❌ frame não encontrado")
+            return vagas
 
-        # 🔥 depois pega os jobs
-        jobs = page.locator("#job-tile-result-container li.job-tile")
+        print("✅ usando frame:", frame_principal.url)
+
+        # 🔥 espera container dentro do frame
+        frame_principal.wait_for_selector("#job-tile-result-container", timeout=20000)
+
+        # 🔥 scroll dentro do frame
+        for _ in range(6):
+            frame_principal.mouse.wheel(0, 3000)
+            page.wait_for_timeout(1500)
+
+        # 🔥 coleta jobs
+        jobs = frame_principal.locator("li.job-tile")
         total = jobs.count()
 
-        print("DEBUG vagas encontradas:", total)
+        print("DEBUG vagas:", total)
 
         for i in range(total):
             try:
