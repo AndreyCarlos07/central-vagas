@@ -409,6 +409,8 @@ def coletar_gerdau(page, site):
         # 🔥 espera carregar resultados
         page.wait_for_timeout(5000)
 
+        print(page.frames)
+
         # 🔥 scroll pra carregar vagas
         for _ in range(6):
             page.mouse.wheel(0, 3000)
@@ -427,9 +429,10 @@ def coletar_gerdau(page, site):
                 break
 
         # 🔥 espera elementos aparecerem
-        page.wait_for_selector("li.job-tile", timeout=15000)
+        page.wait_for_selector("#job-tile-result-container", timeout=20000)
 
-        jobs = page.locator("li.job-tile")
+        # 🔥 depois pega os jobs
+        jobs = page.locator("#job-tile-result-container li.job-tile")
         total = jobs.count()
 
         print("DEBUG vagas encontradas:", total)
