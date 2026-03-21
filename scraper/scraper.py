@@ -403,7 +403,7 @@ def coletar_gerdau(page, site):
     page.keyboard.press("Enter")
 
     # 🔥 ESPERA CORRETA (ESSA É A CHAVE)
-    page.wait_for_selector("a.jobTitle-link", state="attached", timeout=30000)
+    page.wait_for_selector("li.job-tile", state="attached", timeout=30000)
 
     # 🔥 espera extra pra renderizar
     page.wait_for_timeout(3000)
