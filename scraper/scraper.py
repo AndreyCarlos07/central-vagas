@@ -152,7 +152,7 @@ SITES = [
     },
     {
         "empresa": "GERDAU",
-        "url": "https://jobs.gerdau.com/search/?searchby=location&createNewAlert=false&q=&locationsearch=sim%C3%B5es+filho&geolocation=&optionsFacetsDD_country=&optionsFacetsDD_location=&optionsFacetsDD_title=&optionsFacetsDD_state=&optionsFacetsDD_city=&optionsFacetsDD_department=&optionsFacetsDD_customfield5=",
+        "url": "https://jobs.gerdau.com/search",
         "tipo": "gerdau"
     },
     {
@@ -386,28 +386,34 @@ def coletar_continental(page, site):
 # ===========================
 # GERDAU
 # ===========================
-import uuid
-
 def coletar_gerdau(page, site):
     vagas = []
     links_coletados = set()
 
-    page.goto(site["url"], timeout=60000)
+    # 🔥 entra na página base (SEM filtro)
+    page.goto("https://jobs.gerdau.com/search", timeout=60000)
 
-    print(page.frames)
-
-    # 🔥 espera total da rede (ESSENCIAL)
     page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(3000)
 
-    # 🔥 espera extra (Workday precisa)
-    page.wait_for_timeout(5000)
+    # 🔥 digita localização
+    input_local = page.locator('input[name="locationsearch"]')
 
-    # 🔥 scroll pesado pra forçar render
-    for _ in range(5):
-        page.mouse.wheel(0, 5000)
-        page.wait_for_timeout(2000)
+    input_local.wait_for(timeout=20000)
+    input_local.fill("simões filho")
 
-    # 🔥 tenta clicar em "Mais resultados"
+    # 🔥 simula ENTER (ESSENCIAL)
+    page.keyboard.press("Enter")
+
+    # 🔥 espera resultado carregar
+    page.wait_for_selector("a.jobTitle-link", timeout=20000)
+
+    # 🔥 força render (Workday...)
+    for _ in range(3):
+        page.mouse.wheel(0, 4000)
+        page.wait_for_timeout(1500)
+
+    # 🔥 clicar em "Mais resultados"
     while True:
         try:
             botao = page.locator("#tile-more-results")
@@ -415,21 +421,14 @@ def coletar_gerdau(page, site):
             if botao.count() > 0 and botao.is_visible():
                 print("🔄 clicando em 'Mais resultados'")
                 botao.click()
-                page.wait_for_timeout(3000)
+                page.wait_for_timeout(2500)
             else:
                 break
         except:
             break
 
-    # 🔥 DEBUG: ver HTML (opcional)
-    # print(page.content())
-
-    # 🔥 tenta múltiplos seletores (anti-fragil)
+    # 🔥 coleta
     cards = page.locator("a.jobTitle-link")
-
-    if cards.count() == 0:
-        print("⚠️ fallback seletor")
-        cards = page.locator("li.job-tile a")
 
     total = cards.count()
     print("DEBUG vagas:", total)
@@ -449,8 +448,7 @@ def coletar_gerdau(page, site):
                 continue
 
             if not link.startswith("http"):
-                base = site["url"].split("/go/")[0]
-                link = base + link
+                link = "https://jobs.gerdau.com" + link
 
             link_limpo = link.split("?")[0]
 
