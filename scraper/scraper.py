@@ -383,8 +383,10 @@ def coletar_continental(page, site):
     print(f"📌 {site['empresa']} (PORTAL PROPRIO): {len(vagas)} vagas")
     return vagas
 
-import uuid
-
+# ===========================
+# GERDAU
+# ===========================
+import json
 def coletar_gerdau(page, site):
     vagas = []
     links_coletados = set()
@@ -392,100 +394,71 @@ def coletar_gerdau(page, site):
     print(f"🔎 Buscando vagas da {site['empresa']}")
 
     page.goto(site["url"], timeout=60000)
-
-    # 🔥 força layout desktop
-    page.set_viewport_size({"width": 1920, "height": 1080})
-
     page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(3000)
 
     try:
         # 🔥 preenche localização
         input_local = page.locator('input[name="locationsearch"]')
-        input_local.wait_for(timeout=20000)
         input_local.fill("simões filho")
 
-        # 🔥 botão buscar
         botao_buscar = page.locator('input.keywordsearchbutton')
-        botao_buscar.wait_for(timeout=20000)
 
-        # 🔥 espera resposta da busca
-        with page.expect_response(lambda r: "search" in r.url and r.status == 200):
+        # 🔥 captura resposta da API
+        with page.expect_response(lambda r: "search" in r.url and r.status == 200) as response_info:
             botao_buscar.click()
 
-        # 🔥 espera forte
-        page.wait_for_load_state("networkidle")
-        page.wait_for_timeout(5000)
+        response = response_info.value
 
-        # 🔥 força render (SCROLL)
-        for _ in range(5):
-            page.mouse.wheel(0, 3000)
-            page.wait_for_timeout(1000)
+        # 🔥 pega JSON da resposta
+        data = response.json()
 
-        # 🔥 DEBUG DO HTML
-        html = page.content()
-        print("TEM jobTitle-link?", "jobTitle-link" in html)
-        print("TEM job-tile-cell?", "job-tile-cell" in html)
+        # DEBUG opcional
+        print("DEBUG JSON KEYS:", data.keys())
+
+        # 🔥 aqui depende da estrutura (vou tratar genérico)
+        jobs = []
+
+        if "results" in data:
+            jobs = data["results"]
+        elif "data" in data:
+            jobs = data["data"]
+        else:
+            print("⚠️ estrutura desconhecida")
+            return vagas
+
+        for job in jobs:
+            try:
+                titulo = job.get("title") or job.get("jobTitle") or ""
+                link = job.get("url") or job.get("applyUrl") or ""
+
+                if not titulo or not link:
+                    continue
+
+                if not link.startswith("http"):
+                    link = "https://jobs.gerdau.com" + link
+
+                link_limpo = link.split("?")[0]
+
+                if link_limpo in links_coletados:
+                    continue
+
+                links_coletados.add(link_limpo)
+
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo.strip(),
+                    "empresa": site["empresa"],
+                    "link": link_limpo
+                })
+
+            except Exception as e:
+                print("erro job:", e)
 
     except Exception as e:
-        print("⚠️ erro ao buscar vagas:", e)
+        print("❌ erro geral:", e)
         return vagas
 
-    # 🔥 tentar clicar em "mais resultados"
-    while True:
-        try:
-            botao = page.locator("#tile-more-results")
-
-            if botao.count() > 0 and botao.is_visible():
-                print("🔄 clicando em 'Mais resultados'")
-                botao.click()
-                page.wait_for_timeout(2500)
-            else:
-                break
-        except:
-            break
-
-    # 🔥 seletor mais confiável baseado no HTML que você trouxe
-    cards = page.locator("div.job-tile-cell a.jobTitle-link")
-
-    total = cards.count()
-    print("DEBUG vagas:", total)
-
-    if total == 0:
-        print("❌ nenhuma vaga encontrada")
-        return vagas
-
-    for i in range(total):
-        el = cards.nth(i)
-
-        try:
-            link = el.get_attribute("href")
-            titulo = el.inner_text().strip()
-
-            if not link or not titulo:
-                continue
-
-            if not link.startswith("http"):
-                link = "https://jobs.gerdau.com" + link
-
-            link_limpo = link.split("?")[0]
-
-            if link_limpo in links_coletados:
-                continue
-
-            links_coletados.add(link_limpo)
-
-            vagas.append({
-                "id": str(uuid.uuid4())[:8],
-                "titulo": titulo,
-                "empresa": site["empresa"],
-                "link": link_limpo
-            })
-
-        except Exception as e:
-            print("erro vaga:", e)
-
-    print(f"📌 {site['empresa']} (SCRAPING): {len(vagas)} vagas")
+    print(f"📌 {site['empresa']} (NETWORK): {len(vagas)} vagas")
     return vagas
     
 
