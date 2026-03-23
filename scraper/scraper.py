@@ -1042,29 +1042,36 @@ def coletar_inhire(page, site):
 
     try:
         page.goto(site["url"], timeout=60000)
-        page.wait_for_selector("body")
+
+        # 🔥 espera página estabilizar
+        page.wait_for_load_state("networkidle")
         time.sleep(3)
+
+        print(page.locator("div.react-dropdown-select-content").count())
 
         for cidade in cidades:
 
             print(f"📍 Filtrando: {cidade}")
 
             try:
-                # 🔥 LOCALIZAÇÃO (3º campo fixo)
-                campo_localizacao = page.locator(
-                    "div:nth-child(3) .react-dropdown-select-content"
+                # 🔥 SELETOR COMPLETO (sem gamble)
+                campo = page.locator(
+                    "#root div:nth-child(3) div.react-dropdown-select-content"
                 ).first
 
-                campo_localizacao.click()
+                # 🔥 garante que existe
+                campo.wait_for(state="visible", timeout=10000)
+
+                campo.click(force=True)
                 time.sleep(1)
 
-                # 🔥 digita direto
+                # 🔥 digitação real
                 page.keyboard.type(cidade, delay=50)
 
                 time.sleep(1)
 
-                # 🔥 seleciona sugestão
-                page.keyboard.press("Tab")
+                # 🔥 seleção
+                page.keyboard.press("ArrowDown")
                 time.sleep(0.5)
                 page.keyboard.press("Enter")
 
@@ -1074,7 +1081,7 @@ def coletar_inhire(page, site):
                 print("⚠️ erro filtro:", e)
                 continue
 
-            # 🔥 espera carregar vagas
+            # 🔥 espera atualizar vagas
             time.sleep(3)
 
             jobs = page.locator("a[href*='/vagas/']")
@@ -1102,7 +1109,7 @@ def coletar_inhire(page, site):
                 except Exception as e:
                     print("erro coleta:", e)
 
-            # 🔥 LIMPAR FILTRO (ESSENCIAL)
+            # 🔥 limpar filtro (forma correta)
             try:
                 page.keyboard.press("Control+A")
                 page.keyboard.press("Backspace")
