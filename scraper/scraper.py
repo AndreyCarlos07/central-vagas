@@ -386,6 +386,7 @@ def coletar_continental(page, site):
 # ===========================
 # GERDAU
 # ===========================
+import time
 def coletar_gerdau(page, site):
     vagas = []
     links_coletados = set()
