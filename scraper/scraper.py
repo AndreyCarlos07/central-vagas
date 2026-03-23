@@ -431,8 +431,9 @@ def coletar_gerdau(page, site):
             try:
                 job = jobs.nth(i)
 
-                titulo = job.locator("a.jobTitle-link").inner_text()
-                link = job.locator("a.jobTitle-link").get_attribute("href")
+                link_element = job.locator("a.jobTitle-link").first
+                titulo = link_element.inner_text().strip()
+                link = link_element.get_attribute("href")
 
                 if not titulo or not link:
                     continue
