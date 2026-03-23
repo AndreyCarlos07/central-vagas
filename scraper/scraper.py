@@ -1035,7 +1035,6 @@ def coletar_inhire(page, site):
     vagas = []
     links_coletados = set()
 
-    # 🔥 cidades alvo (pode expandir depois)
     cidades = [
         "Salvador, BA, BR",
         "Candeias, BA, BR"
@@ -1049,28 +1048,31 @@ def coletar_inhire(page, site):
         for cidade_alvo in cidades:
             print(f"📍 Filtrando: {cidade_alvo}")
 
-            # 🔥 abrir filtro localização
             try:
-                page.locator("div:has-text('Escolha uma opção')").first.click()
+                # 🔥 abre o dropdown corretamente
+                page.locator("div.css-zhl7f9").click()
                 time.sleep(1)
-            except:
-                print("⚠️ erro ao abrir filtro")
-                continue
 
-            # 🔥 digitar cidade
-            try:
-                campo = page.locator("input").first
+                # 🔥 pega o input visível do dropdown
+                campo = page.locator("input").nth(0)
+
                 campo.fill(cidade_alvo)
                 time.sleep(1)
-                page.keyboard.press("Enter")
-            except:
-                print("⚠️ erro ao digitar cidade")
+
+                # 🔥 ESSA É A CHAVE 🔑
+                page.keyboard.press("Tab")     # foca na opção
+                time.sleep(0.5)
+                page.keyboard.press("Enter")   # seleciona
+
+                print("✅ cidade selecionada")
+
+            except Exception as e:
+                print("⚠️ erro ao aplicar filtro:", e)
                 continue
 
-            # 🔥 esperar atualizar vagas
+            # 🔥 espera atualizar vagas
             time.sleep(3)
 
-            # 🔥 coletar links da página
             jobs = page.locator("a[href*='/vagas/']")
             total = jobs.count()
 
@@ -1078,8 +1080,7 @@ def coletar_inhire(page, site):
 
             for i in range(total):
                 try:
-                    job = jobs.nth(i)
-                    link = job.get_attribute("href")
+                    link = jobs.nth(i).get_attribute("href")
 
                     if not link:
                         continue
@@ -1097,16 +1098,17 @@ def coletar_inhire(page, site):
                 except Exception as e:
                     print("erro coleta:", e)
 
-            # 🔥 limpar filtro (botão X)
+            # 🔥 limpar filtro (X)
             try:
                 page.locator("div.react-dropdown-select-clear").click()
                 time.sleep(2)
+                print("🧹 filtro limpo")
             except:
-                print("⚠️ não conseguiu limpar filtro")
+                print("⚠️ não limpou filtro")
 
         print("🔗 total links únicos:", len(links_coletados))
 
-        # 🔥 entrar nas vagas
+        # 🔥 entra nas vagas
         for link in links_coletados:
             try:
                 page.goto(link, timeout=60000)
