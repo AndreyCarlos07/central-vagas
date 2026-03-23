@@ -829,6 +829,7 @@ def coletar_heineken(page, site):
 def coletar_jde(page, site):
 
     vagas = []
+    links_coletados = set()
 
     try:
         page.goto(site["url"], timeout=60000)
@@ -836,29 +837,33 @@ def coletar_jde(page, site):
         # 🍪 cookies
         try:
             page.click("#onetrust-accept-btn-handler", timeout=5000)
+            print("🍪 cookies aceitos")
         except:
-            pass
+            print("🍪 sem popup")
 
-        page.wait_for_selector('a.btn.btn-secondary')
+        # 🔥 espera lista carregar (sem depender do input)
+        page.wait_for_selector('a.btn.btn-secondary', timeout=30000)
+        print("✅ vagas carregadas")
 
         time.sleep(2)
 
+        # 🔥 pega TODOS os botões "SAIBA MAIS"
         jobs = page.locator('a.btn.btn-secondary')
-        total = jobs.count()
 
+        total = jobs.count()
         print("📦 total encontrado:", total)
 
         for i in range(total):
             try:
                 job = jobs.nth(i)
 
-                # 🔥 pega o container do card
-                container = job.locator("xpath=ancestor::div[contains(@class, 'job')]").first
+                # 🔥 pega o container correto da vaga (SEM .first global bugado)
+                container = job.locator("xpath=ancestor::div[contains(@class,'job')]").nth(0)
 
-                texto = container.inner_text().lower()
+                texto = container.inner_text()
 
-                # 🔥 FILTRO AQUI
-                if "salvador" not in texto:
+                # 🧠 FILTRO AQUI (ESSENCIAL)
+                if "Salvador" not in texto:
                     continue
 
                 link = job.get_attribute("href")
@@ -871,7 +876,14 @@ def coletar_jde(page, site):
 
                 link_limpo = link.split("&")[0]
 
-                titulo = container.inner_text().split("\n")[0]
+                # 🔒 evita duplicado
+                if link_limpo in links_coletados:
+                    continue
+
+                links_coletados.add(link_limpo)
+
+                # 🧠 título = primeira linha do card
+                titulo = texto.split("\n")[0]
 
                 vagas.append({
                     "id": str(uuid.uuid4())[:8],
@@ -881,7 +893,7 @@ def coletar_jde(page, site):
                 })
 
             except Exception as e:
-                print("erro job:", e)
+                print(f"erro job {i}:", e)
 
     except Exception as e:
         print("❌ erro geral:", e)
