@@ -14,7 +14,7 @@ from datetime import datetime
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["GERDAU", "JDE PEET'S", "BOMIX", "INFOTEC BRASIL"]
 
 CSV_HISTORICO = "vagas.csv"
