@@ -15,7 +15,7 @@ from datetime import datetime
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["GERDAU", "JDE PEET'S"]
+EMPRESAS_DEBUG = ["GERDAU", "JDE PEET'S", "BOMIX"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -211,8 +211,13 @@ SITES = [
     },
     {
         "empresa": "JDE PEET'S",
-        "url": "https://careers-br.jdepeets.com/pt-BR/job-search/", 
+        "url": "https://careers-br.jdepeets.com/pt-BR/job-search", 
         "tipo": "jde"
+    },
+    {
+        "empresa": "BOMIX",
+        "url": "https://bomix.pandape.infojobs.com.br", 
+        "tipo": "pandape"
     }
 ]
 
@@ -906,6 +911,118 @@ def coletar_jde(page, site):
     return vagas
 
 # ===========================
+# PANDAPE
+# ===========================
+def coletar_pandape(page, site):
+
+    vagas = []
+    links_coletados = set()
+
+    try:
+        page.goto(site["url"], timeout=60000)
+
+        # 🔥 espera página carregar
+        page.wait_for_selector("body")
+
+        time.sleep(2)
+
+        # ✅ CLICAR NO FILTRO DE CIDADE (abre o dropdown)
+        try:
+            page.locator("#FilterLocation3").click()
+            time.sleep(1)
+        except:
+            print("⚠️ não encontrou filtro cidade")
+
+        # ✅ MARCAR SALVADOR
+        try:
+            page.locator("span:has-text('Salvador - BA')").click()
+            print("📍 Salvador selecionado")
+        except:
+            print("⚠️ Salvador não encontrado")
+
+        # ✅ MARCAR SIMÕES FILHO
+        try:
+            page.locator("span:has-text('Simões Filho - BA')").click()
+            print("📍 Simões Filho selecionado")
+        except:
+            print("⚠️ Simões Filho não encontrado")
+
+        # 🔥 espera atualizar lista
+        time.sleep(3)
+
+        # 🔥 clicar em "carregar mais" até acabar
+        while True:
+            try:
+                botao = page.locator("#btLoadMore")
+
+                if botao.is_visible():
+                    botao.click()
+                    print("➕ carregando mais vagas...")
+                    time.sleep(2)
+                else:
+                    break
+            except:
+                break
+
+        print("✅ todas vagas carregadas")
+
+        # 🔥 pegar todos os links
+        jobs = page.locator("a[href*='/Detail/']")
+        total = jobs.count()
+
+        print("📦 total encontrado:", total)
+
+        for i in range(total):
+            try:
+                job = jobs.nth(i)
+
+                link = job.get_attribute("href")
+
+                if not link:
+                    continue
+
+                if not link.startswith("http"):
+                    link = site["url"].split(".infojobs")[0] + ".infojobs.com.br" + link
+
+                link_limpo = link.split("?")[0]
+
+                if link_limpo in links_coletados:
+                    continue
+
+                links_coletados.add(link_limpo)
+
+            except Exception as e:
+                print("erro coleta:", e)
+
+        print("🔗 links únicos:", len(links_coletados))
+
+        # 🔥 entra em cada vaga
+        for link in links_coletados:
+            try:
+                page.goto(link, timeout=60000)
+                page.wait_for_load_state("networkidle")
+                time.sleep(1)
+
+                titulo = page.locator("h1").inner_text()
+
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo.strip(),
+                    "empresa": site["empresa"],
+                    "link": link
+                })
+
+            except Exception as e:
+                print("erro job:", e)
+
+    except Exception as e:
+        print("❌ erro geral:", e)
+        return vagas
+
+    print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
+    return vagas
+
+# ===========================
 # MAIN
 # ===========================
 def main():
@@ -958,6 +1075,9 @@ def main():
                     vagas = coletar_heineken(page, site)
 
                 elif site["tipo"] == "jde":
+                    vagas = coletar_jde(page, site)
+
+                elif site["tipo"] == "pandape":
                     vagas = coletar_jde(page, site)
                 
                 else:
