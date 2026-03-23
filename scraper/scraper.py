@@ -840,30 +840,25 @@ def coletar_jde(page, site):
         except:
             pass
 
-        # 🔥 espera vagas carregarem
         page.wait_for_selector('a.btn.btn-secondary', timeout=30000)
         print("✅ vagas carregadas")
 
         time.sleep(2)
 
         jobs = page.locator('a.btn.btn-secondary')
-        total = jobs.count()
+        cidades = page.locator('span.city-value')
 
+        total = jobs.count()
         print("📦 total encontrado:", total)
 
         for i in range(total):
             try:
-                job = jobs.nth(i)
-
-                # 🔥 sobe pro container da vaga
-                container = job.locator("xpath=ancestor::div[contains(@class,'job')]").nth(0)
-
-                # 🔥 pega a cidade (ESSE É O PULO DO GATO)
-                cidade = container.locator("span.city-value").inner_text()
+                cidade = cidades.nth(i).inner_text().strip()
 
                 if "Salvador" not in cidade:
                     continue
 
+                job = jobs.nth(i)
                 link = job.get_attribute("href")
 
                 if not link:
@@ -884,7 +879,7 @@ def coletar_jde(page, site):
 
         print("🔗 vagas filtradas Salvador:", len(links_coletados))
 
-        # 🔥 entra nas vagas filtradas
+        # entra nas vagas
         for link in links_coletados:
             try:
                 page.goto(link, timeout=60000)
