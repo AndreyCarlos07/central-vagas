@@ -829,7 +829,7 @@ def coletar_heineken(page, site):
 def coletar_jde(page, site):
 
     vagas = []
-    links_coletados = set()
+    links_coletados = []
 
     try:
         page.goto(site["url"], timeout=60000)
@@ -837,63 +837,60 @@ def coletar_jde(page, site):
         # 🍪 cookies
         try:
             page.click("#onetrust-accept-btn-handler", timeout=5000)
-            print("🍪 cookies aceitos")
         except:
-            print("🍪 sem popup")
+            pass
 
-        # 🔥 espera lista carregar (sem depender do input)
-        page.wait_for_selector('a.btn.btn-secondary', timeout=30000)
-        print("✅ vagas carregadas")
+        # 🔍 busca Salvador
+        page.wait_for_selector('input[name="_searchbar"]')
+        campo = page.locator('input[name="_searchbar"]').first
 
-        time.sleep(2)
+        campo.click()
+        campo.fill("Salvador")
+        page.keyboard.press("Enter")
 
-        # 🔥 pega TODOS os botões "SAIBA MAIS"
+        page.wait_for_timeout(3000)
+
+        # 🔥 pega todos os links UMA VEZ
         jobs = page.locator('a.btn.btn-secondary')
-
         total = jobs.count()
+
         print("📦 total encontrado:", total)
 
         for i in range(total):
+            link = jobs.nth(i).get_attribute("href")
+
+            if not link:
+                continue
+
+            if not link.startswith("http"):
+                link = "https://careers-br.jdepeets.com" + link
+
+            link_limpo = link.split("&")[0]
+
+            if link_limpo not in links_coletados:
+                links_coletados.append(link_limpo)
+
+        print("🔗 links únicos:", len(links_coletados))
+
+        # 🔥 agora entra em cada vaga (rápido)
+        for link in links_coletados:
             try:
-                job = jobs.nth(i)
+                page.goto(link, timeout=60000)
 
-                # 🔥 pega o container correto da vaga (SEM .first global bugado)
-                container = job.locator("xpath=ancestor::div[contains(@class,'job')]").nth(0)
+                page.wait_for_load_state("networkidle")
+                time.sleep(1)
 
-                texto = container.inner_text()
-
-                # 🧠 FILTRO AQUI (ESSENCIAL)
-                if "Salvador" not in texto:
-                    continue
-
-                link = job.get_attribute("href")
-
-                if not link:
-                    continue
-
-                if not link.startswith("http"):
-                    link = "https://careers-br.jdepeets.com" + link
-
-                link_limpo = link.split("&")[0]
-
-                # 🔒 evita duplicado
-                if link_limpo in links_coletados:
-                    continue
-
-                links_coletados.add(link_limpo)
-
-                # 🧠 título = primeira linha do card
-                titulo = texto.split("\n")[0]
+                titulo = page.locator("h1").inner_text()
 
                 vagas.append({
                     "id": str(uuid.uuid4())[:8],
                     "titulo": titulo.strip(),
                     "empresa": site["empresa"],
-                    "link": link_limpo
+                    "link": link
                 })
 
             except Exception as e:
-                print(f"erro job {i}:", e)
+                print("erro job:", e)
 
     except Exception as e:
         print("❌ erro geral:", e)
