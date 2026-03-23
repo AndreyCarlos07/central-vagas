@@ -13,7 +13,7 @@ from datetime import datetime
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["GERDAU"]
 
 CSV_HISTORICO = "vagas.csv"
@@ -386,6 +386,9 @@ def coletar_continental(page, site):
 # ===========================
 # GERDAU
 # ===========================
+import uuid
+import time
+
 def coletar_gerdau(page, site):
     vagas = []
     links_coletados = set()
@@ -404,33 +407,48 @@ def coletar_gerdau(page, site):
 
         page.wait_for_timeout(5000)
 
-        # 🔥 pega o frame certo
-        frame_principal = None
+        # 🔥 pega frame correto
+        frame = None
         for f in page.frames:
             if "jobs.gerdau.com/search" in f.url:
-                frame_principal = f
+                frame = f
                 break
 
-        if not frame_principal:
+        if not frame:
             print("❌ frame não encontrado")
             return vagas
 
-        print("✅ usando frame:", frame_principal.url)
+        print("✅ usando frame:", frame.url)
 
-        # 🔥 espera container dentro do frame
-        frame_principal.wait_for_selector("#job-tile-result-container", timeout=20000)
-
-        # 🔥 scroll dentro do frame
-        for _ in range(6):
-            frame_principal.mouse.wheel(0, 3000)
+        # 🔥 scroll pra forçar render
+        for _ in range(5):
+            frame.mouse.wheel(0, 3000)
             page.wait_for_timeout(1500)
 
-        # 🔥 coleta jobs
-        jobs = frame_principal.locator("li.job-tile")
+        # 🔥 retry até aparecer job-tile-list
+        lista = None
+        for _ in range(10):
+            lista = frame.locator("#job-tile-list")
+            if lista.count() > 0:
+                break
+            print("⏳ esperando lista aparecer...")
+            time.sleep(1)
+
+        if not lista or lista.count() == 0:
+            print("❌ lista não apareceu")
+            return vagas
+
+        # 🔥 agora pega os jobs
+        jobs = frame.locator("li.job-tile")
+
         total = jobs.count()
+        print("DEBUG vagas encontradas:", total)
 
-        print("DEBUG vagas:", total)
+        if total == 0:
+            print("❌ lista veio vazia")
+            return vagas
 
+        # 🔥 coleta
         for i in range(total):
             try:
                 job = jobs.nth(i)
