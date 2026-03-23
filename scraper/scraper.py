@@ -15,7 +15,7 @@ from datetime import datetime
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["GERDAU", "JDE PEET'S", "BOMIX"]
+EMPRESAS_DEBUG = ["GERDAU", "JDE PEET'S", "BOMIX", "INFOTEC BRASIL"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -218,6 +218,11 @@ SITES = [
         "empresa": "BOMIX",
         "url": "https://bomix.pandape.infojobs.com.br", 
         "tipo": "pandape"
+    },
+    {
+        "empresa": "INFOTEC BRASIL",
+        "url": "https://infotecbrasil.inhire.app/vagas", 
+        "tipo": "inhire"
     }
 ]
 
@@ -1023,6 +1028,111 @@ def coletar_pandape(page, site):
     return vagas
 
 # ===========================
+# INHIRE
+# ===========================
+def coletar_inhire(page, site):
+
+    vagas = []
+    links_coletados = set()
+
+    # 🔥 cidades alvo (pode expandir depois)
+    cidades = [
+        "Salvador, BA, BR",
+        "Candeias, BA, BR"
+    ]
+
+    try:
+        page.goto(site["url"], timeout=60000)
+        page.wait_for_selector("body")
+        time.sleep(2)
+
+        for cidade_alvo in cidades:
+            print(f"📍 Filtrando: {cidade_alvo}")
+
+            # 🔥 abrir filtro localização
+            try:
+                page.locator("div:has-text('Escolha uma opção')").first.click()
+                time.sleep(1)
+            except:
+                print("⚠️ erro ao abrir filtro")
+                continue
+
+            # 🔥 digitar cidade
+            try:
+                campo = page.locator("input").first
+                campo.fill(cidade_alvo)
+                time.sleep(1)
+                page.keyboard.press("Enter")
+            except:
+                print("⚠️ erro ao digitar cidade")
+                continue
+
+            # 🔥 esperar atualizar vagas
+            time.sleep(3)
+
+            # 🔥 coletar links da página
+            jobs = page.locator("a[href*='/vagas/']")
+            total = jobs.count()
+
+            print(f"📦 {cidade_alvo}: {total} vagas encontradas")
+
+            for i in range(total):
+                try:
+                    job = jobs.nth(i)
+                    link = job.get_attribute("href")
+
+                    if not link:
+                        continue
+
+                    if not link.startswith("http"):
+                        link = "https://infotecbrasil.inhire.app" + link
+
+                    link_limpo = link.split("?")[0]
+
+                    if link_limpo in links_coletados:
+                        continue
+
+                    links_coletados.add(link_limpo)
+
+                except Exception as e:
+                    print("erro coleta:", e)
+
+            # 🔥 limpar filtro (botão X)
+            try:
+                page.locator("div.react-dropdown-select-clear").click()
+                time.sleep(2)
+            except:
+                print("⚠️ não conseguiu limpar filtro")
+
+        print("🔗 total links únicos:", len(links_coletados))
+
+        # 🔥 entrar nas vagas
+        for link in links_coletados:
+            try:
+                page.goto(link, timeout=60000)
+                page.wait_for_load_state("networkidle")
+                time.sleep(1)
+
+                titulo = page.locator("h1").inner_text()
+
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo.strip(),
+                    "empresa": site["empresa"],
+                    "link": link
+                })
+
+            except Exception as e:
+                print("erro job:", e)
+
+    except Exception as e:
+        print("❌ erro geral:", e)
+        return vagas
+
+    print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
+    return vagas
+
+# ===========================
 # MAIN
 # ===========================
 def main():
@@ -1079,6 +1189,9 @@ def main():
 
                 elif site["tipo"] == "pandape":
                     vagas = coletar_pandape(page, site)
+
+                 elif site["tipo"] == "inhire":
+                    vagas = coletar_inhire(page, site)
                 
                 else:
                     print("⚠️ Tipo não reconhecido")
