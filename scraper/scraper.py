@@ -386,9 +386,6 @@ def coletar_continental(page, site):
 # ===========================
 # GERDAU
 # ===========================
-import uuid
-import time
-
 def coletar_gerdau(page, site):
     vagas = []
     links_coletados = set()
@@ -425,21 +422,21 @@ def coletar_gerdau(page, site):
             page.mouse.wheel(0, 3000)
             page.wait_for_timeout(1500)
 
-        # 🔥 retry até aparecer job-tile-list
+        # 🔥 AGORA CORRETO: espera os itens, não só a lista
         lista = None
         for _ in range(10):
-            lista = frame.locator("#job-tile-list")
-            if lista.count() > 0:
+            if frame.locator("#job-tile-list li").count() > 0:
+                lista = True
                 break
             print("⏳ esperando lista aparecer...")
             time.sleep(1)
 
-        if not lista or lista.count() == 0:
+        if not lista:
             print("❌ lista não apareceu")
             return vagas
 
-        # 🔥 agora pega os jobs
-        jobs = frame.locator("li.job-tile")
+        # 🔥 pega os jobs corretamente
+        jobs = frame.locator("#job-tile-list li")
 
         total = jobs.count()
         print("DEBUG vagas encontradas:", total)
