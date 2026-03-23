@@ -422,7 +422,7 @@ def coletar_gerdau(page, site):
 
         # 🔥 scroll pra forçar render
         for _ in range(5):
-            frame.mouse.wheel(0, 3000)
+            page.mouse.wheel(0, 3000)
             page.wait_for_timeout(1500)
 
         # 🔥 retry até aparecer job-tile-list
