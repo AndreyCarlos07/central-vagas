@@ -388,12 +388,9 @@ def coletar_continental(page, site):
 # ===========================
 def coletar_gerdau(page, site):
     import time
-    import uuid
 
     vagas = []
     links_coletados = set()
-
-    print(f"🔎 Buscando vagas da {site['empresa']}")
 
     try:
         page.goto(site["url"], timeout=60000)
