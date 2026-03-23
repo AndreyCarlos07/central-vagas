@@ -844,9 +844,24 @@ def coletar_jde(page, site):
         page.wait_for_selector('input[name="_searchbar"]')
         campo = page.locator('input[name="_searchbar"]').first
 
-        campo.click()
         campo.fill("Salvador")
-        page.keyboard.press("Enter")
+
+        # 🔥 força evento real de input
+        campo.press("Enter")
+
+        # 🔥 espera lista ATUALIZAR DE VERDADE
+        page.wait_for_function("""
+        () => {
+            const jobs = document.querySelectorAll('a.btn.btn-secondary');
+            if (jobs.length === 0) return false;
+
+            // pega o texto da lista inteira
+            const texto = document.body.innerText.toLowerCase();
+
+            // garante que Salvador está nos resultados
+            return texto.includes("salvador");
+        }
+        """)
 
         page.wait_for_timeout(3000)
 
