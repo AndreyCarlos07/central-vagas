@@ -831,27 +831,35 @@ def coletar_jde(page, site):
     vagas = []
     links_coletados = set()
 
+    print(f"🔎 Buscando vagas da {site['empresa']}")
+
     try:
         page.goto(site["url"], timeout=60000)
 
-        # 🔥 espera campo de busca
-        page.wait_for_selector('input[type="text"]')
+        # 🍪 aceita cookies (ESSENCIAL)
+        try:
+            page.click("#onetrust-accept-btn-handler", timeout=5000)
+            print("🍪 cookies aceitos")
+        except:
+            print("🍪 sem popup")
 
-        # 🔥 digita Salvador
-        page.click('input[type="text"]')
-        page.fill('input[type="text"]', "Salvador")
+        # 🔥 espera campo correto (mais específico)
+        page.wait_for_selector('input[name="_searchbar"]')
 
-        # 🔥 ENTER (ESSENCIAL)
+        campo = page.locator('input[name="_searchbar"]').first
+
+        campo.click()
+        campo.fill("Salvador")
+
         page.keyboard.press("Enter")
 
-        # 🔥 espera vagas aparecerem
+        # 🔥 espera vagas
         page.wait_for_selector('a.btn.btn-secondary', timeout=30000)
 
         print("✅ vagas apareceram")
 
         time.sleep(2)
 
-        # 🔥 pega todos os botões SAIBA MAIS
         jobs = page.locator('a.btn.btn-secondary')
 
         total = jobs.count()
@@ -866,7 +874,6 @@ def coletar_jde(page, site):
                 if not link:
                     continue
 
-                # 🔥 link completo
                 if not link.startswith("http"):
                     link = "https://careers-br.jdepeets.com" + link
 
@@ -877,12 +884,11 @@ def coletar_jde(page, site):
 
                 links_coletados.add(link_limpo)
 
-                # 🔥 tenta pegar título do card
-                titulo = job.locator("xpath=ancestor::div[contains(@class,'job')]").inner_text()
+                titulo = job.locator("xpath=ancestor::div").inner_text().split("\n")[0]
 
                 vagas.append({
                     "id": str(uuid.uuid4())[:8],
-                    "titulo": titulo.strip().split("\n")[0],  # pega primeira linha
+                    "titulo": titulo.strip(),
                     "empresa": site["empresa"],
                     "link": link_limpo
                 })
@@ -896,7 +902,6 @@ def coletar_jde(page, site):
 
     print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
     return vagas
-
 
 # ===========================
 # MAIN
