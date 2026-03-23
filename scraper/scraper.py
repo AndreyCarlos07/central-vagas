@@ -827,7 +827,7 @@ def coletar_heineken(page, site):
 # JDE PEETS
 # ===========================
 def coletar_jde(page, site):
-    
+
     vagas = []
     links_coletados = []
 
