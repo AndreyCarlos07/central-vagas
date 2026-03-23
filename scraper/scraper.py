@@ -1040,80 +1040,88 @@ def coletar_inhire(page, site):
         "Candeias, BA, BR"
     ]
 
+    modelos = [
+        "Presencial",
+        "Híbrido",
+        "Remoto"
+    ]
+
     try:
         page.goto(site["url"], timeout=60000)
         page.wait_for_selector("body")
         time.sleep(2)
 
-        for cidade_alvo in cidades:
-            print(f"📍 Filtrando: {cidade_alvo}")
+        for cidade in cidades:
+            for modelo in modelos:
 
-            try:
-                # 🔥 pega o bloco correto via label
-                bloco_localizacao = page.locator("label:has-text('Localização')").locator("xpath=ancestor::div[1]")
+                print(f"📍 {cidade} | 🏢 {modelo}")
 
-                # 🔥 dentro dele pega o dropdown correto
-                dropdown = bloco_localizacao.locator("div.css-zhl7f9")
-
-                dropdown.click()
-                time.sleep(1)
-
-                # 🔥 pega o input que abriu
-                campo = page.locator("input").last
-                campo.fill(cidade_alvo)
-
-                time.sleep(1)
-
-                # 🔑 comportamento correto
-                page.keyboard.press("Tab")
-                time.sleep(0.5)
-                page.keyboard.press("Enter")
-
-                print("✅ cidade selecionada")
-
-            except Exception as e:
-                print("⚠️ erro ao aplicar filtro:", e)
-                continue
-
-            # 🔥 espera atualizar
-            time.sleep(3)
-
-            jobs = page.locator("a[href*='/vagas/']")
-            total = jobs.count()
-
-            print(f"📦 {cidade_alvo}: {total} vagas encontradas")
-
-            for i in range(total):
                 try:
-                    link = jobs.nth(i).get_attribute("href")
+                    # 🔥 1. selecionar modelo DIRETO (SEM dropdown genérico)
+                    page.locator(f"button:has-text('{modelo}')").first.click()
+                    time.sleep(1)
 
-                    if not link:
-                        continue
+                    # 🔥 2. localização (usa input ativo)
+                    campo = page.locator("input").last
+                    campo.fill(cidade)
 
-                    if not link.startswith("http"):
-                        link = "https://infotecbrasil.inhire.app" + link
+                    time.sleep(1)
 
-                    link_limpo = link.split("?")[0]
+                    page.keyboard.press("Tab")
+                    time.sleep(0.5)
+                    page.keyboard.press("Enter")
 
-                    if link_limpo in links_coletados:
-                        continue
-
-                    links_coletados.add(link_limpo)
+                    print("✅ filtros aplicados")
 
                 except Exception as e:
-                    print("erro coleta:", e)
+                    print("⚠️ erro filtro:", e)
+                    continue
 
-            # 🔥 limpar filtro (dentro do mesmo bloco)
-            try:
-                bloco_localizacao.locator("div.react-dropdown-select-clear").click()
-                time.sleep(2)
-                print("🧹 filtro limpo")
-            except:
-                print("⚠️ não limpou filtro")
+                # 🔥 espera atualizar
+                time.sleep(3)
+
+                jobs = page.locator("a[href*='/vagas/']")
+                total = jobs.count()
+
+                print(f"📦 vagas encontradas: {total}")
+
+                for i in range(total):
+                    try:
+                        link = jobs.nth(i).get_attribute("href")
+
+                        if not link:
+                            continue
+
+                        if not link.startswith("http"):
+                            link = "https://infotecbrasil.inhire.app" + link
+
+                        link_limpo = link.split("?")[0]
+
+                        if link_limpo in links_coletados:
+                            continue
+
+                        links_coletados.add(link_limpo)
+
+                    except Exception as e:
+                        print("erro coleta:", e)
+
+                # 🔥 limpar filtros (X geral)
+                try:
+                    page.locator("div.react-dropdown-select-clear").click()
+                    time.sleep(1)
+                except:
+                    pass
+
+                # 🔥 reset modelo (clicar de novo desmarca)
+                try:
+                    page.locator(f"button:has-text('{modelo}')").first.click()
+                    time.sleep(1)
+                except:
+                    pass
 
         print("🔗 total links únicos:", len(links_coletados))
 
-        # 🔥 entrar nas vagas
+        # 🔥 entra nas vagas
         for link in links_coletados:
             try:
                 page.goto(link, timeout=60000)
@@ -1138,6 +1146,7 @@ def coletar_inhire(page, site):
 
     print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
     return vagas
+
 
 # ===========================
 # MAIN
