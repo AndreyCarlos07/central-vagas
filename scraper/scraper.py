@@ -834,39 +834,46 @@ def coletar_jde(page, site):
     try:
         page.goto(site["url"], timeout=60000)
 
-        # 🍪 aceita cookies (ESSENCIAL)
+        # 🍪 cookies
         try:
             page.click("#onetrust-accept-btn-handler", timeout=5000)
-            print("🍪 cookies aceitos")
         except:
-            print("🍪 sem popup")
+            pass
 
-        # 🔥 espera campo correto (mais específico)
-        page.wait_for_selector('input[name="_searchbar"]')
+        def buscar_salvador():
+            page.wait_for_selector('input[name="_searchbar"]')
+            campo = page.locator('input[name="_searchbar"]').first
+            campo.click()
+            campo.fill("Salvador")
+            page.keyboard.press("Enter")
 
-        campo = page.locator('input[name="_searchbar"]').first
+            # 🔥 espera REAL da busca aplicar
+            page.wait_for_timeout(2000)
 
-        campo.click()
-        campo.fill("Salvador")
+            page.wait_for_function("""
+            () => {
+                const jobs = document.querySelectorAll('a.btn.btn-secondary');
+                return jobs.length > 0 && document.body.innerText.includes('Salvador');
+            }
+            """)
 
-        page.keyboard.press("Enter")
-
-        # 🔥 espera vagas
-        page.wait_for_selector('a.btn.btn-secondary', timeout=30000)
-
-        print("✅ vagas apareceram")
-
-        time.sleep(2)
+        # 🔥 primeira busca
+        buscar_salvador()
 
         jobs = page.locator('a.btn.btn-secondary')
-
         total = jobs.count()
+
         print("📦 total encontrado:", total)
 
         for i in range(total):
-            try:
-                job = jobs.nth(i)
 
+            # 🔥 REBUSCA SEMPRE (ESSENCIAL)
+            buscar_salvador()
+
+            jobs = page.locator('a.btn.btn-secondary')
+            job = jobs.nth(i)
+
+            try:
                 link = job.get_attribute("href")
 
                 if not link:
@@ -882,8 +889,14 @@ def coletar_jde(page, site):
 
                 links_coletados.add(link_limpo)
 
-                container = job.locator("xpath=ancestor::div[contains(@class, 'job')]").first
-                titulo = container.inner_text().split("\n")[0]
+                # 🔥 entra na vaga
+                job.click()
+
+                page.wait_for_load_state("networkidle")
+
+                time.sleep(2)
+
+                titulo = page.locator("h1").inner_text()
 
                 vagas.append({
                     "id": str(uuid.uuid4())[:8],
@@ -891,6 +904,13 @@ def coletar_jde(page, site):
                     "empresa": site["empresa"],
                     "link": link_limpo
                 })
+
+                # 🔙 voltar
+                page.click('a.btn.btn-tertiary')
+
+                page.wait_for_load_state("networkidle")
+
+                time.sleep(2)
 
             except Exception as e:
                 print("erro job:", e)
