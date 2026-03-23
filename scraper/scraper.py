@@ -1045,9 +1045,12 @@ def coletar_inhire(page, site):
 
         # 🔥 espera página estabilizar
         page.wait_for_load_state("networkidle")
-        time.sleep(3)
+        time.sleep(5)
+        page.mouse.wheel(0, 2000)  # 🔥 SCROLL FORÇADO
+        time.sleep(2)
 
-        print(page.locator("div.react-dropdown-select-content").count())
+        print("TOTAL DROPDOWNS:", page.locator("div.react-dropdown-select-content").count())
+        print(page.content()[:2000])
 
         for cidade in cidades:
 
