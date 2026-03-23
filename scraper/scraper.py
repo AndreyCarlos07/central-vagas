@@ -1040,88 +1040,79 @@ def coletar_inhire(page, site):
         "Candeias, BA, BR"
     ]
 
-    modelos = [
-        "Presencial",
-        "Híbrido",
-        "Remoto"
-    ]
-
     try:
         page.goto(site["url"], timeout=60000)
-        page.wait_for_selector("input")
-        time.sleep(2)
+        page.wait_for_selector("body")
+        time.sleep(3)
 
         for cidade in cidades:
-            for modelo in modelos:
 
-                print(f"📍 {cidade} | 🏢 {modelo}")
+            print(f"📍 Filtrando: {cidade}")
 
+            try:
+                # 🔥 LOCALIZAÇÃO (3º campo fixo)
+                campo_localizacao = page.locator(
+                    "div:nth-child(3) .react-dropdown-select-content"
+                ).first
+
+                campo_localizacao.click()
+                time.sleep(1)
+
+                # 🔥 digita direto
+                page.keyboard.type(cidade, delay=50)
+
+                time.sleep(1)
+
+                # 🔥 seleciona sugestão
+                page.keyboard.press("Tab")
+                time.sleep(0.5)
+                page.keyboard.press("Enter")
+
+                print("✅ localização aplicada")
+
+            except Exception as e:
+                print("⚠️ erro filtro:", e)
+                continue
+
+            # 🔥 espera carregar vagas
+            time.sleep(3)
+
+            jobs = page.locator("a[href*='/vagas/']")
+            total = jobs.count()
+
+            print(f"📦 vagas encontradas: {total}")
+
+            for i in range(total):
                 try:
-                    inputs = page.locator("input")
+                    link = jobs.nth(i).get_attribute("href")
 
-                    # 🔥 1. MODELO DE ATUAÇÃO
-                    inputs.nth(0).click()
-                    inputs.nth(0).fill(modelo)
+                    if not link:
+                        continue
 
-                    time.sleep(1)
-                    page.keyboard.press("Tab")
-                    time.sleep(0.5)
-                    page.keyboard.press("Enter")
+                    if not link.startswith("http"):
+                        link = "https://infotecbrasil.inhire.app" + link
 
-                    # 🔥 2. LOCALIZAÇÃO
-                    inputs.nth(1).click()
-                    inputs.nth(1).fill(cidade)
+                    link_limpo = link.split("?")[0]
 
-                    time.sleep(1)
-                    page.keyboard.press("Tab")
-                    time.sleep(0.5)
-                    page.keyboard.press("Enter")
+                    if link_limpo in links_coletados:
+                        continue
 
-                    print("✅ filtros aplicados")
+                    links_coletados.add(link_limpo)
 
                 except Exception as e:
-                    print("⚠️ erro filtro:", e)
-                    continue
+                    print("erro coleta:", e)
 
-                # 🔥 espera atualizar
-                time.sleep(3)
-
-                jobs = page.locator("a[href*='/vagas/']")
-                total = jobs.count()
-
-                print(f"📦 vagas encontradas: {total}")
-
-                for i in range(total):
-                    try:
-                        link = jobs.nth(i).get_attribute("href")
-
-                        if not link:
-                            continue
-
-                        if not link.startswith("http"):
-                            link = "https://infotecbrasil.inhire.app" + link
-
-                        link_limpo = link.split("?")[0]
-
-                        if link_limpo in links_coletados:
-                            continue
-
-                        links_coletados.add(link_limpo)
-
-                    except Exception as e:
-                        print("erro coleta:", e)
-
-                # 🔥 LIMPAR FILTROS (CRÍTICO)
-                try:
-                    page.keyboard.press("Control+A")
-                    page.keyboard.press("Backspace")
-                    time.sleep(1)
-                except:
-                    pass
+            # 🔥 LIMPAR FILTRO (ESSENCIAL)
+            try:
+                page.keyboard.press("Control+A")
+                page.keyboard.press("Backspace")
+                time.sleep(1)
+            except:
+                pass
 
         print("🔗 total links únicos:", len(links_coletados))
 
-        # 🔥 entrar nas vagas
+        # 🔥 entra nas vagas
         for link in links_coletados:
             try:
                 page.goto(link, timeout=60000)
