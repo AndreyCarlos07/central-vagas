@@ -949,6 +949,9 @@ def main():
 
                 elif site["tipo"] == "heineken":
                     vagas = coletar_heineken(page, site)
+
+                elif site["tipo"] == "jde":
+                    vagas = coletar_jde(page, site)
                 
                 else:
                     print("⚠️ Tipo não reconhecido")
