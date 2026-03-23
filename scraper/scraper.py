@@ -829,7 +829,7 @@ def coletar_heineken(page, site):
 def coletar_jde(page, site):
 
     vagas = []
-    links_coletados = []
+    links_coletados = set()
 
     try:
         page.goto(site["url"], timeout=60000)
@@ -840,43 +840,54 @@ def coletar_jde(page, site):
         except:
             pass
 
-        # 🔍 busca Salvador
-        page.wait_for_selector('input[name="_searchbar"]')
-        campo = page.locator('input[name="_searchbar"]').first
+        # 🔥 espera vagas carregarem
+        page.wait_for_selector('a.btn.btn-secondary', timeout=30000)
+        print("✅ vagas carregadas")
 
-        campo.click()
-        campo.fill("Salvador")
-        page.keyboard.press("Enter")
+        time.sleep(2)
 
-        page.wait_for_timeout(3000)
-
-        # 🔥 pega todos os links UMA VEZ
         jobs = page.locator('a.btn.btn-secondary')
         total = jobs.count()
 
         print("📦 total encontrado:", total)
 
         for i in range(total):
-            link = jobs.nth(i).get_attribute("href")
+            try:
+                job = jobs.nth(i)
 
-            if not link:
-                continue
+                # 🔥 sobe pro container da vaga
+                container = job.locator("xpath=ancestor::div[contains(@class,'job')]").nth(0)
 
-            if not link.startswith("http"):
-                link = "https://careers-br.jdepeets.com" + link
+                # 🔥 pega a cidade (ESSE É O PULO DO GATO)
+                cidade = container.locator("span.city-value").inner_text()
 
-            link_limpo = link.split("&")[0]
+                if "Salvador" not in cidade:
+                    continue
 
-            if link_limpo not in links_coletados:
-                links_coletados.append(link_limpo)
+                link = job.get_attribute("href")
 
-        print("🔗 links únicos:", len(links_coletados))
+                if not link:
+                    continue
 
-        # 🔥 agora entra em cada vaga (rápido)
+                if not link.startswith("http"):
+                    link = "https://careers-br.jdepeets.com" + link
+
+                link_limpo = link.split("&")[0]
+
+                if link_limpo in links_coletados:
+                    continue
+
+                links_coletados.add(link_limpo)
+
+            except Exception as e:
+                print(f"erro coleta {i}:", e)
+
+        print("🔗 vagas filtradas Salvador:", len(links_coletados))
+
+        # 🔥 entra nas vagas filtradas
         for link in links_coletados:
             try:
                 page.goto(link, timeout=60000)
-
                 page.wait_for_load_state("networkidle")
                 time.sleep(1)
 
