@@ -1044,7 +1044,8 @@ def coletar_inhire(page, site):
         page.goto(site["url"], timeout=60000)
 
         # 🔥 espera página estabilizar
-        page.wait_for_load_state("networkidle")
+        page.wait_for_selector("#root div", timeout=30000)
+
         time.sleep(5)
         page.mouse.wheel(0, 2000)  # 🔥 SCROLL FORÇADO
         time.sleep(2)
