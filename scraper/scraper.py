@@ -1190,7 +1190,7 @@ def main():
                 elif site["tipo"] == "pandape":
                     vagas = coletar_pandape(page, site)
 
-                 elif site["tipo"] == "inhire":
+                elif site["tipo"] == "inhire":
                     vagas = coletar_inhire(page, site)
                 
                 else:
