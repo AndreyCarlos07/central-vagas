@@ -152,7 +152,7 @@ SITES = [
     },
     {
         "empresa": "GERDAU",
-        "url": "https://jobs.gerdau.com/search",
+        "url": "https://jobs.gerdau.com/search/?createNewAlert=false&q&locationsearch&locale=pt_BR",
         "tipo": "gerdau"
     },
     {
@@ -386,32 +386,46 @@ def coletar_continental(page, site):
 # ===========================
 # GERDAU
 # ===========================
-import time
 def coletar_gerdau(page, site):
+    import time
+    import uuid
+
     vagas = []
     links_coletados = set()
 
     print(f"🔎 Buscando vagas da {site['empresa']}")
 
     try:
-        url = "https://jobs.gerdau.com/search/?searchby=location&createNewAlert=false&q=&locationsearch=sim%C3%B5es+filho"
+        page.goto(site["url"], timeout=60000)
 
-        page.goto(url, timeout=60000)
-        page.wait_for_load_state("networkidle")
+        # 🔥 espera campo aparecer
+        page.wait_for_selector('input[name="locationsearch"]')
 
-        # 🔥 tempo pro JS renderizar
-        page.wait_for_timeout(6000)
+        # 🔥 digita como humano
+        page.click('input[name="locationsearch"]')
+        page.fill('input[name="locationsearch"]', "simões filho")
 
-        # 🔥 DEBUG (ESSENCIAL)
-        print("HTML snippet:", page.content()[:1000])
+        # 🔥 ESSENCIAL: pressiona ENTER (isso dispara o search real do SAP)
+        page.keyboard.press("Enter")
 
-        # 🔥 espera os itens direto (SEM frame)
+        # 🔥 fallback: botão também
+        try:
+            page.click('input.keywordsearchbutton')
+        except:
+            pass
+
+        # 🔥 espera REAL: algum job aparecer
         page.wait_for_selector("#job-tile-list li", timeout=30000)
+
+        print("✅ vagas apareceram")
+
+        # 🔥 pequena pausa pra garantir render completo
+        time.sleep(2)
 
         jobs = page.locator("#job-tile-list li")
 
         total = jobs.count()
-        print("DEBUG vagas encontradas:", total)
+        print("📦 total encontrado:", total)
 
         for i in range(total):
             try:
