@@ -394,59 +394,25 @@ def coletar_gerdau(page, site):
     print(f"🔎 Buscando vagas da {site['empresa']}")
 
     try:
-        page.goto(site["url"], timeout=60000)
+        url = "https://jobs.gerdau.com/search/?searchby=location&createNewAlert=false&q=&locationsearch=sim%C3%B5es+filho"
+
+        page.goto(url, timeout=60000)
         page.wait_for_load_state("networkidle")
 
-        # 🔥 preenche localização
-        page.locator('input[name="locationsearch"]').fill("simões filho")
+        # 🔥 tempo pro JS renderizar
+        page.wait_for_timeout(6000)
 
-        # 🔥 clica buscar
-        page.locator('input.keywordsearchbutton').click()
+        # 🔥 DEBUG (ESSENCIAL)
+        print("HTML snippet:", page.content()[:1000])
 
-        page.wait_for_timeout(5000)
+        # 🔥 espera os itens direto (SEM frame)
+        page.wait_for_selector("#job-tile-list li", timeout=30000)
 
-        # 🔥 pega frame correto
-        frame = None
-        for f in page.frames:
-            if "jobs.gerdau.com/search" in f.url:
-                frame = f
-                break
-
-        if not frame:
-            print("❌ frame não encontrado")
-            return vagas
-
-        print("✅ usando frame:", frame.url)
-
-        # 🔥 scroll pra forçar render
-        for _ in range(5):
-            page.mouse.wheel(0, 3000)
-            page.wait_for_timeout(1500)
-
-        # 🔥 AGORA CORRETO: espera os itens, não só a lista
-        lista = None
-        for _ in range(10):
-            if frame.locator("#job-tile-list li").count() > 0:
-                lista = True
-                break
-            print("⏳ esperando lista aparecer...")
-            time.sleep(1)
-
-        if not lista:
-            print("❌ lista não apareceu")
-            return vagas
-
-        # 🔥 pega os jobs corretamente
-        jobs = frame.locator("#job-tile-list li")
+        jobs = page.locator("#job-tile-list li")
 
         total = jobs.count()
         print("DEBUG vagas encontradas:", total)
 
-        if total == 0:
-            print("❌ lista veio vazia")
-            return vagas
-
-        # 🔥 coleta
         for i in range(total):
             try:
                 job = jobs.nth(i)
