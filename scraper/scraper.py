@@ -1048,7 +1048,7 @@ def coletar_inhire(page, site):
 
     try:
         page.goto(site["url"], timeout=60000)
-        page.wait_for_selector("body")
+        page.wait_for_selector("input")
         time.sleep(2)
 
         for cidade in cidades:
@@ -1057,16 +1057,22 @@ def coletar_inhire(page, site):
                 print(f"📍 {cidade} | 🏢 {modelo}")
 
                 try:
-                    # 🔥 1. selecionar modelo DIRETO (SEM dropdown genérico)
-                    page.locator(f"button:has-text('{modelo}')").first.click()
-                    time.sleep(1)
+                    inputs = page.locator("input")
 
-                    # 🔥 2. localização (usa input ativo)
-                    campo = page.locator("input").last
-                    campo.fill(cidade)
+                    # 🔥 1. MODELO DE ATUAÇÃO
+                    inputs.nth(0).click()
+                    inputs.nth(0).fill(modelo)
 
                     time.sleep(1)
+                    page.keyboard.press("Tab")
+                    time.sleep(0.5)
+                    page.keyboard.press("Enter")
 
+                    # 🔥 2. LOCALIZAÇÃO
+                    inputs.nth(1).click()
+                    inputs.nth(1).fill(cidade)
+
+                    time.sleep(1)
                     page.keyboard.press("Tab")
                     time.sleep(0.5)
                     page.keyboard.press("Enter")
@@ -1105,23 +1111,17 @@ def coletar_inhire(page, site):
                     except Exception as e:
                         print("erro coleta:", e)
 
-                # 🔥 limpar filtros (X geral)
+                # 🔥 LIMPAR FILTROS (CRÍTICO)
                 try:
-                    page.locator("div.react-dropdown-select-clear").click()
-                    time.sleep(1)
-                except:
-                    pass
-
-                # 🔥 reset modelo (clicar de novo desmarca)
-                try:
-                    page.locator(f"button:has-text('{modelo}')").first.click()
+                    page.keyboard.press("Control+A")
+                    page.keyboard.press("Backspace")
                     time.sleep(1)
                 except:
                     pass
 
         print("🔗 total links únicos:", len(links_coletados))
 
-        # 🔥 entra nas vagas
+        # 🔥 entrar nas vagas
         for link in links_coletados:
             try:
                 page.goto(link, timeout=60000)
@@ -1146,7 +1146,7 @@ def coletar_inhire(page, site):
 
     print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
     return vagas
-
+    
 
 # ===========================
 # MAIN
