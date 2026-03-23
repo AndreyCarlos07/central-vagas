@@ -831,8 +831,6 @@ def coletar_jde(page, site):
     vagas = []
     links_coletados = set()
 
-    print(f"🔎 Buscando vagas da {site['empresa']}")
-
     try:
         page.goto(site["url"], timeout=60000)
 
@@ -884,7 +882,8 @@ def coletar_jde(page, site):
 
                 links_coletados.add(link_limpo)
 
-                titulo = job.locator("xpath=ancestor::div").inner_text().split("\n")[0]
+                container = job.locator("xpath=ancestor::div[contains(@class, 'job')]").first
+                titulo = container.inner_text().split("\n")[0]
 
                 vagas.append({
                     "id": str(uuid.uuid4())[:8],
