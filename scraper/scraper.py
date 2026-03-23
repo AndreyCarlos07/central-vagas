@@ -1078,7 +1078,7 @@ def main():
                     vagas = coletar_jde(page, site)
 
                 elif site["tipo"] == "pandape":
-                    vagas = coletar_jde(page, site)
+                    vagas = coletar_pandape(page, site)
                 
                 else:
                     print("⚠️ Tipo não reconhecido")
