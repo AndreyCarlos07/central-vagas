@@ -1049,20 +1049,25 @@ def coletar_inhire(page, site):
             print(f"📍 Filtrando: {cidade_alvo}")
 
             try:
-                # 🔥 abre o dropdown corretamente
-                page.locator("div.css-zhl7f9").click()
+                # 🔥 pega o bloco correto via label
+                bloco_localizacao = page.locator("label:has-text('Localização')").locator("xpath=ancestor::div[1]")
+
+                # 🔥 dentro dele pega o dropdown correto
+                dropdown = bloco_localizacao.locator("div.css-zhl7f9")
+
+                dropdown.click()
                 time.sleep(1)
 
-                # 🔥 pega o input visível do dropdown
-                campo = page.locator("input").nth(0)
-
+                # 🔥 pega o input que abriu
+                campo = page.locator("input").last
                 campo.fill(cidade_alvo)
+
                 time.sleep(1)
 
-                # 🔥 ESSA É A CHAVE 🔑
-                page.keyboard.press("Tab")     # foca na opção
+                # 🔑 comportamento correto
+                page.keyboard.press("Tab")
                 time.sleep(0.5)
-                page.keyboard.press("Enter")   # seleciona
+                page.keyboard.press("Enter")
 
                 print("✅ cidade selecionada")
 
@@ -1070,7 +1075,7 @@ def coletar_inhire(page, site):
                 print("⚠️ erro ao aplicar filtro:", e)
                 continue
 
-            # 🔥 espera atualizar vagas
+            # 🔥 espera atualizar
             time.sleep(3)
 
             jobs = page.locator("a[href*='/vagas/']")
@@ -1098,9 +1103,9 @@ def coletar_inhire(page, site):
                 except Exception as e:
                     print("erro coleta:", e)
 
-            # 🔥 limpar filtro (X)
+            # 🔥 limpar filtro (dentro do mesmo bloco)
             try:
-                page.locator("div.react-dropdown-select-clear").click()
+                bloco_localizacao.locator("div.react-dropdown-select-clear").click()
                 time.sleep(2)
                 print("🧹 filtro limpo")
             except:
@@ -1108,7 +1113,7 @@ def coletar_inhire(page, site):
 
         print("🔗 total links únicos:", len(links_coletados))
 
-        # 🔥 entra nas vagas
+        # 🔥 entrar nas vagas
         for link in links_coletados:
             try:
                 page.goto(link, timeout=60000)
