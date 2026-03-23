@@ -829,7 +829,6 @@ def coletar_heineken(page, site):
 def coletar_jde(page, site):
 
     vagas = []
-    links_coletados = []
 
     try:
         page.goto(site["url"], timeout=60000)
@@ -840,68 +839,45 @@ def coletar_jde(page, site):
         except:
             pass
 
-        # 🔍 busca Salvador
-        page.wait_for_selector('input[name="_searchbar"]')
-        campo = page.locator('input[name="_searchbar"]').first
+        page.wait_for_selector('a.btn.btn-secondary')
 
-        campo.fill("Salvador")
+        time.sleep(2)
 
-        # 🔥 força evento real de input
-        campo.press("Enter")
-
-        # 🔥 espera lista ATUALIZAR DE VERDADE
-        page.wait_for_function("""
-        () => {
-            const jobs = document.querySelectorAll('a.btn.btn-secondary');
-            if (jobs.length === 0) return false;
-
-            // pega o texto da lista inteira
-            const texto = document.body.innerText.toLowerCase();
-
-            // garante que Salvador está nos resultados
-            return texto.includes("salvador");
-        }
-        """)
-
-        page.wait_for_timeout(3000)
-
-        # 🔥 pega todos os links UMA VEZ
         jobs = page.locator('a.btn.btn-secondary')
         total = jobs.count()
 
         print("📦 total encontrado:", total)
 
         for i in range(total):
-            link = jobs.nth(i).get_attribute("href")
-
-            if not link:
-                continue
-
-            if not link.startswith("http"):
-                link = "https://careers-br.jdepeets.com" + link
-
-            link_limpo = link.split("&")[0]
-
-            if link_limpo not in links_coletados:
-                links_coletados.append(link_limpo)
-
-        print("🔗 links únicos:", len(links_coletados))
-
-        # 🔥 agora entra em cada vaga (rápido)
-        for link in links_coletados:
             try:
-                page.goto(link, timeout=60000)
+                job = jobs.nth(i)
 
-                page.wait_for_load_state("networkidle")
-                time.sleep(1)
+                # 🔥 pega o container do card
+                container = job.locator("xpath=ancestor::div[contains(@class, 'job')]").first
 
-                titulo = page.locator("h1").inner_text()
+                texto = container.inner_text().lower()
+
+                # 🔥 FILTRO AQUI
+                if "salvador" not in texto:
+                    continue
+
+                link = job.get_attribute("href")
+
+                if not link:
+                    continue
+
+                if not link.startswith("http"):
+                    link = "https://careers-br.jdepeets.com" + link
+
+                link_limpo = link.split("&")[0]
+
+                titulo = container.inner_text().split("\n")[0]
 
                 vagas.append({
                     "id": str(uuid.uuid4())[:8],
                     "titulo": titulo.strip(),
                     "empresa": site["empresa"],
-                    "link": link
+                    "link": link_limpo
                 })
 
             except Exception as e:
