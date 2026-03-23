@@ -3,18 +3,19 @@
 
 # In[ ]:
 
-
+    
 from playwright.sync_api import sync_playwright
 import csv
 import uuid
 import os
+import time
 from datetime import datetime
 
 # ===========================
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["GERDAU"]
+EMPRESAS_DEBUG = ["GERDAU", "JDE PEET'S"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -207,6 +208,11 @@ SITES = [
         "empresa": "HEINEKEN",
         "url": "https://careers.theheinekencompany.com/Brazil/search", 
         "tipo": "heineken"
+    },
+    {
+        "empresa": "JDE PEET'S",
+        "url": "https://careers-br.jdepeets.com/pt-BR/job-search/", 
+        "tipo": "jde"
     }
 ]
 
@@ -387,7 +393,6 @@ def coletar_continental(page, site):
 # GERDAU
 # ===========================
 def coletar_gerdau(page, site):
-    import time
 
     vagas = []
     links_coletados = set()
@@ -816,6 +821,80 @@ def coletar_heineken(page, site):
             continue
 
     print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
+    return vagas
+
+# ===========================
+# JDE PEETS
+# ===========================
+def coletar_jde(page, site):
+
+    vagas = []
+    links_coletados = set()
+
+    try:
+        page.goto(site["url"], timeout=60000)
+
+        # 🔥 espera campo de busca
+        page.wait_for_selector('input[type="text"]')
+
+        # 🔥 digita Salvador
+        page.click('input[type="text"]')
+        page.fill('input[type="text"]', "Salvador")
+
+        # 🔥 ENTER (ESSENCIAL)
+        page.keyboard.press("Enter")
+
+        # 🔥 espera vagas aparecerem
+        page.wait_for_selector('a.btn.btn-secondary', timeout=30000)
+
+        print("✅ vagas apareceram")
+
+        time.sleep(2)
+
+        # 🔥 pega todos os botões SAIBA MAIS
+        jobs = page.locator('a.btn.btn-secondary')
+
+        total = jobs.count()
+        print("📦 total encontrado:", total)
+
+        for i in range(total):
+            try:
+                job = jobs.nth(i)
+
+                link = job.get_attribute("href")
+
+                if not link:
+                    continue
+
+                # 🔥 link completo
+                if not link.startswith("http"):
+                    link = "https://careers-br.jdepeets.com" + link
+
+                link_limpo = link.split("&")[0]
+
+                if link_limpo in links_coletados:
+                    continue
+
+                links_coletados.add(link_limpo)
+
+                # 🔥 tenta pegar título do card
+                titulo = job.locator("xpath=ancestor::div[contains(@class,'job')]").inner_text()
+
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo.strip().split("\n")[0],  # pega primeira linha
+                    "empresa": site["empresa"],
+                    "link": link_limpo
+                })
+
+            except Exception as e:
+                print("erro job:", e)
+
+    except Exception as e:
+        print("❌ erro geral:", e)
+        return vagas
+
+    print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
     return vagas
 
 
