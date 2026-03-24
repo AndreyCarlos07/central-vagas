@@ -1032,177 +1032,83 @@ def coletar_pandape(page, site):
     return vagas
 
 # ===========================
-# INHIRE
+# INHIRE (API)
 # ===========================
-def coletar_inhire(page, site):
+def coletar_inhire(site):
+
+    import requests
 
     vagas = []
     links_coletados = set()
 
     cidades = [
-        "Salvador, BA, BR",
-        "São Francisco do Conde, BA, BR",
-        "Catu, BA, BR"
+        "Salvador",
+        "São Francisco do Conde",
+        "Catu"
     ]
 
     try:
-        # 🔥 TENTA CARREGAR ATÉ FUNCIONAR
-        for tentativa in range(3):
-            page.goto(site["url"], timeout=60000)
+        print("🌐 Acessando API da Inhire...")
 
-            # 🔥 ESPERA REAL (SPA)
-            page.wait_for_load_state("networkidle")
-            time.sleep(5)
+        url = "https://infotecbrasil.inhire.app/api/v1/jobs"
 
-            print("🔍 DEBUG HTML:")
-            print(page.content()[:1000])
+        headers = {
+            "User-Agent": "Mozilla/5.0",
+            "Accept": "application/json"
+        }
 
-            # 🔥 força React renderizar
-            page.mouse.move(200, 200)
-            page.mouse.wheel(0, 4000)
-            time.sleep(3)
+        response = requests.get(url, headers=headers, timeout=30)
 
-            # 🔥 garante que a página existe
-            try:
-                page.wait_for_selector("body", timeout=15000)
-            except:
-                print("⚠️ body não carregou")
-                continue
-
-            time.sleep(3)
-
-            # 🔥 DETECÇÃO INTELIGENTE
-            html = page.content().lower()
-            if "job" not in html:
-                print("🚨 Página não renderizou vagas (React não carregou)")
-                continue
-
-            # 🔥 AGORA sim tenta o campo
-            if page.locator("#name").count() > 0:
-                print("✅ página carregou corretamente")
-                break
-            else:
-                print(f"🔄 tentativa {tentativa+1} falhou, recarregando...")
-
-        # 🔥 VALIDA SE INPUT EXISTE
-        campo = page.locator("#name")
-
-        if campo.count() == 0:
-            print("❌ INPUT NÃO EXISTE → página não carregou")
+        if response.status_code != 200:
+            print(f"❌ erro API: {response.status_code}")
             return vagas
 
-        # =========================
-        # 🔁 LOOP DAS CIDADES
-        # =========================
-        for cidade in cidades:
+        data = response.json()
 
-            print(f"📍 Filtrando: {cidade}")
+        jobs = data.get("jobs", [])
 
+        print(f"📦 total bruto da API: {len(jobs)}")
+
+        for job in jobs:
             try:
-                # 🔥 clicar no campo base (#name)
-                campo.first.click()
-                time.sleep(0.5)
+                titulo = job.get("title", "").strip()
+                local = job.get("location", "").lower()
 
-                # 🔥 2 TAB → Localização
-                page.keyboard.press("Tab")
-                time.sleep(0.3)
-                page.keyboard.press("Tab")
-                time.sleep(0.5)
+                # 🔥 FILTRO DE CIDADES
+                if not any(cidade.lower() in local for cidade in cidades):
+                    continue
 
-                # 🔥 abre dropdown
-                page.keyboard.press("ArrowDown")
-                time.sleep(1)
+                link = job.get("path", "")
 
-                # 🔥 digita cidade
-                page.keyboard.type(cidade, delay=50)
-                time.sleep(1)
+                if not link:
+                    continue
 
-                # 🔥 seleciona
-                page.keyboard.press("Tab")
-                time.sleep(0.5)
-                page.keyboard.press("Enter")
+                if not link.startswith("http"):
+                    link = "https://infotecbrasil.inhire.app" + link
 
-                print("✅ localização aplicada")
+                link_limpo = link.split("?")[0]
 
-            except Exception as e:
-                print("⚠️ erro filtro:", e)
-                continue
+                if link_limpo in links_coletados:
+                    continue
 
-            # 🔥 espera vagas carregarem
-            time.sleep(5)
-
-            # 🔥 seletor correto das vagas
-            jobs = page.locator("a[data-component-name='job-position-link']")
-            total = jobs.count()
-
-            print(f"📦 vagas encontradas: {total}")
-
-            for i in range(total):
-                try:
-                    link = jobs.nth(i).get_attribute("href")
-
-                    if not link:
-                        continue
-
-                    if not link.startswith("http"):
-                        link = "https://infotecbrasil.inhire.app" + link
-
-                    link_limpo = link.split("?")[0]
-
-                    if link_limpo in links_coletados:
-                        continue
-
-                    links_coletados.add(link_limpo)
-
-                except Exception as e:
-                    print("erro coleta:", e)
-
-            # 🔥 LIMPAR FILTRO
-            try:
-                campo.first.click()
-                time.sleep(0.5)
-
-                page.keyboard.press("Tab")
-                page.keyboard.press("Tab")
-                time.sleep(0.5)
-
-                page.keyboard.press("Control+A")
-                page.keyboard.press("Backspace")
-
-                print("🧹 filtro limpo")
-                time.sleep(1)
-
-            except Exception as e:
-                print("⚠️ erro limpar:", e)
-
-        print("🔗 total links únicos:", len(links_coletados))
-
-        # =========================
-        # 🔎 ENTRAR NAS VAGAS
-        # =========================
-        for link in links_coletados:
-            try:
-                page.goto(link, timeout=60000)
-                page.wait_for_load_state("networkidle")
-                time.sleep(1)
-
-                titulo = page.locator("h1").inner_text()
+                links_coletados.add(link_limpo)
 
                 vagas.append({
                     "id": str(uuid.uuid4())[:8],
-                    "titulo": titulo.strip(),
+                    "titulo": titulo,
                     "empresa": site["empresa"],
-                    "link": link
+                    "link": link_limpo
                 })
 
             except Exception as e:
                 print("erro job:", e)
 
+        print(f"📌 {site['empresa']}: {len(vagas)} vagas filtradas")
+
     except Exception as e:
-        print("❌ erro geral:", e)
+        print("❌ erro geral API:", e)
         return vagas
 
-    print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
     return vagas
     
 
@@ -1265,32 +1171,8 @@ def main():
                     vagas = coletar_pandape(page, site)
 
                 elif site["tipo"] == "inhire":
-                    print("🕵️ Criando página isolada com stealth manual...")
-                    page_inhire = browser.new_page()
-
-                    # 🔥 STEALTH MANUAL
-                    page_inhire.add_init_script("""
-                    Object.defineProperty(navigator, 'webdriver', {
-                        get: () => undefined
-                    });
-
-                    window.chrome = {
-                        runtime: {}
-                    };
-
-                    Object.defineProperty(navigator, 'plugins', {
-                        get: () => [1, 2, 3, 4, 5]
-                    });
-
-                    Object.defineProperty(navigator, 'languages', {
-                        get: () => ['pt-BR', 'pt']
-                    });
-                    """)
-
-                    vagas = coletar_inhire(page_inhire, site)
-
-                    page_inhire.close()
-                
+                    vagas = coletar_inhire(site)
+                    
                 else:
                     print("⚠️ Tipo não reconhecido")
                     vagas = []
