@@ -1037,41 +1037,43 @@ def coletar_inhire(page, site):
 
     cidades = [
         "Salvador, BA, BR",
-        "Candeias, BA, BR"
+        "São Francisco do Conde, BA, BR",
+        "Catu, BA, BR"
     ]
+
+    print(page.content()[:2000])
 
     try:
         page.goto(site["url"], timeout=60000)
 
-        # 🔥 espera "burra" (funciona melhor que wait em SPA bloqueada)
-        time.sleep(10)
+        time.sleep(10)  # 🔥 SPA precisa disso
 
         for cidade in cidades:
 
             print(f"📍 Filtrando: {cidade}")
 
             try:
-                # 🔥 tenta clicar no texto Localização direto (sem wait)
+                # 🔥 clicar no texto Localização (FORÇADO)
                 try:
-                    page.locator("text=Localização").click(timeout=5000)
+                    page.get_by_text("Localização", exact=False).first.click()
                 except:
-                    print("⚠️ não achou 'Localização', tentando mesmo assim...")
+                    print("⚠️ não conseguiu clicar no texto")
 
                 time.sleep(0.5)
 
-                # 🔥 TAB (igual você faz)
+                # 🔥 TAB → campo
                 page.keyboard.press("Tab")
                 time.sleep(0.5)
 
-                # 🔥 abre dropdown
+                # 🔥 abrir dropdown
                 page.keyboard.press("ArrowDown")
-                time.sleep(1)
+                time.sleep(1.5)
 
-                # 🔥 digita cidade
+                # 🔥 digitar cidade
                 page.keyboard.type(cidade, delay=50)
                 time.sleep(1)
 
-                # 🔥 seleciona
+                # 🔥 selecionar
                 page.keyboard.press("Tab")
                 time.sleep(0.5)
                 page.keyboard.press("Enter")
@@ -1082,10 +1084,11 @@ def coletar_inhire(page, site):
                 print("⚠️ erro filtro:", e)
                 continue
 
-            # 🔥 espera carregar vagas
+            # 🔥 esperar vagas aparecerem
             time.sleep(5)
 
-            jobs = page.locator("a[href*='/vagas/']")
+            # 🔥 SELETOR CORRETO (VOCÊ DESCOBRIU)
+            jobs = page.locator("a[data-component-name='job-position-link']")
             total = jobs.count()
 
             print(f"📦 vagas encontradas: {total}")
@@ -1110,13 +1113,23 @@ def coletar_inhire(page, site):
                 except Exception as e:
                     print("erro coleta:", e)
 
-            # 🔥 limpar filtro
+            # 🔥 LIMPAR FILTRO (SEU JEITO)
             try:
-                page.locator("div.react-dropdown-select-clear").click()
-                time.sleep(2)
+                page.get_by_text("Localização", exact=False).first.click()
+                time.sleep(0.5)
+
+                page.keyboard.press("Tab")
+                time.sleep(0.5)
+
+                page.keyboard.press("Control+A")
+                page.keyboard.press("Backspace")
+
                 print("🧹 filtro limpo")
-            except:
-                print("⚠️ não conseguiu limpar filtro")
+
+                time.sleep(1)
+
+            except Exception as e:
+                print("⚠️ erro limpar:", e)
 
         print("🔗 total links únicos:", len(links_coletados))
 
