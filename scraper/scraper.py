@@ -58,6 +58,7 @@ def salvar_csv(arquivo, vagas):
         for vaga in vagas:
             writer.writerow(vaga)
 
+
 # ===========================
 # FAZER BACKUP
 # ===========================
