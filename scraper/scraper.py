@@ -11,6 +11,8 @@ import os
 import time
 import requests
 import base64
+import smtplib
+from email.mime.text import MIMEText
 from datetime import datetime
 
 # ===========================
@@ -1078,6 +1080,61 @@ def coletar_pandape(page, site):
     
 
 # ===========================
+# GERAR RELATÓRIO GMAIL
+# ===========================
+def gerar_relatorio(total, sucesso, erro, zero, empresas_erro, empresas_zero, total_vagas):
+    status = "🟢 OK" if erro == 0 else "🔴 ERROS DETECTADOS"
+
+    return f"""
+📊 RELATÓRIO DIÁRIO - SCRAPER
+
+⏰ Data: {time.strftime('%d/%m/%Y %H:%M')}
+
+🏢 Total de empresas: {total}
+📊 Total de vagas coletadas: {total_vagas}
+
+✅ Sucesso: {sucesso}
+❌ Erro: {erro}
+⚠️ Sem vagas: {zero}
+
+-----------------------------------
+
+❌ EMPRESAS COM ERRO:
+{', '.join(sorted(empresas_erro)) if empresas_erro else 'Nenhuma'}
+
+-----------------------------------
+
+⚠️ EMPRESAS COM 0 VAGAS:
+{', '.join(sorted(empresas_zero)) if empresas_zero else 'Nenhuma'}
+
+-----------------------------------
+
+📊 STATUS: {status}
+"""
+
+
+# ===========================
+# ENVIAR ALERTA
+# ===========================
+def enviar_email_alerta(mensagem):
+    remetente = os.getenv("EMAIL_USER")
+    senha = os.getenv("EMAIL_PASS")
+    destinatario = "SEU_EMAIL@gmail.com"
+
+    msg = MIMEText(mensagem)
+    msg["Subject"] = "Relatório Diário - Scraper"
+    msg["From"] = remetente
+    msg["To"] = destinatario
+
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login(remetente, senha)
+        server.send_message(msg)
+
+    print("📧 Email enviado com sucesso!")
+
+    
+# ===========================
 # MAIN
 # ===========================
 def main():
@@ -1086,6 +1143,8 @@ def main():
     novas_vagas_execucao = []
     todas_vagas_coletadas = []
     empresas_sucesso = set()  # 🔥 controla quem rodou corretamente
+    empresas_erro = set()       # 👈 adicionar
+    empresas_zero = set()       # 👈 adicionar
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -1141,6 +1200,9 @@ def main():
 
                 print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
 
+                if len(vagas) == 0:
+                    empresas_zero.add(site["empresa"])
+
                 todas_vagas_coletadas.extend(vagas)
                 empresas_sucesso.add(site["empresa"])  # ✅ marcou como sucesso
 
@@ -1148,12 +1210,28 @@ def main():
                 print(f"❌ ERRO ao coletar {site['empresa']}")
                 print(f"Motivo: {e}")
                 print("⏭️ Pulando para próxima empresa...")
+
+                empresas_erro.add(site["empresa"])  # 👈 adicionar
+                
                 continue
 
         browser.close()
 
     print("\n✅ Coleta finalizada")
     print(f"📊 Total coletado: {len(todas_vagas_coletadas)} vagas")
+
+    total = len(SITES)
+    sucesso = len(empresas_sucesso)
+    erro = len(empresas_erro)
+    zero = len(empresas_zero)
+
+    total_vagas = len(todas_vagas_coletadas)
+
+    try:
+        mensagem = gerar_relatorio(total, sucesso, erro, zero, empresas_erro, empresas_zero, total_vagas)
+        enviar_email_alerta(mensagem)
+    except Exception as e:
+        print("⚠️ Erro ao enviar email:", e)
 
     # ===========================
     # 🔥 SINCRONIZAÇÃO INTELIGENTE
