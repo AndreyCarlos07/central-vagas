@@ -1045,12 +1045,15 @@ def coletar_inhire(page, site):
         "Catu, BA, BR"
     ]
 
+    print("🔍 DEBUG HTML:")
+    print(page.content()[:1000])
+
     try:
         # 🔥 TENTA CARREGAR ATÉ FUNCIONAR
         for tentativa in range(3):
             page.goto(site["url"], timeout=60000)
 
-            page.wait_for_load_state("domcontentloaded")
+            page.wait_for_selector("#name", timeout=15000)
             time.sleep(5)
 
             # 🔥 força renderização (React acordar)
