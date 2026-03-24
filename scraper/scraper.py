@@ -1041,39 +1041,35 @@ def coletar_inhire(page, site):
         "Catu, BA, BR"
     ]
 
-    print(page.content()[:2000])
-
     try:
         page.goto(site["url"], timeout=60000)
 
-        time.sleep(10)  # 🔥 SPA precisa disso
+        time.sleep(10)  # 🔥 deixa SPA carregar
 
         for cidade in cidades:
 
             print(f"📍 Filtrando: {cidade}")
 
             try:
-                # 🔥 clicar no texto Localização (FORÇADO)
-                try:
-                    page.get_by_text("Localização", exact=False).first.click()
-                except:
-                    print("⚠️ não conseguiu clicar no texto")
-
+                # 🔥 PASSO 1: clicar no campo base
+                page.locator("//*[@id='name']").click()
                 time.sleep(0.5)
 
-                # 🔥 TAB → campo
+                # 🔥 PASSO 2: 2 TAB → vai pra Localização
+                page.keyboard.press("Tab")
+                time.sleep(0.3)
                 page.keyboard.press("Tab")
                 time.sleep(0.5)
 
-                # 🔥 abrir dropdown
+                # 🔥 PASSO 3: abre dropdown
                 page.keyboard.press("ArrowDown")
-                time.sleep(1.5)
+                time.sleep(1)
 
-                # 🔥 digitar cidade
+                # 🔥 PASSO 4: digita cidade
                 page.keyboard.type(cidade, delay=50)
                 time.sleep(1)
 
-                # 🔥 selecionar
+                # 🔥 PASSO 5: seleciona
                 page.keyboard.press("Tab")
                 time.sleep(0.5)
                 page.keyboard.press("Enter")
@@ -1084,10 +1080,9 @@ def coletar_inhire(page, site):
                 print("⚠️ erro filtro:", e)
                 continue
 
-            # 🔥 esperar vagas aparecerem
+            # 🔥 espera carregar vagas
             time.sleep(5)
 
-            # 🔥 SELETOR CORRETO (VOCÊ DESCOBRIU)
             jobs = page.locator("a[data-component-name='job-position-link']")
             total = jobs.count()
 
@@ -1113,11 +1108,12 @@ def coletar_inhire(page, site):
                 except Exception as e:
                     print("erro coleta:", e)
 
-            # 🔥 LIMPAR FILTRO (SEU JEITO)
+            # 🔥 LIMPAR FILTRO (MESMO CAMINHO)
             try:
-                page.get_by_text("Localização", exact=False).first.click()
+                page.locator("//*[@id='name']").click()
                 time.sleep(0.5)
 
+                page.keyboard.press("Tab")
                 page.keyboard.press("Tab")
                 time.sleep(0.5)
 
