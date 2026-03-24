@@ -375,7 +375,7 @@ def home():
         {% if vagas %}
             {% for vaga in vagas %}
                 <div class="vaga">
-                    <a href="/vaga/{{ vaga.id }}" target="_blank" class="vaga-link">
+                    <a href="/vaga/{{ vaga.id }}?redirect=1" target="_blank" class="vaga-link">
                         <strong>{{ vaga.titulo }}</strong>
                     </a>
                     <div class="empresa">
@@ -523,12 +523,56 @@ def admin_ocultas():
 
 @app.route("/vaga/<id>")
 def vaga(id):
+
+    redirect_mode = request.args.get("redirect") == "1"
+
     try:
         with open(CSV_FILE, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for vaga in reader:
                 if vaga["id"] == id:
-                    return redirect(vaga["link"])
+
+                    # 🔥 Se for clique interno → redireciona direto
+                    if redirect_mode:
+                        return redirect(vaga["link"])
+
+                    # 🔥 Se for link compartilhado → mostra página
+                    html = """
+                    <html>
+                    <head>
+                        <title>{{ vaga.titulo }}</title>
+                        <meta property="og:title" content="{{ vaga.titulo }}">
+                        <meta property="og:description" content="Veja essa vaga na Central de Vagas">
+                        <meta property="og:type" content="website">
+                    </head>
+                    <body style="font-family: Arial; padding: 30px; background:#f4f6f8;">
+
+                        <div style="background:white;padding:20px;border-radius:8px;max-width:600px;margin:auto;">
+                            
+                            <h2>{{ vaga.titulo }}</h2>
+
+                            <p><strong>Empresa:</strong> {{ vaga.empresa }}</p>
+
+                            <br>
+
+                            <a href="{{ vaga.link }}" target="_blank"
+                               style="background:#0066cc;color:white;padding:12px 20px;
+                                      text-decoration:none;border-radius:6px;">
+                                🚀 Ir para candidatura
+                            </a>
+
+                            <br><br>
+
+                            <a href="/">← Voltar para central</a>
+
+                        </div>
+
+                    </body>
+                    </html>
+                    """
+
+                    return render_template_string(html, vaga=vaga)
+
     except FileNotFoundError:
         pass
 
