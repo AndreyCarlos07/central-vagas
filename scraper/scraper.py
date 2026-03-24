@@ -923,6 +923,10 @@ def coletar_pandape(page, site):
     vagas = []
     links_coletados = set()
 
+    print("TITLE:", page.title())
+    print("TEM #name?:", page.locator("#name").count())
+    print("HTML:", page.content()[:500])
+
     try:
         page.goto(site["url"], timeout=60000)
 
