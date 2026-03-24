@@ -1036,15 +1036,13 @@ def coletar_pandape(page, site):
 # ===========================
 def coletar_inhire(site):
 
-    import requests
-
     vagas = []
     links_coletados = set()
 
     cidades = [
-        "Salvador",
-        "São Francisco do Conde",
-        "Catu"
+        "Salvador, BA, BR",
+        "São francisco do conde, BA, BR",
+        "Catu, BA, BR"
     ]
 
     try:
@@ -1053,19 +1051,24 @@ def coletar_inhire(site):
         url = "https://api.inhire.app/v1/jobs?company=infotecbrasil"
 
         headers = {
-            "User-Agent": "Mozilla/5.0",
-            "Accept": "application/json"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+            "Accept": "application/json, text/plain, */*",
+            "Origin": "https://infotecbrasil.inhire.app",
+            "Referer": "https://infotecbrasil.inhire.app/",
+            "Connection": "keep-alive"
         }
 
-        response = requests.get(url, headers=headers, timeout=30)
+        session = requests.Session()
+        response = session.get(url, headers=headers, timeout=30)
 
         if response.status_code != 200:
             print(f"❌ erro API: {response.status_code}")
+            print(response.text[:300])
             return vagas
 
         data = response.json()
 
-        jobs = data.get("jobs", [])
+        jobs = data.get("data", [])
 
         print(f"📦 total bruto da API: {len(jobs)}")
 
@@ -1074,17 +1077,13 @@ def coletar_inhire(site):
                 titulo = job.get("title", "").strip()
                 local = job.get("location", "").lower()
 
-                # 🔥 FILTRO DE CIDADES
-                if not any(cidade.lower() in local for cidade in cidades):
+                if not any(cidade in local for cidade in cidades):
                     continue
 
-                link = job.get("path", "")
+                link = job.get("url", "")
 
                 if not link:
                     continue
-
-                if not link.startswith("http"):
-                    link = "https://infotecbrasil.inhire.app" + link
 
                 link_limpo = link.split("?")[0]
 
