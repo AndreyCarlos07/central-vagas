@@ -5,11 +5,11 @@
 
     
 from playwright.sync_api import sync_playwright
-from playwright_stealth import stealth
 import csv
 import uuid
 import os
 import time
+import playwright_stealth as ps
 from datetime import datetime
 
 # ===========================
@@ -1250,7 +1250,7 @@ def main():
                 elif site["tipo"] == "inhire":
                     print("🕵️ Criando página isolada com stealth...")
                     page_inhire = browser.new_page()
-                    stealth(page_inhire)
+                    ps.stealth(page_inhire)
                     vagas = coletar_inhire(page_inhire, site)
                     page_inhire.close()
                 
