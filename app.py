@@ -565,6 +565,8 @@ def vaga(id):
 
                             <a href="/">← Voltar para central</a>
 
+                            <p>Projeto voluntário desenvolvido por <strong>Andrey Carlos</strong></p>
+
                         </div>
 
                     </body>
