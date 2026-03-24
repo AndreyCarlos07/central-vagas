@@ -14,7 +14,7 @@ from datetime import datetime
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["GERDAU", "JDE PEET'S", "BOMIX", "INFOTEC BRASIL"]
 
 CSV_HISTORICO = "vagas.csv"
@@ -1043,40 +1043,36 @@ def coletar_inhire(page, site):
     try:
         page.goto(site["url"], timeout=60000)
 
-        # 🔥 espera página estabilizar
-        page.wait_for_selector("#root div", timeout=30000)
-
-        time.sleep(5)
-        page.mouse.wheel(0, 2000)  # 🔥 SCROLL FORÇADO
+        # 🔥 espera aparecer o label (âncora do seu fluxo)
+        page.wait_for_selector("label:has-text('Localização')", timeout=30000)
         time.sleep(2)
-
-        print("TOTAL DROPDOWNS:", page.locator("div.react-dropdown-select-content").count())
-        print(page.content()[:2000])
 
         for cidade in cidades:
 
             print(f"📍 Filtrando: {cidade}")
 
             try:
-                # 🔥 SELETOR COMPLETO (sem gamble)
-                campo = page.locator(
-                    "#root div:nth-child(3) div.react-dropdown-select-content"
-                ).first
-
-                # 🔥 garante que existe
-                campo.wait_for(state="visible", timeout=10000)
-
-                campo.click(force=True)
-                time.sleep(1)
-
-                # 🔥 digitação real
-                page.keyboard.type(cidade, delay=50)
-
-                time.sleep(1)
-
-                # 🔥 seleção
-                page.keyboard.press("ArrowDown")
+                # 🔥 PASSO 1: clica no label (garante foco inicial correto)
+                page.locator("label:has-text('Localização')").click()
                 time.sleep(0.5)
+
+                # 🔥 PASSO 2: TAB → vai pra caixa (EXATAMENTE como você falou)
+                page.keyboard.press("Tab")
+                time.sleep(0.5)
+
+                # 🔥 PASSO 3: abre dropdown
+                page.keyboard.press("ArrowDown")
+                time.sleep(1)
+
+                # 🔥 PASSO 4: digita cidade
+                page.keyboard.type(cidade, delay=50)
+                time.sleep(1)
+
+                # 🔥 PASSO 5: TAB pra selecionar sugestão
+                page.keyboard.press("Tab")
+                time.sleep(0.5)
+
+                # 🔥 PASSO 6: ENTER confirma
                 page.keyboard.press("Enter")
 
                 print("✅ localização aplicada")
@@ -1086,7 +1082,7 @@ def coletar_inhire(page, site):
                 continue
 
             # 🔥 espera atualizar vagas
-            time.sleep(3)
+            time.sleep(4)
 
             jobs = page.locator("a[href*='/vagas/']")
             total = jobs.count()
@@ -1113,13 +1109,13 @@ def coletar_inhire(page, site):
                 except Exception as e:
                     print("erro coleta:", e)
 
-            # 🔥 limpar filtro (forma correta)
+            # 🔥 PASSO 7: clicar no X pra limpar (seu fluxo)
             try:
-                page.keyboard.press("Control+A")
-                page.keyboard.press("Backspace")
-                time.sleep(1)
+                page.locator("div.react-dropdown-select-clear").click()
+                time.sleep(2)
+                print("🧹 filtro limpo")
             except:
-                pass
+                print("⚠️ não conseguiu limpar filtro")
 
         print("🔗 total links únicos:", len(links_coletados))
 
