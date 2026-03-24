@@ -1050,7 +1050,7 @@ def coletar_inhire(site):
     try:
         print("🌐 Acessando API da Inhire...")
 
-        url = "https://infotecbrasil.inhire.app/api/v1/jobs"
+        url = "https://api.inhire.app/v1/jobs?company=infotecbrasil"
 
         headers = {
             "User-Agent": "Mozilla/5.0",
