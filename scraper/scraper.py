@@ -10,7 +10,16 @@ import uuid
 import os
 import time
 import requests
+import base64
 from datetime import datetime
+
+# ===========================
+# BACKUP CONFIG
+# ===========================
+
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
+REPO = "AndreyCarlos07/central-vagas"
+ARQUIVO_BACKUP = "vagas_backup.csv"
 
 # ===========================
 # DEBUG CONFIG
@@ -48,6 +57,45 @@ def salvar_csv(arquivo, vagas):
         writer.writeheader()
         for vaga in vagas:
             writer.writerow(vaga)
+
+# ===========================
+# FAZER BACKUP
+# ===========================
+def backup_csv_github():
+
+    if not os.path.exists(CSV_HISTORICO):
+        print("⚠️ Nenhum histórico para backup")
+        return
+
+    print("☁️ Enviando backup para GitHub...")
+
+    with open(CSV_HISTORICO, "r", encoding="utf-8") as f:
+        conteudo = f.read()
+
+    encoded = base64.b64encode(conteudo.encode()).decode()
+
+    url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_BACKUP}"
+
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}"
+    }
+
+    # Verifica se já existe (pra pegar SHA)
+    r = requests.get(url, headers=headers)
+    sha = None
+
+    if r.status_code == 200:
+        sha = r.json()["sha"]
+
+    payload = {
+        "message": "Backup automático vagas.csv",
+        "content": encoded,
+        "sha": sha
+    }
+
+    requests.put(url, headers=headers, json=payload)
+
+    print("✅ Backup realizado com sucesso!")
 
 
 # ===========================
