@@ -5,6 +5,7 @@
 
     
 from playwright.sync_api import sync_playwright
+from playwright_stealth import stealth_sync
 import csv
 import uuid
 import os
@@ -1045,13 +1046,13 @@ def coletar_inhire(page, site):
         "Catu, BA, BR"
     ]
 
-    print("🔍 DEBUG HTML:")
-    print(page.content()[:1000])
-
     try:
         # 🔥 TENTA CARREGAR ATÉ FUNCIONAR
         for tentativa in range(3):
             page.goto(site["url"], timeout=60000)
+
+            print("🔍 DEBUG HTML:")
+            print(page.content()[:1000])
 
             page.wait_for_selector("#name", timeout=15000)
             time.sleep(5)
@@ -1247,7 +1248,11 @@ def main():
                     vagas = coletar_pandape(page, site)
 
                 elif site["tipo"] == "inhire":
-                    vagas = coletar_inhire(page, site)
+                    print("🕵️ Criando página isolada com stealth...")
+                    page_inhire = browser.new_page()
+                    stealth_sync(page_inhire)
+                    vagas = coletar_inhire(page_inhire, site)
+                    page_inhire.close()
                 
                 else:
                     print("⚠️ Tipo não reconhecido")
