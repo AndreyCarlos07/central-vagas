@@ -1085,7 +1085,7 @@ def main():
 
                 elif site["tipo"] == "pandape":
                     vagas = coletar_pandape(page, site)
-                    
+                
                 else:
                     print("⚠️ Tipo não reconhecido")
                     vagas = []
