@@ -1042,34 +1042,57 @@ def coletar_inhire(page, site):
     ]
 
     try:
-        page.goto(site["url"], timeout=60000)
+        # 🔥 TENTA CARREGAR ATÉ FUNCIONAR
+        for tentativa in range(3):
+            page.goto(site["url"], timeout=60000)
 
-        time.sleep(10)  # 🔥 deixa SPA carregar
+            page.wait_for_load_state("domcontentloaded")
+            time.sleep(5)
 
+            # 🔥 força renderização (React acordar)
+            page.mouse.wheel(0, 3000)
+            time.sleep(2)
+
+            if page.locator("#name").count() > 0:
+                print("✅ página carregou corretamente")
+                break
+            else:
+                print(f"🔄 tentativa {tentativa+1} falhou, recarregando...")
+
+        # 🔥 VALIDA SE INPUT EXISTE
+        campo = page.locator("#name")
+
+        if campo.count() == 0:
+            print("❌ INPUT NÃO EXISTE → página não carregou")
+            return vagas
+
+        # =========================
+        # 🔁 LOOP DAS CIDADES
+        # =========================
         for cidade in cidades:
 
             print(f"📍 Filtrando: {cidade}")
 
             try:
-                # 🔥 PASSO 1: clicar no campo base
-                page.locator("//*[@id='name']").click()
+                # 🔥 clicar no campo base (#name)
+                campo.first.click()
                 time.sleep(0.5)
 
-                # 🔥 PASSO 2: 2 TAB → vai pra Localização
+                # 🔥 2 TAB → Localização
                 page.keyboard.press("Tab")
                 time.sleep(0.3)
                 page.keyboard.press("Tab")
                 time.sleep(0.5)
 
-                # 🔥 PASSO 3: abre dropdown
+                # 🔥 abre dropdown
                 page.keyboard.press("ArrowDown")
                 time.sleep(1)
 
-                # 🔥 PASSO 4: digita cidade
+                # 🔥 digita cidade
                 page.keyboard.type(cidade, delay=50)
                 time.sleep(1)
 
-                # 🔥 PASSO 5: seleciona
+                # 🔥 seleciona
                 page.keyboard.press("Tab")
                 time.sleep(0.5)
                 page.keyboard.press("Enter")
@@ -1080,9 +1103,10 @@ def coletar_inhire(page, site):
                 print("⚠️ erro filtro:", e)
                 continue
 
-            # 🔥 espera carregar vagas
+            # 🔥 espera vagas carregarem
             time.sleep(5)
 
+            # 🔥 seletor correto das vagas
             jobs = page.locator("a[data-component-name='job-position-link']")
             total = jobs.count()
 
@@ -1108,9 +1132,9 @@ def coletar_inhire(page, site):
                 except Exception as e:
                     print("erro coleta:", e)
 
-            # 🔥 LIMPAR FILTRO (MESMO CAMINHO)
+            # 🔥 LIMPAR FILTRO (SEU FLUXO)
             try:
-                page.locator("//*[@id='name']").click()
+                campo.first.click()
                 time.sleep(0.5)
 
                 page.keyboard.press("Tab")
@@ -1121,7 +1145,6 @@ def coletar_inhire(page, site):
                 page.keyboard.press("Backspace")
 
                 print("🧹 filtro limpo")
-
                 time.sleep(1)
 
             except Exception as e:
@@ -1129,6 +1152,9 @@ def coletar_inhire(page, site):
 
         print("🔗 total links únicos:", len(links_coletados))
 
+        # =========================
+        # 🔎 ENTRAR NAS VAGAS
+        # =========================
         for link in links_coletados:
             try:
                 page.goto(link, timeout=60000)
