@@ -1050,16 +1050,34 @@ def coletar_inhire(page, site):
         for tentativa in range(3):
             page.goto(site["url"], timeout=60000)
 
+            # 🔥 ESPERA REAL (SPA)
+            page.wait_for_load_state("networkidle")
+            time.sleep(5)
+
             print("🔍 DEBUG HTML:")
             print(page.content()[:1000])
 
-            page.wait_for_selector("#name", timeout=15000)
-            time.sleep(5)
+            # 🔥 força React renderizar
+            page.mouse.move(200, 200)
+            page.mouse.wheel(0, 4000)
+            time.sleep(3)
 
-            # 🔥 força renderização (React acordar)
-            page.mouse.wheel(0, 3000)
-            time.sleep(2)
+            # 🔥 garante que a página existe
+            try:
+                page.wait_for_selector("body", timeout=15000)
+            except:
+                print("⚠️ body não carregou")
+                continue
 
+            time.sleep(3)
+
+            # 🔥 DETECÇÃO INTELIGENTE
+            html = page.content().lower()
+            if "job" not in html:
+                print("🚨 Página não renderizou vagas (React não carregou)")
+                continue
+
+            # 🔥 AGORA sim tenta o campo
             if page.locator("#name").count() > 0:
                 print("✅ página carregou corretamente")
                 break
@@ -1139,7 +1157,7 @@ def coletar_inhire(page, site):
                 except Exception as e:
                     print("erro coleta:", e)
 
-            # 🔥 LIMPAR FILTRO (SEU FLUXO)
+            # 🔥 LIMPAR FILTRO
             try:
                 campo.first.click()
                 time.sleep(0.5)
