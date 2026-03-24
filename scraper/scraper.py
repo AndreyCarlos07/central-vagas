@@ -5,7 +5,6 @@
 
     
 from playwright.sync_api import sync_playwright
-from playwright_stealth import stealth
 import csv
 import uuid
 import os
@@ -1248,10 +1247,30 @@ def main():
                     vagas = coletar_pandape(page, site)
 
                 elif site["tipo"] == "inhire":
-                    print("🕵️ Criando página isolada com stealth...")
+                    print("🕵️ Criando página isolada com stealth manual...")
                     page_inhire = browser.new_page()
-                    stealth(page_inhire)
+
+                    # 🔥 STEALTH MANUAL
+                    page_inhire.add_init_script("""
+                    Object.defineProperty(navigator, 'webdriver', {
+                        get: () => undefined
+                    });
+
+                    window.chrome = {
+                        runtime: {}
+                    };
+
+                    Object.defineProperty(navigator, 'plugins', {
+                        get: () => [1, 2, 3, 4, 5]
+                    });
+
+                    Object.defineProperty(navigator, 'languages', {
+                        get: () => ['pt-BR', 'pt']
+                    });
+                    """)
+
                     vagas = coletar_inhire(page_inhire, site)
+
                     page_inhire.close()
                 
                 else:
