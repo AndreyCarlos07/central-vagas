@@ -219,11 +219,6 @@ SITES = [
         "empresa": "BOMIX",
         "url": "https://bomix.pandape.infojobs.com.br", 
         "tipo": "pandape"
-    },
-    {
-        "empresa": "INFOTEC BRASIL",
-        "url": "https://infotecbrasil.inhire.app/vagas", 
-        "tipo": "inhire"
     }
 ]
 
@@ -1031,85 +1026,6 @@ def coletar_pandape(page, site):
 
     print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
     return vagas
-
-# ===========================
-# INHIRE (API)
-# ===========================
-def coletar_inhire(site):
-
-    vagas = []
-    links_coletados = set()
-
-    cidades = [
-        "Salvador, BA, BR",
-        "São francisco do conde, BA, BR",
-        "Catu, BA, BR"
-    ]
-
-    try:
-        print("🌐 Acessando API da Inhire...")
-
-        url = "https://api.inhire.app/v1/jobs?company=infotecbrasil"
-
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
-            "Accept": "application/json, text/plain, */*",
-            "Origin": "https://infotecbrasil.inhire.app",
-            "Referer": "https://infotecbrasil.inhire.app/",
-            "Connection": "keep-alive"
-        }
-
-        session = requests.Session()
-        response = session.get(url, headers=headers, timeout=30)
-
-        if response.status_code != 200:
-            print(f"❌ erro API: {response.status_code}")
-            print(response.text[:300])
-            return vagas
-
-        data = response.json()
-
-        jobs = data.get("data", [])
-
-        print(f"📦 total bruto da API: {len(jobs)}")
-
-        for job in jobs:
-            try:
-                titulo = job.get("title", "").strip()
-                local = job.get("location", "").lower()
-
-                if not any(cidade in local for cidade in cidades):
-                    continue
-
-                link = job.get("url", "")
-
-                if not link:
-                    continue
-
-                link_limpo = link.split("?")[0]
-
-                if link_limpo in links_coletados:
-                    continue
-
-                links_coletados.add(link_limpo)
-
-                vagas.append({
-                    "id": str(uuid.uuid4())[:8],
-                    "titulo": titulo,
-                    "empresa": site["empresa"],
-                    "link": link_limpo
-                })
-
-            except Exception as e:
-                print("erro job:", e)
-
-        print(f"📌 {site['empresa']}: {len(vagas)} vagas filtradas")
-
-    except Exception as e:
-        print("❌ erro geral API:", e)
-        return vagas
-
-    return vagas
     
 
 # ===========================
@@ -1169,9 +1085,6 @@ def main():
 
                 elif site["tipo"] == "pandape":
                     vagas = coletar_pandape(page, site)
-
-                elif site["tipo"] == "inhire":
-                    vagas = coletar_inhire(site)
                     
                 else:
                     print("⚠️ Tipo não reconhecido")
