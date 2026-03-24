@@ -15,7 +15,7 @@ from datetime import datetime
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["GERDAU", "JDE PEET'S", "BOMIX", "INFOTEC BRASIL"]
+EMPRESAS_DEBUG = ["MERCADO LIVRE", "INFOTEC BRASIL"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -1043,36 +1043,37 @@ def coletar_inhire(page, site):
     try:
         page.goto(site["url"], timeout=60000)
 
-        # 🔥 espera aparecer o label (âncora do seu fluxo)
-        page.wait_for_selector("label:has-text('Localização')", timeout=30000)
-        time.sleep(2)
+        # 🔥 espera "burra" (funciona melhor que wait em SPA bloqueada)
+        time.sleep(10)
 
         for cidade in cidades:
 
             print(f"📍 Filtrando: {cidade}")
 
             try:
-                # 🔥 PASSO 1: clica no label (garante foco inicial correto)
-                page.locator("label:has-text('Localização')").click()
+                # 🔥 tenta clicar no texto Localização direto (sem wait)
+                try:
+                    page.locator("text=Localização").click(timeout=5000)
+                except:
+                    print("⚠️ não achou 'Localização', tentando mesmo assim...")
+
                 time.sleep(0.5)
 
-                # 🔥 PASSO 2: TAB → vai pra caixa (EXATAMENTE como você falou)
+                # 🔥 TAB (igual você faz)
                 page.keyboard.press("Tab")
                 time.sleep(0.5)
 
-                # 🔥 PASSO 3: abre dropdown
+                # 🔥 abre dropdown
                 page.keyboard.press("ArrowDown")
                 time.sleep(1)
 
-                # 🔥 PASSO 4: digita cidade
+                # 🔥 digita cidade
                 page.keyboard.type(cidade, delay=50)
                 time.sleep(1)
 
-                # 🔥 PASSO 5: TAB pra selecionar sugestão
+                # 🔥 seleciona
                 page.keyboard.press("Tab")
                 time.sleep(0.5)
-
-                # 🔥 PASSO 6: ENTER confirma
                 page.keyboard.press("Enter")
 
                 print("✅ localização aplicada")
@@ -1081,8 +1082,8 @@ def coletar_inhire(page, site):
                 print("⚠️ erro filtro:", e)
                 continue
 
-            # 🔥 espera atualizar vagas
-            time.sleep(4)
+            # 🔥 espera carregar vagas
+            time.sleep(5)
 
             jobs = page.locator("a[href*='/vagas/']")
             total = jobs.count()
@@ -1109,7 +1110,7 @@ def coletar_inhire(page, site):
                 except Exception as e:
                     print("erro coleta:", e)
 
-            # 🔥 PASSO 7: clicar no X pra limpar (seu fluxo)
+            # 🔥 limpar filtro
             try:
                 page.locator("div.react-dropdown-select-clear").click()
                 time.sleep(2)
@@ -1119,7 +1120,6 @@ def coletar_inhire(page, site):
 
         print("🔗 total links únicos:", len(links_coletados))
 
-        # 🔥 entra nas vagas
         for link in links_coletados:
             try:
                 page.goto(link, timeout=60000)
