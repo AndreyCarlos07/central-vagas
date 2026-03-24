@@ -1193,6 +1193,9 @@ def main():
     # SALVAR ARQUIVOS
     # ===========================
 
+    if not MODO_DEBUG:
+        backup_csv_github()  # 🔥 BACKUP ANTES DE SOBRESCREVER
+    
     if MODO_DEBUG:
         print("\n🧪 MODO DEBUG ATIVO - Salvando apenas arquivo de teste")
         salvar_csv("vagas_debug.csv", todas_vagas_coletadas)
