@@ -26,8 +26,8 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["MERCADO LIVRE", "INFOTEC BRASIL"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["MERCADO LIVRE"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -529,90 +529,57 @@ def coletar_gerdau(page, site):
 # EIGHTFOLD (MERCADO LIVRE)
 # ===========================
 def coletar_eightfold(page, site):
+
     vagas = []
+    links_coletados = set()
+
+    cidades = [
+        "Simões Filho",
+        "Lauro de Freitas"
+    ]
 
     page.goto("https://mercadolibre.eightfold.ai/careers", timeout=60000)
     page.wait_for_load_state("networkidle")
 
-    # Espera o campo aparecer
     page.wait_for_selector('input[data-testid="position-query-search-search"]', timeout=15000)
 
-    # Digita Simões Filho
-    page.fill('input[data-testid="position-query-search-search"]', "Simões Filho")
-    page.keyboard.press("Enter")
+    for cidade in cidades:
 
-    # Espera os resultados carregarem
-    page.wait_for_selector('a[href*="/careers/job/"]', timeout=15000)
-    page.wait_for_load_state("networkidle")
-
-    # Coleta links
-    links = page.locator('a[href*="/careers/job/"]')
-    total = links.count()
-
-    for i in range(total):
-        titulo = links.nth(i).inner_text()
-        link = links.nth(i).get_attribute("href")
-
-        if link and not link.startswith("http"):
-            link = "https://mercadolibre.eightfold.ai" + link
-
-        vagas.append({
-            "id": str(uuid.uuid4())[:8],
-            "empresa": site["empresa"],
-            "titulo": titulo.strip(),
-            "link": link
-        })
-
-    print(f"📌 {site['empresa']} (EIGHTFOLD): {len(vagas)} vagas coletadas")
-    return vagas
-
-
-# ===========================
-# ORACLE CLOUD
-# ===========================
-def coletar_oracle(page, site):
-    vagas = []
-    links_coletados = set()
-
-    filtros = site.get("filtros", [])
-
-    if not filtros:
-        filtros = [None]  # caso não tenha filtro
-
-    for filtro in filtros:
-
-        if filtro:
-            url_com_filtro = (
-                site["url"]
-                + f"?location={filtro['location']}"
-                + f"&locationId={filtro['locationId']}"
-                + "&locationLevel=city"
-                + "&mode=location"
-                + "&radius=25"
-                + "&radiusUnit=KM"
-            )
-        else:
-            url_com_filtro = site["url"]
+        print(f"📍 Filtrando: {cidade}")
 
         try:
-            page.goto(url_com_filtro, timeout=60000)
+            campo = page.locator('input[data-testid="position-query-search-search"]')
+
+            # 🔥 limpa antes (importantíssimo)
+            campo.fill("")
+            time.sleep(0.5)
+
+            # 🔥 digita cidade
+            campo.fill(cidade)
+            time.sleep(1)
+
+            page.keyboard.press("Enter")
+
+            # 🔥 espera resultados
+            page.wait_for_selector('a[href*="/careers/job/"]', timeout=15000)
             page.wait_for_load_state("networkidle")
-            page.wait_for_timeout(4000)
+            time.sleep(2)
 
-            print("URL carregada:", page.url)
+            links = page.locator('a[href*="/careers/job/"]')
+            total = links.count()
 
-            cards = page.locator("a.job-list-item__link")
-            total = cards.count()
-
-            print("Total de links encontrados:", total)
+            print(f"📦 vagas encontradas: {total}")
 
             for i in range(total):
                 try:
-                    card = cards.nth(i)
-                    link = card.get_attribute("href")
+                    titulo = links.nth(i).inner_text()
+                    link = links.nth(i).get_attribute("href")
 
                     if not link:
                         continue
+
+                    if not link.startswith("http"):
+                        link = "https://mercadolibre.eightfold.ai" + link
 
                     link_limpo = link.split("?")[0]
 
@@ -621,31 +588,22 @@ def coletar_oracle(page, site):
 
                     links_coletados.add(link_limpo)
 
-                    page.goto(link_limpo, timeout=60000)
-                    page.wait_for_load_state("networkidle")
-
-                    titulo = page.locator("h1.job-details__title").inner_text().strip()
-
                     vagas.append({
                         "id": str(uuid.uuid4())[:8],
-                        "titulo": titulo,
                         "empresa": site["empresa"],
+                        "titulo": titulo.strip(),
                         "link": link_limpo
                     })
 
-                    page.go_back()
-                    page.wait_for_load_state("networkidle")
-
                 except Exception as e:
-                    print("Erro ao processar vaga:", e)
-                    continue
+                    print("erro coleta:", e)
 
         except Exception as e:
-            print(f"Erro ao acessar Oracle {site['empresa']}:", e)
-            continue
+            print("⚠️ erro filtro:", e)
 
-    print(f"📌 {site['empresa']} (ORACLE): {len(vagas)} vagas coletadas")
+    print(f"📌 {site['empresa']} (EIGHTFOLD): {len(vagas)} vagas coletadas")
     return vagas
+
 
 # ===========================
 # RECRUT.AI
