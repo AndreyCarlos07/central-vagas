@@ -529,81 +529,42 @@ def coletar_gerdau(page, site):
 # EIGHTFOLD (MERCADO LIVRE)
 # ===========================
 def coletar_eightfold(page, site):
-
     vagas = []
-    links_coletados = set()
-
-    cidades = [
-        "Simões Filho",
-        "Lauro de Freitas"
-    ]
 
     page.goto("https://mercadolibre.eightfold.ai/careers", timeout=60000)
     page.wait_for_load_state("networkidle")
 
+    # Espera o campo aparecer
     page.wait_for_selector('input[data-testid="position-query-search-search"]', timeout=15000)
 
-    for cidade in cidades:
+    # Digita Simões Filho
+    page.fill('input[data-testid="position-query-search-search"]', "Simões Filho")
+    page.keyboard.press("Enter")
 
-        print(f"📍 Filtrando: {cidade}")
+    # Espera os resultados carregarem
+    page.wait_for_selector('a[href*="/careers/job/"]', timeout=15000)
+    page.wait_for_load_state("networkidle")
 
-        try:
-            campo = page.locator('input[data-testid="position-query-search-search"]')
+    # Coleta links
+    links = page.locator('a[href*="/careers/job/"]')
+    total = links.count()
 
-            # 🔥 limpa antes (importantíssimo)
-            campo.fill("")
-            time.sleep(0.5)
+    for i in range(total):
+        titulo = links.nth(i).inner_text()
+        link = links.nth(i).get_attribute("href")
 
-            # 🔥 digita cidade
-            campo.fill(cidade)
-            time.sleep(1)
+        if link and not link.startswith("http"):
+            link = "https://mercadolibre.eightfold.ai" + link
 
-            page.keyboard.press("Enter")
-
-            # 🔥 espera resultados
-            page.wait_for_selector('a[href*="/careers/job/"]', timeout=15000)
-            page.wait_for_load_state("networkidle")
-            time.sleep(2)
-
-            links = page.locator('a[href*="/careers/job/"]')
-            total = links.count()
-
-            print(f"📦 vagas encontradas: {total}")
-
-            for i in range(total):
-                try:
-                    titulo = links.nth(i).inner_text()
-                    link = links.nth(i).get_attribute("href")
-
-                    if not link:
-                        continue
-
-                    if not link.startswith("http"):
-                        link = "https://mercadolibre.eightfold.ai" + link
-
-                    link_limpo = link.split("?")[0]
-
-                    if link_limpo in links_coletados:
-                        continue
-
-                    links_coletados.add(link_limpo)
-
-                    vagas.append({
-                        "id": str(uuid.uuid4())[:8],
-                        "empresa": site["empresa"],
-                        "titulo": titulo.strip(),
-                        "link": link_limpo
-                    })
-
-                except Exception as e:
-                    print("erro coleta:", e)
-
-        except Exception as e:
-            print("⚠️ erro filtro:", e)
+        vagas.append({
+            "id": str(uuid.uuid4())[:8],
+            "empresa": site["empresa"],
+            "titulo": titulo.strip(),
+            "link": link
+        })
 
     print(f"📌 {site['empresa']} (EIGHTFOLD): {len(vagas)} vagas coletadas")
     return vagas
-
 
 # ===========================
 # RECRUT.AI
