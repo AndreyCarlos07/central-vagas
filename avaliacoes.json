@@ -1,26 +1,5 @@
 {
   "pendentes": [],
-  "aprovadas": [
-    {
-      "id": "3d0f21d4",
-      "nome": "Teste",
-      "comentario": "Top",
-      "estrelas": 5,
-      "linkedin": "",
-      "status": "recolocacao",
-      "cargo": "",
-      "empresa": "",
-      "data": "2026-03-26T16:16:15.068864"
-    },
-    {
-      "id": "f7171114",
-      "nome": "Andrey",
-      "comentario": "Awesome",
-      "estrelas": 5,
-      "status": "recolocacao",
-      "cargo": null,
-      "empresa": null,
-      "data": "2026-03-26T17:14:07.839726"
-    }
-  ]
+  "aprovadas": [],
+  "excluidas": []
 }
