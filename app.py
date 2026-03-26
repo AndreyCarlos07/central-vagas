@@ -133,13 +133,18 @@ def carregar_avaliacoes():
     r = requests.get(url, headers=headers)
 
     if r.status_code != 200:
-        return {"pendentes": [], "aprovadas": []}
+        return {"pendentes": [], "aprovadas": [], "excluidas": []}
 
     data = r.json()
     conteudo = base64.b64decode(data["content"]).decode()
 
-    return json.loads(conteudo)
+    dados = json.loads(conteudo)
 
+    # 🔥 garante estrutura
+    if "excluidas" not in dados:
+        dados["excluidas"] = []
+
+    return dados
 
 def salvar_avaliacoes(dados):
     url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_AVALIACOES}"
@@ -785,26 +790,11 @@ def admin_avaliacoes():
     """
 
     return render_template_string(html,
-        pendentes=dados["pendentes"],
-        token=ADMIN_TOKEN
-    )
-
-@app.route("/excluir_avaliacao/<id>")
-def excluir_avaliacao(id):
-    if request.args.get("admin") != ADMIN_TOKEN:
-        return "Acesso negado"
-
-    dados = carregar_avaliacoes()
-
-    for a in dados["aprovadas"]:
-        if a["id"] == id:
-            dados["aprovadas"].remove(a)
-            dados["excluidas"].append(a)
-            break
-
-    salvar_avaliacoes(dados)
-
-    return redirect("/admin/avaliacoes?admin=" + ADMIN_TOKEN)
+    pendentes=dados["pendentes"],
+    aprovadas=dados["aprovadas"],
+    excluidas=dados["excluidas"],
+    token=ADMIN_TOKEN
+)
 
 @app.route("/excluir_avaliacao/<id>")
 def excluir_avaliacao(id):
