@@ -350,12 +350,40 @@ def home():
     </head>
     <body>
 
+        {% if request.args.get("msg") == "ok" %}
+        <div id="msg-sucesso" style="
+            background:#d4edda;
+            color:#155724;
+            padding:15px;
+            border-radius:6px;
+            margin-bottom:20px;
+            font-weight:bold;
+        ">
+            ✅ Avaliação enviada com sucesso! Aguarde aprovação.
+        </div>
+
+        <script>
+        setTimeout(() => {
+            const msg = document.getElementById("msg-sucesso");
+            if (msg) msg.style.display = "none";
+        }, 4000);
+        </script>
+        {% endif %}
+
         <h1>Central de Vagas - Engenharia / BA</h1>
 
         {% if admin %}
         <p>
         <a href="/admin/ocultas?admin={{token}}" style="font-size:14px;">
         ⚙️ Ver vagas ocultas
+        </a>
+        </p>
+        {% endif %}
+
+        {% if admin %}
+        <p>
+        <a href="/admin/avaliacoes?admin={{token}}">
+        📝 Ver avaliações pendentes
         </a>
         </p>
         {% endif %}
@@ -377,7 +405,8 @@ def home():
                 🏢 {{ total_empresas }} empresas monitoradas
             </div>
 
-            <button onclick="document.getElementById('form-avaliacao').style.display='block'">
+            <button style="background:#28a745;" 
+            onclick="document.getElementById('form-avaliacao').style.display='block'">
                 ⭐ Avaliar página / Agradecimento
             </button>
 
@@ -424,15 +453,30 @@ def home():
 
         <input name="nome" placeholder="Seu nome" required>
 
-        <select name="status">
+        <select name="status" onchange="toggleCampos(this.value)">
             <option value="recolocacao">Recolocação</option>
             <option value="empregado">Empregado</option>
         </select>
 
+        <script>
+        function toggleCampos(status) {
+            const cargo = document.querySelector('input[name="cargo"]');
+            const empresa = document.querySelector('input[name="empresa"]');
+
+            if (status === "recolocacao") {
+                cargo.disabled = true;
+                empresa.disabled = true;
+                cargo.value = "";
+                empresa.value = "";
+            } else {
+                cargo.disabled = false;
+                empresa.disabled = false;
+            }
+        }
+        </script>
+
         <input name="cargo" placeholder="Cargo (se empregado)">
         <input name="empresa" placeholder="Empresa (se empregado)">
-
-        <input name="linkedin" placeholder="LinkedIn (opcional)">
 
         <select name="estrelas" required>
             <option value="">Avaliação</option>
@@ -493,9 +537,6 @@ def home():
         <div class="vaga">
 
         <strong>{{ a.nome }}</strong>
-        {% if a.linkedin %}
-         - <a href="{{ a.linkedin }}" target="_blank">LinkedIn</a>
-        {% endif %}
 
         <br>
 
@@ -632,7 +673,6 @@ def avaliar():
     nome = request.form.get("nome")
     comentario = request.form.get("comentario")
     estrelas = int(request.form.get("estrelas", 0))
-    linkedin = request.form.get("linkedin")
     status = request.form.get("status")
     cargo = request.form.get("cargo")
     empresa = request.form.get("empresa")
@@ -648,7 +688,6 @@ def avaliar():
         "nome": nome,
         "comentario": comentario,
         "estrelas": estrelas,
-        "linkedin": linkedin,
         "status": status,
         "cargo": cargo,
         "empresa": empresa,
@@ -660,7 +699,7 @@ def avaliar():
 
     salvar_avaliacoes(dados)
 
-    return redirect("/")
+    return redirect("/?msg=ok")
 
 
 @app.route("/admin/avaliacoes")
