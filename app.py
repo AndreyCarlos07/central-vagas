@@ -10,6 +10,7 @@ from flask import Flask, redirect, render_template_string, request
 import json
 import base64
 import requests
+import uuid
 from datetime import datetime
 
 app = Flask(__name__)
@@ -23,6 +24,7 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 
 REPO = "AndreyCarlos07/central-vagas"
 ARQUIVO_OCULTAS = "vagas_ocultas.json"
+ARQUIVO_AVALIACOES = "avaliacoes.json"
 
 
 # ==========================
@@ -118,6 +120,47 @@ def restaurar_vaga(id):
     ocultas.discard(id)
 
     salvar_ocultas(ocultas)
+    
+
+def carregar_avaliacoes():
+    url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_AVALIACOES}"
+
+    headers = {
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github+json"
+    }
+
+    r = requests.get(url, headers=headers)
+
+    if r.status_code != 200:
+        return {"pendentes": [], "aprovadas": []}
+
+    data = r.json()
+    conteudo = base64.b64decode(data["content"]).decode()
+
+    return json.loads(conteudo)
+
+
+def salvar_avaliacoes(dados):
+    url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_AVALIACOES}"
+
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}"
+    }
+
+    r = requests.get(url, headers=headers)
+    sha = r.json()["sha"] if r.status_code == 200 else None
+
+    conteudo = json.dumps(dados, indent=2, ensure_ascii=False)
+    encoded = base64.b64encode(conteudo.encode()).decode()
+
+    payload = {
+        "message": "Atualizando avaliações",
+        "content": encoded,
+        "sha": sha
+    }
+
+    requests.put(url, headers=headers, json=payload)
     
 
 def vagas_ativas():
@@ -334,6 +377,9 @@ def home():
                 🏢 {{ total_empresas }} empresas monitoradas
             </div>
 
+            <button onclick="document.getElementById('form-avaliacao').style.display='block'">
+                ⭐ Avaliar página / Agradecimento
+            </button>
 
         </div>
 
@@ -371,6 +417,38 @@ def home():
         </div>
 
         <p>Projeto voluntário desenvolvido por <strong>Andrey Carlos</strong> para ajudar profissionais a se candidatarem.</p>
+
+        <div id="form-avaliacao" style="display:none;background:white;padding:15px;border-radius:8px;margin-bottom:20px;">
+
+        <form method="POST" action="/avaliar">
+
+        <input name="nome" placeholder="Seu nome" required>
+
+        <select name="status">
+            <option value="recolocacao">Recolocação</option>
+            <option value="empregado">Empregado</option>
+        </select>
+
+        <input name="cargo" placeholder="Cargo (se empregado)">
+        <input name="empresa" placeholder="Empresa (se empregado)">
+
+        <input name="linkedin" placeholder="LinkedIn (opcional)">
+
+        <select name="estrelas" required>
+            <option value="">Avaliação</option>
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="1">⭐</option>
+        </select>
+
+        <textarea name="comentario" maxlength="300" placeholder="Comentário..." required></textarea>
+
+        <button type="submit">Enviar avaliação</button>
+
+        </form>
+        </div>
         
         {% if vagas %}
             {% for vaga in vagas %}
@@ -409,9 +487,36 @@ def home():
             
         </div>
 
+        <h2>⭐ Avaliações</h2>
+
+        {% for a in avaliacoes %}
+        <div class="vaga">
+
+        <strong>{{ a.nome }}</strong>
+        {% if a.linkedin %}
+         - <a href="{{ a.linkedin }}" target="_blank">LinkedIn</a>
+        {% endif %}
+
+        <br>
+
+        {{ "⭐" * (a.estrelas | int) }}
+
+        <p>{{ a.comentario }}</p>
+
+        {% if a.status == "empregado" %}
+        <small>{{ a.cargo }} - {{ a.empresa }}</small>
+        {% else %}
+        <small>Em recolocação</small>
+        {% endif %}
+
+        </div>
+        {% endfor %}
+
     </body>
     </html>
     """
+
+    avaliacoes = carregar_avaliacoes()["aprovadas"]
 
     return render_template_string(
         html,
@@ -425,7 +530,8 @@ def home():
         page=page,
         total_paginas=total_paginas,
         admin=admin,
-        token=ADMIN_TOKEN
+        token=ADMIN_TOKEN,
+        avaliacoes=avaliacoes
     )
 
 
@@ -519,7 +625,84 @@ def admin_ocultas():
         vagas=vagas,
         token=ADMIN_TOKEN
     )
+    
 
+@app.route("/avaliar", methods=["POST"])
+def avaliar():
+    nome = request.form.get("nome")
+    comentario = request.form.get("comentario")
+    estrelas = int(request.form.get("estrelas", 0))
+    linkedin = request.form.get("linkedin")
+    status = request.form.get("status")
+    cargo = request.form.get("cargo")
+    empresa = request.form.get("empresa")
+
+    if not nome or not comentario or estrelas == 0:
+        return "Preencha os campos obrigatórios"
+
+    if len(comentario) > 300:
+        return "Comentário muito grande (máx 300 caracteres)"
+
+    nova = {
+        "id": str(uuid.uuid4())[:8],
+        "nome": nome,
+        "comentario": comentario,
+        "estrelas": estrelas,
+        "linkedin": linkedin,
+        "status": status,
+        "cargo": cargo,
+        "empresa": empresa,
+        "data": datetime.now().isoformat()
+    }
+
+    dados = carregar_avaliacoes()
+    dados["pendentes"].append(nova)
+
+    salvar_avaliacoes(dados)
+
+    return redirect("/")
+
+
+@app.route("/admin/avaliacoes")
+def admin_avaliacoes():
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_avaliacoes()
+
+    html = """
+    <h2>Pendentes</h2>
+
+    {% for a in pendentes %}
+        <p>
+        {{ a.nome }} - {{ a.comentario }}
+        <br>
+        <a href="/aprovar/{{a.id}}?admin={{token}}">Aprovar</a>
+        </p>
+    {% endfor %}
+    """
+
+    return render_template_string(html,
+        pendentes=dados["pendentes"],
+        token=ADMIN_TOKEN
+    )
+
+@app.route("/aprovar/<id>")
+def aprovar(id):
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_avaliacoes()
+
+    for a in dados["pendentes"]:
+        if a["id"] == id:
+            dados["pendentes"].remove(a)
+            dados["aprovadas"].append(a)
+            break
+
+    salvar_avaliacoes(dados)
+
+    return redirect("/admin/avaliacoes?admin=" + ADMIN_TOKEN)
 
 @app.route("/vaga/<id>")
 def vaga(id):
