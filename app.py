@@ -346,6 +346,12 @@ def home():
             }
 
             .empresa { color: #555; margin-top: 5px; }
+
+            textarea {
+                width: 100%;
+                height: 120px;
+                resize: none; /* impede redimensionar */
+            }
         </style>
     </head>
     <body>
@@ -475,8 +481,8 @@ def home():
         }
         </script>
 
-        <input name="cargo" placeholder="Cargo (se empregado)" disabled>
-        <input name="empresa" placeholder="Empresa (se empregado)" disabled>
+        <input name="cargo" placeholder="Cargo" disabled>
+        <input name="empresa" placeholder="Empresa" disabled>
 
         <select name="estrelas" required>
             <option value="">Avaliação</option>
@@ -553,11 +559,36 @@ def home():
         </div>
         {% endfor %}
 
+        <div class="paginacao">
+        {% if page_av > 1 %}
+        <a href="?page={{page}}&page_av={{ page_av-1 }}">← Anterior</a>
+        {% endif %}
+
+        {% if page_av < total_paginas_av %}
+        <a href="?page={{page}}&page_av={{ page_av+1 }}">Próxima →</a>
+        {% endif %}
+        </div>
+
     </body>
     </html>
     """
 
     avaliacoes = carregar_avaliacoes()["aprovadas"]
+
+    # ordena mais recentes primeiro
+    avaliacoes.sort(key=lambda a: a["data"], reverse=True)
+
+    # pega só as 5
+
+    AVALIACOES_POR_PAGINA = 5
+    page_av = int(request.args.get("page_av", 1))
+
+    inicio = (page_av - 1) * AVALIACOES_POR_PAGINA
+    fim = inicio + AVALIACOES_POR_PAGINA
+
+    avaliacoes_paginadas = avaliacoes[inicio:fim]
+
+    total_paginas_av = (len(avaliacoes) + AVALIACOES_POR_PAGINA - 1) // AVALIACOES_POR_PAGINA
 
     return render_template_string(
         html,
@@ -572,7 +603,9 @@ def home():
         total_paginas=total_paginas,
         admin=admin,
         token=ADMIN_TOKEN,
-        avaliacoes=avaliacoes
+        avaliacoes=avaliacoes_paginadas,
+        page_av=page_av,
+        total_paginas_av=total_paginas_av
     )
 
 
@@ -710,6 +743,8 @@ def admin_avaliacoes():
     dados = carregar_avaliacoes()
 
     html = """
+    <a href="/?admin={{token}}">← voltar</a>
+
     <h2>Pendentes</h2>
 
     {% for a in pendentes %}
@@ -719,12 +754,74 @@ def admin_avaliacoes():
         <a href="/aprovar/{{a.id}}?admin={{token}}">Aprovar</a>
         </p>
     {% endfor %}
+
+    <hr>
+
+    <h2>Aprovadas</h2>
+
+    {% for a in aprovadas %}
+        <p>
+        {{ a.nome }} - {{ a.comentario }}
+        <br>
+        <a href="/excluir_avaliacao/{{a.id}}?admin={{token}}" style="color:red;">
+        Excluir
+        </a>
+        </p>
+        {% endfor %}
+
+    <hr>
+
+    <h2>Excluídas</h2>
+
+    {% for a in excluidas %}
+        <p>
+        {{ a.nome }} - {{ a.comentario }}
+        <br>
+        <a href="/restaurar_avaliacao/{{a.id}}?admin={{token}}" style="color:green;">
+        Restaurar
+        </a>
+        </p>
+        {% endfor %}
     """
 
     return render_template_string(html,
         pendentes=dados["pendentes"],
         token=ADMIN_TOKEN
     )
+
+@app.route("/excluir_avaliacao/<id>")
+def excluir_avaliacao(id):
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_avaliacoes()
+
+    for a in dados["aprovadas"]:
+        if a["id"] == id:
+            dados["aprovadas"].remove(a)
+            dados["excluidas"].append(a)
+            break
+
+    salvar_avaliacoes(dados)
+
+    return redirect("/admin/avaliacoes?admin=" + ADMIN_TOKEN)
+
+@app.route("/excluir_avaliacao/<id>")
+def excluir_avaliacao(id):
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_avaliacoes()
+
+    for a in dados["aprovadas"]:
+        if a["id"] == id:
+            dados["aprovadas"].remove(a)
+            dados["excluidas"].append(a)
+            break
+
+    salvar_avaliacoes(dados)
+
+    return redirect("/admin/avaliacoes?admin=" + ADMIN_TOKEN)
 
 @app.route("/aprovar/<id>")
 def aprovar(id):
