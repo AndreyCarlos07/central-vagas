@@ -1,5 +1,6 @@
 {
-  "pendentes": [
+  "pendentes": [],
+  "aprovadas": [
     {
       "id": "3d0f21d4",
       "nome": "Teste",
@@ -11,6 +12,5 @@
       "empresa": "",
       "data": "2026-03-26T16:16:15.068864"
     }
-  ],
-  "aprovadas": []
+  ]
 }
