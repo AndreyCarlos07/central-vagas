@@ -475,8 +475,8 @@ def home():
         }
         </script>
 
-        <input name="cargo" placeholder="Cargo (se empregado)">
-        <input name="empresa" placeholder="Empresa (se empregado)">
+        <input name="cargo" placeholder="Cargo (se empregado)" disabled>
+        <input name="empresa" placeholder="Empresa (se empregado)" disabled>
 
         <select name="estrelas" required>
             <option value="">Avaliação</option>
