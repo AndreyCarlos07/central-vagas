@@ -1,16 +1,5 @@
 {
-  "pendentes": [
-    {
-      "id": "39b5fad6",
-      "nome": "Lucas ",
-      "comentario": "Excelente iniciativa! 👏🏻👏🏻",
-      "estrelas": 5,
-      "status": "empregado",
-      "cargo": "",
-      "empresa": "",
-      "data": "2026-03-27T11:08:02.415610"
-    }
-  ],
+  "pendentes": [],
   "aprovadas": [
     {
       "id": "84d6b2d1",
@@ -31,6 +20,16 @@
       "cargo": null,
       "empresa": null,
       "data": "2026-03-27T09:33:13.841099"
+    },
+    {
+      "id": "39b5fad6",
+      "nome": "Lucas ",
+      "comentario": "Excelente iniciativa! 👏🏻👏🏻",
+      "estrelas": 5,
+      "status": "empregado",
+      "cargo": "",
+      "empresa": "",
+      "data": "2026-03-27T11:08:02.415610"
     }
   ],
   "excluidas": []
