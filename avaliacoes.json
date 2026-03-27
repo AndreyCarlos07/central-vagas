@@ -19,6 +19,16 @@
       "cargo": null,
       "empresa": null,
       "data": "2026-03-27T13:24:22.530988"
+    },
+    {
+      "id": "bcc228ee",
+      "nome": "Vinicius Cardoso Lima",
+      "comentario": "Parabéns. Excelente ferramenta. Muito prática e intuitiva.",
+      "estrelas": 5,
+      "status": "empregado",
+      "cargo": "Operador de Processos Químicos",
+      "empresa": "ITF Chemical",
+      "data": "2026-03-27T13:58:48.933391"
     }
   ],
   "aprovadas": [
