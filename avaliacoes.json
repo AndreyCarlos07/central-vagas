@@ -1,16 +1,6 @@
 {
   "pendentes": [
     {
-      "id": "f0ebf3ad",
-      "nome": "Raimundo Rafael ",
-      "comentario": "Bom trabalho prestado. Parabéns!",
-      "estrelas": 5,
-      "status": "recolocacao",
-      "cargo": null,
-      "empresa": null,
-      "data": "2026-03-27T15:52:05.261160"
-    },
-    {
       "id": "13f76b92",
       "nome": "Wellington ",
       "comentario": "Ótima iniciativa! 👏👏",
@@ -91,6 +81,16 @@
       "cargo": null,
       "empresa": null,
       "data": "2026-03-27T15:12:57.383048"
+    },
+    {
+      "id": "f0ebf3ad",
+      "nome": "Raimundo Rafael ",
+      "comentario": "Bom trabalho prestado. Parabéns!",
+      "estrelas": 5,
+      "status": "recolocacao",
+      "cargo": null,
+      "empresa": null,
+      "data": "2026-03-27T15:52:05.261160"
     }
   ],
   "excluidas": [
