@@ -1,16 +1,5 @@
 {
-  "pendentes": [
-    {
-      "id": "67c9ad65",
-      "nome": "Allan Santos ",
-      "comentario": "Excelente 👏🏽👏🏽",
-      "estrelas": 5,
-      "status": "recolocacao",
-      "cargo": null,
-      "empresa": null,
-      "data": "2026-03-27T17:14:23.602976"
-    }
-  ],
+  "pendentes": [],
   "aprovadas": [
     {
       "id": "84d6b2d1",
@@ -101,6 +90,16 @@
       "cargo": null,
       "empresa": null,
       "data": "2026-03-27T16:35:40.584924"
+    },
+    {
+      "id": "67c9ad65",
+      "nome": "Allan Santos ",
+      "comentario": "Excelente 👏🏽👏🏽",
+      "estrelas": 5,
+      "status": "recolocacao",
+      "cargo": null,
+      "empresa": null,
+      "data": "2026-03-27T17:14:23.602976"
     }
   ],
   "excluidas": [
