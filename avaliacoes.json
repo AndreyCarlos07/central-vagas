@@ -91,7 +91,9 @@
       "cargo": null,
       "empresa": null,
       "data": "2026-03-27T15:12:57.383048"
-    },
+    }
+  ],
+  "excluidas": [
     {
       "id": "cf4b27bd",
       "nome": "Joelton",
@@ -102,6 +104,5 @@
       "empresa": null,
       "data": "2026-03-27T15:12:58.692064"
     }
-  ],
-  "excluidas": []
+  ]
 }
