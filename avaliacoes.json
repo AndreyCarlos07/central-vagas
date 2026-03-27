@@ -1,16 +1,5 @@
 {
-  "pendentes": [
-    {
-      "id": "13f76b92",
-      "nome": "Wellington ",
-      "comentario": "Ótima iniciativa! 👏👏",
-      "estrelas": 5,
-      "status": "recolocacao",
-      "cargo": null,
-      "empresa": null,
-      "data": "2026-03-27T16:35:40.584924"
-    }
-  ],
+  "pendentes": [],
   "aprovadas": [
     {
       "id": "84d6b2d1",
@@ -91,6 +80,16 @@
       "cargo": null,
       "empresa": null,
       "data": "2026-03-27T15:52:05.261160"
+    },
+    {
+      "id": "13f76b92",
+      "nome": "Wellington ",
+      "comentario": "Ótima iniciativa! 👏👏",
+      "estrelas": 5,
+      "status": "recolocacao",
+      "cargo": null,
+      "empresa": null,
+      "data": "2026-03-27T16:35:40.584924"
     }
   ],
   "excluidas": [
