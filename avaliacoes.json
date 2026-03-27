@@ -1,5 +1,16 @@
 {
-  "pendentes": [],
+  "pendentes": [
+    {
+      "id": "9ddaac42",
+      "nome": "Joelton",
+      "comentario": "Excelente essa ferramenta de busca por vagas!",
+      "estrelas": 5,
+      "status": "recolocacao",
+      "cargo": null,
+      "empresa": null,
+      "data": "2026-03-27T15:12:57.383048"
+    }
+  ],
   "aprovadas": [
     {
       "id": "84d6b2d1",
