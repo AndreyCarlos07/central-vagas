@@ -1,16 +1,5 @@
 {
-  "pendentes": [
-    {
-      "id": "56c01fcc",
-      "nome": "WILLAMES SOUZA DA SILVA",
-      "comentario": "Portal bem atrativo para buscar oportunidades ",
-      "estrelas": 5,
-      "status": "recolocacao",
-      "cargo": null,
-      "empresa": null,
-      "data": "2026-03-28T10:57:15.070063"
-    }
-  ],
+  "pendentes": [],
   "aprovadas": [
     {
       "id": "84d6b2d1",
@@ -111,6 +100,16 @@
       "cargo": null,
       "empresa": null,
       "data": "2026-03-27T17:14:23.602976"
+    },
+    {
+      "id": "56c01fcc",
+      "nome": "WILLAMES SOUZA DA SILVA",
+      "comentario": "Portal bem atrativo para buscar oportunidades ",
+      "estrelas": 5,
+      "status": "recolocacao",
+      "cargo": null,
+      "empresa": null,
+      "data": "2026-03-28T10:57:15.070063"
     }
   ],
   "excluidas": [
