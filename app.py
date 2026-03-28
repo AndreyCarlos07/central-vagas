@@ -518,7 +518,7 @@ def home():
         {% if vagas %}
             {% for vaga in vagas %}
                 <div class="vaga">
-                    <a href="/vaga/{{ vaga.id }}?redirect=1" target="_blank" class="vaga-link">
+                    <a href="/vaga/{{ vaga.id }}?redirect=1" target="_blank" class="vaga-link"
                        onclick="event.preventDefault();
                                 gtag('event', 'click_vaga', {
                                     'vaga': '{{ vaga.titulo }}',
