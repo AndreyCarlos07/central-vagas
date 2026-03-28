@@ -519,6 +519,11 @@ def home():
             {% for vaga in vagas %}
                 <div class="vaga">
                     <a href="/vaga/{{ vaga.id }}?redirect=1" target="_blank" class="vaga-link">
+                       onclick="gtag('event', 'click_vaga', {
+                           'vaga': '{{ vaga.titulo }}',
+                           'empresa': '{{ vaga.empresa }}',
+                           'origem': 'home'
+                       })">                
                         <strong>{{ vaga.titulo }}</strong>
                     </a>
                     <div class="empresa">
@@ -883,6 +888,11 @@ def vaga(id):
                             <br>
 
                             <a href="{{ vaga.link }}" target="_blank"
+                            onclick="gtag('event', 'click_vaga', {
+                              'vaga': '{{ vaga.titulo }}',
+                              'empresa': '{{ vaga.empresa }}',
+                              'origem': 'pagina_vaga'
+                            })"
                                style="background:#0066cc;color:white;padding:12px 20px;
                                       text-decoration:none;border-radius:6px;">
                                 🚀 Ir para candidatura
