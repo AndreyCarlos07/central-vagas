@@ -519,11 +519,15 @@ def home():
             {% for vaga in vagas %}
                 <div class="vaga">
                     <a href="/vaga/{{ vaga.id }}?redirect=1" target="_blank" class="vaga-link">
-                       onclick="gtag('event', 'click_vaga', {
-                           'vaga': '{{ vaga.titulo }}',
-                           'empresa': '{{ vaga.empresa }}',
-                           'origem': 'home'
-                       })">                  
+                       onclick="event.preventDefault();
+                                gtag('event', 'click_vaga', {
+                                    'vaga': '{{ vaga.titulo }}',
+                                    'empresa': '{{ vaga.empresa }}',
+                                    'origem': 'home'
+                                });
+                                setTimeout(() => {
+                                    window.open(this.href, '_blank');
+                                }, 150);">
                         <strong>{{ vaga.titulo }}</strong>
                     </a>  
                     <div class="empresa">
@@ -888,11 +892,15 @@ def vaga(id):
                             <br>
 
                             <a href="{{ vaga.link }}" target="_blank"
-                            onclick="gtag('event', 'click_vaga', {
-                              'vaga': '{{ vaga.titulo }}',
-                              'empresa': '{{ vaga.empresa }}',
-                              'origem': 'pagina_vaga'
-                            })"
+                               onclick="event.preventDefault();
+                                        gtag('event', 'click_vaga', {
+                                            'vaga': '{{ vaga.titulo }}',
+                                            'empresa': '{{ vaga.empresa }}',
+                                            'origem': 'pagina_vaga'
+                                        });
+                                        setTimeout(() => {
+                                            window.open(this.href, '_blank');
+                                        }, 150);"
                                style="background:#0066cc;color:white;padding:12px 20px;
                                       text-decoration:none;border-radius:6px;">
                                 🚀 Ir para candidatura
