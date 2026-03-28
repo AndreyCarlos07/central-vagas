@@ -523,9 +523,9 @@ def home():
                            'vaga': '{{ vaga.titulo }}',
                            'empresa': '{{ vaga.empresa }}',
                            'origem': 'home'
-                       })">                
+                       })">                  
                         <strong>{{ vaga.titulo }}</strong>
-                    </a>
+                    </a>  
                     <div class="empresa">
                         Empresa: {{ vaga.empresa }}
                     </div>
