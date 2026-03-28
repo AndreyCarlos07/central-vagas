@@ -257,6 +257,16 @@ def home():
     <html>
     <head>
         <title>Central de Vagas</title>
+
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLTE9JPMLL"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LLTE9JPMLL');
+        </script>
+
         <style>
             body { font-family: Arial; background: #f4f6f8; padding: 30px; }
             h1 { color: #222; }
