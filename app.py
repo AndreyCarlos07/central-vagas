@@ -860,6 +860,14 @@ def vaga(id):
                     <html>
                     <head>
                         <title>{{ vaga.titulo }}</title>
+                        <!-- Google tag (gtag.js) -->
+                        <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLTE9JPMLL"></script>
+                        <script>
+                          window.dataLayer = window.dataLayer || [];
+                          function gtag(){dataLayer.push(arguments);}
+                          gtag('js', new Date());
+                          gtag('config', 'G-LLTE9JPMLL');
+                        </script>
                         <meta property="og:title" content="{{ vaga.titulo }}">
                         <meta property="og:description" content="Veja essa vaga na Central de Vagas">
                         <meta property="og:type" content="website">
