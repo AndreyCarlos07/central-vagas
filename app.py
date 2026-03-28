@@ -416,7 +416,7 @@ def home():
                 🏢 {{ total_empresas }} empresas monitoradas
             </div>
 
-            <button style="background:#28a745; padding: 8px 15px; font-weight: bold;" 
+            <button style="background:#28a745; font-weight: bold;" 
             onclick="document.getElementById('form-avaliacao').style.display='block'">
                 ⭐ Avaliar página / Agradecimento
             </button>
