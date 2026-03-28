@@ -385,7 +385,7 @@ def home():
 
         {% if admin %}
         <p>
-        <a href="/admin/ocultas?admin={{token}}" style="font-size:14px;">
+        <a href="/admin/ocultas?admin={{token}}">
         ⚙️ Ver vagas ocultas
         </a>
         </p>
