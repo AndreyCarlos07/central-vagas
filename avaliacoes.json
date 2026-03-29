@@ -1,16 +1,5 @@
 {
-  "pendentes": [
-    {
-      "id": "3f106c78",
-      "nome": "L. B.",
-      "comentario": "Muito boa a iniciativa, parabéns!",
-      "estrelas": 5,
-      "status": "empregado",
-      "cargo": "",
-      "empresa": "",
-      "data": "2026-03-28T12:48:03.919610"
-    }
-  ],
+  "pendentes": [],
   "aprovadas": [
     {
       "id": "84d6b2d1",
@@ -121,6 +110,16 @@
       "cargo": null,
       "empresa": null,
       "data": "2026-03-28T10:57:15.070063"
+    },
+    {
+      "id": "3f106c78",
+      "nome": "L. B.",
+      "comentario": "Muito boa a iniciativa, parabéns!",
+      "estrelas": 5,
+      "status": "empregado",
+      "cargo": "",
+      "empresa": "",
+      "data": "2026-03-28T12:48:03.919610"
     }
   ],
   "excluidas": [
