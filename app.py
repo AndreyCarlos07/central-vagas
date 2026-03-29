@@ -434,7 +434,18 @@ def home():
                 ⭐ Avaliar página / Agradecimento
             </button>
 
-        </div>
+            <div style="min-width:250px;">
+                <!-- banner_home_topo -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-2211390415336582"
+                     data-ad-slot="8168087096"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
 
         <div class="filtro-box">
             <form method="GET">
