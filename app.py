@@ -267,6 +267,9 @@ def home():
           gtag('config', 'G-LLTE9JPMLL');
         </script>
 
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2211390415336582"
+            crossorigin="anonymous"></script>
+
         <style>
             body { font-family: Arial; background: #f4f6f8; padding: 30px; }
             h1 { color: #222; }
