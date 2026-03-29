@@ -436,11 +436,9 @@ def home():
 
             <!-- banner_home_topo -->
             <ins class="adsbygoogle"
-                style="display:block; width:20%;"
+                style="display:block; width:60px;"
                 data-ad-client="ca-pub-2211390415336582"
-                data-ad-slot="8168087096"
-                data-ad-format="auto"
-                data-full-width-responsive="true"></ins>
+                data-ad-slot="8168087096"</ins>
 
         </div>   
                
