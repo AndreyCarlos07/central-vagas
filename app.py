@@ -864,6 +864,12 @@ def aprovar(id):
 
     return redirect("/admin/avaliacoes?admin=" + ADMIN_TOKEN)
 
+@app.route("/ads.txt")
+def ads_txt():
+    return "google.com, pub-2211390415336582, DIRECT, f08c47fec0942fa0", 200, {
+        'Content-Type': 'text/plain'
+    }
+
 @app.route("/vaga/<id>")
 def vaga(id):
 
