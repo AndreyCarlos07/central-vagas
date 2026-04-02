@@ -995,6 +995,16 @@ def coletar_pandape(page, site):
         except:
             print("⚠️ não encontrou filtro cidade")
 
+        # 🔥 NOVO: clicar em "Ver mais" se existir
+        try:
+            botao_ver_mais = page.locator("text=Ver mais")
+        if botao_ver_mais.is_visible():
+            botao_ver_mais.click()
+            print("🔽 expandiu lista de cidades")
+            time.sleep(1)
+        except:
+            print("ℹ️ não tinha botão 'Ver mais'")
+
         # ✅ MARCAR SALVADOR
         try:
             page.locator("span:has-text('Salvador - BA')").click()
@@ -1012,7 +1022,7 @@ def coletar_pandape(page, site):
        # ✅ MARCAR CAMAÇARI
         try:
             page.locator("span:has-text('Camaçari - BA')").click()
-            print("📍 Simões Filho selecionado")
+            print("📍 Camaçari selecionado")
         except:
             print("⚠️ Camaçari não encontrado")
 
