@@ -27,7 +27,7 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["BRASKEM", "FORD"]
+EMPRESAS_DEBUG = ["BRASKEM", "FORD", "ZEENTECH"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -269,6 +269,11 @@ SITES = [
     {
         "empresa": "BOMIX",
         "url": "https://bomix.pandape.infojobs.com.br", 
+        "tipo": "pandape"
+    },
+    {
+        "empresa": "ZEENTECH",
+        "url": "hhttps://zeentech.pandape.infojobs.com.br",
         "tipo": "pandape"
     }
 ]
@@ -1003,6 +1008,13 @@ def coletar_pandape(page, site):
             print("📍 Simões Filho selecionado")
         except:
             print("⚠️ Simões Filho não encontrado")
+
+       # ✅ MARCAR CAMAÇARI
+        try:
+            page.locator("span:has-text('Camaçari - BA')").click()
+            print("📍 Simões Filho selecionado")
+        except:
+            print("⚠️ Camaçari não encontrado")
 
         # 🔥 espera atualizar lista
         time.sleep(3)
