@@ -26,8 +26,8 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["MERCADO LIVRE"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["BRASKEM", "FORD"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -565,6 +565,88 @@ def coletar_eightfold(page, site):
 
     print(f"📌 {site['empresa']} (EIGHTFOLD): {len(vagas)} vagas coletadas")
     return vagas
+    
+
+# ===========================
+# ORACLE CLOUD
+# ===========================
+def coletar_oracle(page, site):
+    vagas = []
+    links_coletados = set()
+
+    filtros = site.get("filtros", [])
+
+    if not filtros:
+        filtros = [None]  # caso não tenha filtro
+
+    for filtro in filtros:
+
+        if filtro:
+            url_com_filtro = (
+                site["url"]
+                + f"?location={filtro['location']}"
+                + f"&locationId={filtro['locationId']}"
+                + "&locationLevel=city"
+                + "&mode=location"
+                + "&radius=25"
+                + "&radiusUnit=KM"
+            )
+        else:
+            url_com_filtro = site["url"]
+
+        try:
+            page.goto(url_com_filtro, timeout=60000)
+            page.wait_for_load_state("networkidle")
+            page.wait_for_timeout(4000)
+
+            print("URL carregada:", page.url)
+
+            cards = page.locator("a.job-list-item__link")
+            total = cards.count()
+
+            print("Total de links encontrados:", total)
+
+            for i in range(total):
+                try:
+                    card = cards.nth(i)
+                    link = card.get_attribute("href")
+
+                    if not link:
+                        continue
+
+                    link_limpo = link.split("?")[0]
+
+                    if link_limpo in links_coletados:
+                        continue
+
+                    links_coletados.add(link_limpo)
+
+                    page.goto(link_limpo, timeout=60000)
+                    page.wait_for_load_state("networkidle")
+
+                    titulo = page.locator("h1.job-details__title").inner_text().strip()
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": site["empresa"],
+                        "link": link_limpo
+                    })
+
+                    page.go_back()
+                    page.wait_for_load_state("networkidle")
+
+                except Exception as e:
+                    print("Erro ao processar vaga:", e)
+                    continue
+
+        except Exception as e:
+            print(f"Erro ao acessar Oracle {site['empresa']}:", e)
+            continue
+
+    print(f"📌 {site['empresa']} (ORACLE): {len(vagas)} vagas coletadas")
+    return vagas
+    
 
 # ===========================
 # RECRUT.AI
