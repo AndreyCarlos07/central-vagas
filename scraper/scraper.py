@@ -273,7 +273,7 @@ SITES = [
     },
     {
         "empresa": "ZEENTECH",
-        "url": "hhttps://zeentech.pandape.infojobs.com.br",
+        "url": "https://zeentech.pandape.infojobs.com.br",
         "tipo": "pandape"
     }
 ]
