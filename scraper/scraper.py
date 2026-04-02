@@ -997,13 +997,13 @@ def coletar_pandape(page, site):
 
         # 🔥 NOVO: clicar em "Ver mais" se existir
         try:
-            botao_ver_mais = page.locator("text=Ver mais")
-            if botao_ver_mais.is_visible():
-                botao_ver_mais.click()
+            botao_cidade = page.locator("text=Cidade")
+            if botao_cidade.is_visible():
+                botao_cidade.click()
                 print("🔽 expandiu lista de cidades")
                 time.sleep(1)
         except:
-            print("ℹ️ não tinha botão 'Ver mais'")
+            print("ℹ️ não tinha botão 'Cidade'")
 
         # ✅ MARCAR SALVADOR
         try:
