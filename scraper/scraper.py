@@ -28,7 +28,7 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["MFX", "TRESCAL", "INFOTEC BRASIL"]
 
 CSV_HISTORICO = "vagas.csv"
@@ -68,18 +68,22 @@ def salvar_csv(arquivo, vagas):
 # ===========================
 def backup_csv_github():
 
-    if not os.path.exists(CSV_HISTORICO):
-        print("⚠️ Nenhum histórico para backup")
+    # 🔥 escolhe o arquivo de backup dependendo do modo
+    arquivo_para_backup = "vagas_debug.csv" if MODO_DEBUG else CSV_HISTORICO
+
+    if not os.path.exists(arquivo_para_backup):
+        print(f"⚠️ Nenhum arquivo para backup: {arquivo_para_backup}")
         return
 
-    print("☁️ Enviando backup para GitHub...")
+    print(f"☁️ Enviando backup de {arquivo_para_backup} para GitHub...")
 
-    with open(CSV_HISTORICO, "r", encoding="utf-8") as f:
+    with open(arquivo_para_backup, "r", encoding="utf-8") as f:
         conteudo = f.read()
 
     encoded = base64.b64encode(conteudo.encode()).decode()
 
     url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_BACKUP}"
+    print("🔗 URL:", url)
 
     headers = {
         "Authorization": f"token {GITHUB_TOKEN}"
@@ -88,18 +92,19 @@ def backup_csv_github():
     # Verifica se já existe (pra pegar SHA)
     r = requests.get(url, headers=headers)
     sha = None
-
     if r.status_code == 200:
         sha = r.json()["sha"]
 
     payload = {
-        "message": "Backup automático vagas.csv",
+        "message": f"Backup automático {arquivo_para_backup}",
         "content": encoded,
         "sha": sha
     }
 
-    requests.put(url, headers=headers, json=payload)
+    response = requests.put(url, headers=headers, json=payload)
 
+    print("📡 Status PUT:", response.status_code)
+    print("📡 Resposta:", response.text)
     print("✅ Backup realizado com sucesso!")
 
 # ===========================
@@ -1870,6 +1875,7 @@ def main():
         backup_csv_github()  # 🔥 BACKUP ANTES DE SOBRESCREVER
     
     if MODO_DEBUG:
+        backup_csv_github()
         print("\n🧪 MODO DEBUG ATIVO - Salvando apenas arquivo de teste")
         salvar_csv("vagas_debug.csv", todas_vagas_coletadas)
     else:
