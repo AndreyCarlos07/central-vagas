@@ -543,42 +543,70 @@ def coletar_gerdau(page, site):
 # ===========================
 # GRUPO PETRÓPOLIS (API)
 # ===========================
-import requests
-import uuid
-
 def coletar_petropolis(page, site):
 
     vagas = []
     links_coletados = set()
 
     try:
-        # 🔥 1. abre site pra gerar sessão
+        # ===========================
+        # 1️⃣ ABRE SITE (GERA SESSÃO REAL)
+        # ===========================
         page.goto("https://carreiras.grupopetropolis.com.br", timeout=60000)
         page.wait_for_load_state("networkidle")
+        time.sleep(3)
 
         print("🌐 sessão iniciada")
 
-        # 🔥 2. pega cookies do browser
-        cookies_list = page.context.cookies()
+        # 🔥 interação fake (importante pra anti-bot)
+        page.mouse.move(100, 200)
+        page.mouse.wheel(0, 500)
+        time.sleep(2)
 
+        # ===========================
+        # 2️⃣ PEGA COOKIES
+        # ===========================
+        cookies_list = page.context.cookies()
         cookies = {c['name']: c['value'] for c in cookies_list}
 
-        # 🔥 3. headers mais completos
+        # ===========================
+        # 3️⃣ PEGA CSRF TOKEN DINÂMICO
+        # ===========================
+        try:
+            csrf_token = page.locator("meta[name='csrf-token']").get_attribute("content")
+        except:
+            csrf_token = None
+
+        print("🔐 CSRF:", csrf_token)
+
+        # ===========================
+        # 4️⃣ HEADERS COMPLETOS (IGUAL BROWSER)
+        # ===========================
         headers = {
+            "Accept": "application/json, text/javascript, */*; q=0.01",
             "Content-Type": "application/json",
-            "Accept": "application/json",
-            "User-Agent": "Mozilla/5.0",
             "Origin": "https://carreiras.grupopetropolis.com.br",
             "Referer": "https://carreiras.grupopetropolis.com.br/",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/146 Safari/537.36",
             "X-Requested-With": "XMLHttpRequest"
         }
 
+        # 🔥 adiciona CSRF se existir
+        if csrf_token:
+            headers["x-csrf-token"] = csrf_token
+
+        # ===========================
+        # 5️⃣ URL API
+        # ===========================
         url = "https://carreiras.grupopetropolis.com.br/services/jobs/search/"
 
         cidades = ["alagoinhas", "camacari", "salvador"]
 
         total_empresa = 0
 
+        # ===========================
+        # 6️⃣ LOOP CIDADES
+        # ===========================
         for cidade in cidades:
 
             print(f"📍 Buscando vagas em: {cidade}")
@@ -596,7 +624,7 @@ def coletar_petropolis(page, site):
                 url,
                 json=payload,
                 headers=headers,
-                cookies=cookies  # 🔥 ESSENCIAL
+                cookies=cookies
             )
 
             if response.status_code != 200:
