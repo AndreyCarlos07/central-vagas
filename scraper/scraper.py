@@ -540,8 +540,11 @@ def coletar_gerdau(page, site):
     return vagas
     
 
+import uuid
+import time
+
 # ===========================
-# GRUPO PETRÓPOLIS (API)
+# GRUPO PETRÓPOLIS (INTERCEPT)
 # ===========================
 def coletar_petropolis(page, site):
 
@@ -549,8 +552,25 @@ def coletar_petropolis(page, site):
     links_coletados = set()
 
     try:
+        api_jobs = []
+
         # ===========================
-        # 1️⃣ ABRE SITE (GERA SESSÃO REAL)
+        # 1️⃣ INTERCEPTA RESPOSTA DA API
+        # ===========================
+        def handle_response(response):
+            if "jobs/search" in response.url:
+                try:
+                    data = response.json()
+                    jobs = data.get("jobs", [])
+                    api_jobs.extend(jobs)
+                    print(f"🔥 API capturada: {len(jobs)} vagas")
+                except:
+                    pass
+
+        page.on("response", handle_response)
+
+        # ===========================
+        # 2️⃣ ABRE SITE (SESSÃO REAL)
         # ===========================
         page.goto("https://carreiras.grupopetropolis.com.br", timeout=60000)
         page.wait_for_load_state("networkidle")
@@ -558,113 +578,75 @@ def coletar_petropolis(page, site):
 
         print("🌐 sessão iniciada")
 
-        # 🔥 interação fake (importante pra anti-bot)
+        # simula humano (ANTI-BOT)
         page.mouse.move(100, 200)
         page.mouse.wheel(0, 500)
         time.sleep(2)
 
         # ===========================
-        # 2️⃣ PEGA COOKIES
+        # 3️⃣ VAI PRA BUSCA
         # ===========================
-        cookies_list = page.context.cookies()
-        cookies = {c['name']: c['value'] for c in cookies_list}
+        page.goto("https://carreiras.grupopetropolis.com.br/jobs/search/", timeout=60000)
+        page.wait_for_load_state("networkidle")
+        time.sleep(3)
 
-        # ===========================
-        # 3️⃣ PEGA CSRF TOKEN DINÂMICO
-        # ===========================
-        try:
-            csrf_token = page.locator("meta[name='csrf-token']").get_attribute("content")
-        except:
-            csrf_token = None
-
-        print("🔐 CSRF:", csrf_token)
-
-        # ===========================
-        # 4️⃣ HEADERS COMPLETOS (IGUAL BROWSER)
-        # ===========================
-        headers = {
-            "Accept": "application/json, text/javascript, */*; q=0.01",
-            "Content-Type": "application/json",
-            "Origin": "https://carreiras.grupopetropolis.com.br",
-            "Referer": "https://carreiras.grupopetropolis.com.br/",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/146 Safari/537.36",
-            "X-Requested-With": "XMLHttpRequest"
-        }
-
-        # 🔥 adiciona CSRF se existir
-        if csrf_token:
-            headers["x-csrf-token"] = csrf_token
-
-        # ===========================
-        # 5️⃣ URL API
-        # ===========================
-        url = "https://carreiras.grupopetropolis.com.br/services/jobs/search/"
-
-        cidades = ["alagoinhas", "camacari", "salvador"]
+        cidades = ["Alagoinhas", "Camaçari", "Salvador"]
 
         total_empresa = 0
 
         # ===========================
-        # 6️⃣ LOOP CIDADES
+        # 4️⃣ BUSCA POR CIDADE (UI)
         # ===========================
         for cidade in cidades:
 
-            print(f"📍 Buscando vagas em: {cidade}")
+            print(f"📍 Buscando via UI: {cidade}")
 
-            payload = {
-                "keywords": "",
-                "locationsearch": cidade,
-                "page": 0,
-                "recordsperpage": 50,
-                "sortby": "referencedate",
-                "sortdir": "desc"
-            }
+            try:
+                # campo de busca SAP padrão
+                page.fill('input[name="locationsearch"]', cidade)
+                time.sleep(1)
 
-            response = requests.post(
-                url,
-                json=payload,
-                headers=headers,
-                cookies=cookies
-            )
+                page.keyboard.press("Enter")
+                time.sleep(3)
 
-            if response.status_code != 200:
-                print(f"❌ erro na API ({cidade}):", response.status_code)
+            except:
+                print(f"⚠️ erro ao buscar {cidade}")
                 continue
 
-            data = response.json()
-            jobs = data.get("jobs", [])
+        # ===========================
+        # 5️⃣ PROCESSA DADOS CAPTURADOS
+        # ===========================
+        print(f"📦 total bruto capturado: {len(api_jobs)}")
 
-            print(f"📦 total encontrado em {cidade}: {len(jobs)}")
+        for job in api_jobs:
+            try:
+                titulo = job.get("title")
+                link = job.get("url")
 
-            for job in jobs:
-                try:
-                    titulo = job.get("title")
-                    link = job.get("url")
+                if not titulo or not link:
+                    continue
 
-                    if not titulo or not link:
-                        continue
+                if not link.startswith("http"):
+                    link = "https://carreiras.grupopetropolis.com.br" + link
 
-                    if not link.startswith("http"):
-                        link = "https://carreiras.grupopetropolis.com.br" + link
+                link_limpo = link.split("?")[0]
 
-                    link_limpo = link.split("?")[0]
+                if link_limpo in links_coletados:
+                    continue
 
-                    if link_limpo in links_coletados:
-                        continue
+                links_coletados.add(link_limpo)
 
-                    links_coletados.add(link_limpo)
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo.strip(),
+                    "empresa": site["empresa"],
+                    "link": link_limpo
+                })
 
-                    vagas.append({
-                        "id": str(uuid.uuid4())[:8],
-                        "titulo": titulo.strip(),
-                        "empresa": site["empresa"],
-                        "link": link_limpo
-                    })
+                total_empresa += 1
 
-                    total_empresa += 1
-
-                except Exception as e:
-                    print("erro job:", e)
+            except Exception as e:
+                print("erro job:", e)
 
         print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
         return vagas
