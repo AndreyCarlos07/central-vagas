@@ -259,12 +259,12 @@ SITES = [
     {
         "empresa": "HEINEKEN",
         "url": "https://careers.theheinekencompany.com/Brazil/search", 
-        "tipo": "careers"
+        "tipo": "heineken"
     },
     {
         "empresa": "GOLDWIND",
         "url": "https://careers.goldwind.com/Brazil/search", 
-        "tipo": "careers"
+        "tipo": "goldwind"
     },
     {
         "empresa": "JDE PEET'S",
