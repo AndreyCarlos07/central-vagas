@@ -540,9 +540,6 @@ def coletar_gerdau(page, site):
     return vagas
     
 
-import uuid
-import time
-
 # ===========================
 # GRUPO PETRÓPOLIS (INTERCEPT)
 # ===========================
@@ -588,7 +585,7 @@ def coletar_petropolis(page, site):
         # ===========================
         page.goto("https://carreiras.grupopetropolis.com.br/jobs/search/", timeout=60000)
         page.wait_for_load_state("networkidle")
-        time.sleep(3)
+        time.sleep(5)
 
         cidades = ["Alagoinhas", "Camaçari", "Salvador"]
 
@@ -603,7 +600,7 @@ def coletar_petropolis(page, site):
 
             try:
                 # campo de busca SAP padrão
-                page.fill('input[name="locationsearch"]', cidade)
+                page.fill('input[name="q"]', cidade)
                 time.sleep(1)
 
                 page.keyboard.press("Enter")
