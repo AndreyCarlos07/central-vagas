@@ -976,10 +976,6 @@ def coletar_pandape(page, site):
     vagas = []
     links_coletados = set()
 
-    print("TITLE:", page.title())
-    print("TEM #name?:", page.locator("#name").count())
-    print("HTML:", page.content()[:500])
-
     try:
         page.goto(site["url"], timeout=60000)
 
@@ -997,13 +993,13 @@ def coletar_pandape(page, site):
 
         # 🔥 NOVO: clicar em "Ver mais" se existir
         try:
-            botao_cidade = page.locator("text=Cidade")
-            if botao_cidade.is_visible():
-                botao_cidade.click()
+            page.locator("text=Ver mais")
+            if botao_ver_mais.count() > 0:
+                botao_ver_mais.first.click()
                 print("🔽 expandiu lista de cidades")
                 time.sleep(1)
         except:
-            print("ℹ️ não tinha botão 'Cidade'")
+            print("ℹ️ não tinha botão 'Ver mais'")
 
         # ✅ MARCAR SALVADOR
         try:
