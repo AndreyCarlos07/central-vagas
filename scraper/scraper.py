@@ -28,7 +28,7 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["MFX", "TRESCAL", "INFOTEC BRASIL"]
 
 CSV_HISTORICO = "vagas.csv"
