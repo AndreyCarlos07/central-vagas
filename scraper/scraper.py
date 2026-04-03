@@ -551,6 +551,8 @@ def coletar_petropolis(page, site):
     try:
         page.goto(site["url"], timeout=60000)
 
+        print(page.content()[:500])
+
         # 🔥 espera campo aparecer
         page.wait_for_selector('input[name="q"]')
 
