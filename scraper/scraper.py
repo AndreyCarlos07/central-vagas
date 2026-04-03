@@ -541,7 +541,7 @@ def coletar_gerdau(page, site):
     
 
 # ===========================
-# GRUPO PETRÓPOLIS (API)
+# GRUPO PETRÓPOLIS (API FINAL)
 # ===========================
 def coletar_petropolis(page, site):
 
