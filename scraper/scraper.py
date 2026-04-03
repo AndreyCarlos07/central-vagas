@@ -549,25 +549,8 @@ def coletar_petropolis(page, site):
     links_coletados = set()
 
     try:
-        api_jobs = []
-
         # ===========================
-        # 1️⃣ INTERCEPTA RESPOSTA DA API
-        # ===========================
-        def handle_response(response):
-            if "jobs/search" in response.url:
-                try:
-                    data = response.json()
-                    jobs = data.get("jobs", [])
-                    api_jobs.extend(jobs)
-                    print(f"🔥 API capturada: {len(jobs)} vagas")
-                except:
-                    pass
-
-        page.on("response", handle_response)
-
-        # ===========================
-        # 2️⃣ ABRE SITE (SESSÃO REAL)
+        # 1️⃣ ABRE SITE (SESSÃO)
         # ===========================
         page.goto("https://carreiras.grupopetropolis.com.br", timeout=60000)
         page.wait_for_load_state("networkidle")
@@ -575,75 +558,113 @@ def coletar_petropolis(page, site):
 
         print("🌐 sessão iniciada")
 
-        # simula humano (ANTI-BOT)
+        # interação fake
         page.mouse.move(100, 200)
         page.mouse.wheel(0, 500)
         time.sleep(2)
 
         # ===========================
-        # 3️⃣ VAI PRA BUSCA
+        # 2️⃣ COOKIES
         # ===========================
-        page.goto("https://carreiras.grupopetropolis.com.br/jobs/search/", timeout=60000)
-        page.wait_for_load_state("networkidle")
-        time.sleep(5)
+        cookies_list = page.context.cookies()
+        cookies = {c['name']: c['value'] for c in cookies_list}
 
-        cidades = ["Alagoinhas", "Camaçari", "Salvador"]
+        # ===========================
+        # 3️⃣ HEADERS
+        # ===========================
+        headers = {
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Content-Type": "application/json",
+            "Origin": "https://carreiras.grupopetropolis.com.br",
+            "Referer": "https://carreiras.grupopetropolis.com.br/",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/146 Safari/537.36",
+            "X-Requested-With": "XMLHttpRequest"
+        }
+
+        # ===========================
+        # 4️⃣ API URL
+        # ===========================
+        url = "https://carreiras.grupopetropolis.com.br/services/jobs/search/"
+
+        cidades = ["ALAGOINHAS", "CAMACARI", "SALVADOR"]
 
         total_empresa = 0
 
         # ===========================
-        # 4️⃣ BUSCA POR CIDADE (UI)
+        # 5️⃣ LOOP
         # ===========================
         for cidade in cidades:
 
-            print(f"📍 Buscando via UI: {cidade}")
+            print(f"📍 Buscando vagas em: {cidade}")
 
-            try:
-                # campo de busca SAP padrão
-                page.fill('input[name="q"]', cidade)
-                time.sleep(1)
+            payload = {
+                "keywords": "",
+                "locationsearch": cidade,
+                "page": 0,
+                "recordsperpage": 50,
+                "sortby": "referencedate",
+                "sortdir": "desc",
 
-                page.keyboard.press("Enter")
-                time.sleep(3)
+                # 🔥 ESSENCIAL (VOCÊ DESCOBRIU ISSO)
+                "facetquery": {
+                    "facet": True,
+                    "mincount": 1,
+                    "limit": 5000,
+                    "fields": ["location", "city", "state", "title"]
+                },
 
-            except:
-                print(f"⚠️ erro ao buscar {cidade}")
+                "filterquery": {}
+            }
+
+            time.sleep(1)  # 🔥 evita bloqueio silencioso
+
+            response = requests.post(
+                url,
+                json=payload,
+                headers=headers,
+                cookies=cookies
+            )
+
+            if response.status_code != 200:
+                print(f"❌ erro na API ({cidade}):", response.status_code)
                 continue
 
-        # ===========================
-        # 5️⃣ PROCESSA DADOS CAPTURADOS
-        # ===========================
-        print(f"📦 total bruto capturado: {len(api_jobs)}")
+            data = response.json()
 
-        for job in api_jobs:
-            try:
-                titulo = job.get("title")
-                link = job.get("url")
+            # 🔥 aqui muda dependendo da resposta
+            jobs = data.get("jobs") or data.get("results") or []
 
-                if not titulo or not link:
-                    continue
+            print(f"📦 total encontrado em {cidade}: {len(jobs)}")
 
-                if not link.startswith("http"):
-                    link = "https://carreiras.grupopetropolis.com.br" + link
+            for job in jobs:
+                try:
+                    titulo = job.get("title")
+                    link = job.get("url") or job.get("applyUrl")
 
-                link_limpo = link.split("?")[0]
+                    if not titulo or not link:
+                        continue
 
-                if link_limpo in links_coletados:
-                    continue
+                    if not link.startswith("http"):
+                        link = "https://carreiras.grupopetropolis.com.br" + link
 
-                links_coletados.add(link_limpo)
+                    link_limpo = link.split("?")[0]
 
-                vagas.append({
-                    "id": str(uuid.uuid4())[:8],
-                    "titulo": titulo.strip(),
-                    "empresa": site["empresa"],
-                    "link": link_limpo
-                })
+                    if link_limpo in links_coletados:
+                        continue
 
-                total_empresa += 1
+                    links_coletados.add(link_limpo)
 
-            except Exception as e:
-                print("erro job:", e)
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo.strip(),
+                        "empresa": site["empresa"],
+                        "link": link_limpo
+                    })
+
+                    total_empresa += 1
+
+                except Exception as e:
+                    print("erro job:", e)
 
         print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
         return vagas
