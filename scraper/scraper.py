@@ -1410,7 +1410,7 @@ def main():
                     vagas = coletar_gerdau(page, site)
 
                 elif site["tipo"] == "petropolis":
-                    vagas = coletar_petropolis(site)
+                    vagas = coletar_petropolis(page, site)
                 
                 elif site["tipo"] == "eightfold":
                     vagas = coletar_eightfold(page, site)
