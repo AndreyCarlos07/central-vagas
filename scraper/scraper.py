@@ -546,27 +546,39 @@ def coletar_gerdau(page, site):
 import requests
 import uuid
 
-def coletar_petropolis(site):
+def coletar_petropolis(page, site):
 
     vagas = []
     links_coletados = set()
 
-    url = "https://carreiras.grupopetropolis.com.br/services/jobs/search/"
-
-    headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "User-Agent": "Mozilla/5.0",
-        "Origin": "https://carreiras.grupopetropolis.com.br",
-        "Referer": "https://carreiras.grupopetropolis.com.br/"
-    }
-
-    # 🔥 cidades que você quer
-    cidades = ["alagoinhas"]
-
-    total_empresa = 0
-
     try:
+        # 🔥 1. abre site pra gerar sessão
+        page.goto("https://carreiras.grupopetropolis.com.br", timeout=60000)
+        page.wait_for_load_state("networkidle")
+
+        print("🌐 sessão iniciada")
+
+        # 🔥 2. pega cookies do browser
+        cookies_list = page.context.cookies()
+
+        cookies = {c['name']: c['value'] for c in cookies_list}
+
+        # 🔥 3. headers mais completos
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0",
+            "Origin": "https://carreiras.grupopetropolis.com.br",
+            "Referer": "https://carreiras.grupopetropolis.com.br/",
+            "X-Requested-With": "XMLHttpRequest"
+        }
+
+        url = "https://carreiras.grupopetropolis.com.br/services/jobs/search/"
+
+        cidades = ["alagoinhas", "camacari", "salvador"]
+
+        total_empresa = 0
+
         for cidade in cidades:
 
             print(f"📍 Buscando vagas em: {cidade}")
@@ -580,14 +592,18 @@ def coletar_petropolis(site):
                 "sortdir": "desc"
             }
 
-            response = requests.post(url, json=payload, headers=headers)
+            response = requests.post(
+                url,
+                json=payload,
+                headers=headers,
+                cookies=cookies  # 🔥 ESSENCIAL
+            )
 
             if response.status_code != 200:
                 print(f"❌ erro na API ({cidade}):", response.status_code)
                 continue
 
             data = response.json()
-
             jobs = data.get("jobs", [])
 
             print(f"📦 total encontrado em {cidade}: {len(jobs)}")
@@ -600,7 +616,6 @@ def coletar_petropolis(site):
                     if not titulo or not link:
                         continue
 
-                    # 🔥 monta link completo
                     if not link.startswith("http"):
                         link = "https://carreiras.grupopetropolis.com.br" + link
 
