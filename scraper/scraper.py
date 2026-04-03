@@ -27,7 +27,7 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["BRASKEM", "FORD", "BOMIX", "ZEENTECH"]
+EMPRESAS_DEBUG = ["BRASKEM", "FORD", "BOMIX", "ZEENTECH", "HEINEKEN", "GOLDWIND"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -259,7 +259,12 @@ SITES = [
     {
         "empresa": "HEINEKEN",
         "url": "https://careers.theheinekencompany.com/Brazil/search", 
-        "tipo": "heineken"
+        "tipo": "careers"
+    },
+    {
+        "empresa": "GOLDWIND",
+        "url": "https://careers.goldwind.com/Brazil/search", 
+        "tipo": "careers"
     },
     {
         "empresa": "JDE PEET'S",
@@ -789,9 +794,9 @@ def coletar_jobconvo(page, site):
     return vagas
 
 # ===========================
-# HEINEKEN
+# CAREERS
 # ===========================
-def coletar_heineken(page, site):
+def coletar_careers(page, site):
     vagas = []
     links_coletados = set()
     total_empresa = 0  # 👈 contador geral real
@@ -814,7 +819,7 @@ def coletar_heineken(page, site):
 
         page.click("#input-date-submit")
         page.wait_for_load_state("networkidle")
-        page.goto("https://careers.theheinekencompany.com/Brazil/search")
+        page.goto(site["url"])
         page.wait_for_selector("#location", timeout=30000)
 
     else:
@@ -823,7 +828,7 @@ def coletar_heineken(page, site):
     # ===========================
     # 2️⃣ CIDADES PARA FILTRAR
     # ===========================
-    cidades = ["Alagoinhas", "Salvador"]
+    cidades = ["Alagoinhas", "Salvador", "Camacari"]
 
     for cidade in cidades:
 
@@ -842,6 +847,7 @@ def coletar_heineken(page, site):
             # ===========================
             links = page.locator("a[href*='/job/']")
             total = links.count()
+            base = site["url"].split("/")[0] + "//" + site["url"].split("/")[2]
 
             for i in range(total):
                 try:
@@ -851,7 +857,7 @@ def coletar_heineken(page, site):
                         continue
 
                     if link.startswith("/"):
-                        link = "https://careers.theheinekencompany.com" + link
+                        llink = base + link
 
                     link_limpo = link.split("?")[0]
 
@@ -1206,8 +1212,8 @@ def main():
                 elif site["tipo"] == "jobconvo":
                     vagas = coletar_jobconvo(page, site)
 
-                elif site["tipo"] == "heineken":
-                    vagas = coletar_heineken(page, site)
+                elif site["tipo"] == "careers":
+                    vagas = coletar_careers(page, site)
 
                 elif site["tipo"] == "jde":
                     vagas = coletar_jde(page, site)
