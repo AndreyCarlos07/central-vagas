@@ -1312,7 +1312,7 @@ def main():
                 elif site["tipo"] == "heineken":
                     vagas = coletar_heineken(page, site)
 
-                elif site["tipo"] == "goldiwnd":
+                elif site["tipo"] == "goldwind":
                     vagas = coletar_goldwind(page, site)
 
                 elif site["tipo"] == "jde":
