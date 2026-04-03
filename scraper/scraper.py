@@ -296,6 +296,12 @@ SITES = [
         "url": "https://trabalheconosco.vagas.com.br/white-martins/oportunidades",
         "tipo": "vagas"
     }
+    },
+    {
+        "empresa": "MFX",
+        "url": "https://mfx.inhire.app/vagas",
+        "tipo": "mfx"
+    }
 ]
 
 # 📍 filtro Bahia (somente GUPY)
@@ -1531,6 +1537,88 @@ def coletar_white_martins(page, site):
     except Exception as e:
         print("❌ erro geral:", e)
         return vagas
+
+# ===========================
+# MFX (API INHIRE)
+# ===========================
+def coletar_mfx(site):
+
+    vagas = []
+    links_coletados = set()
+
+    print("\n🔎 Buscando vagas da MFX")
+
+    try:
+        url = "https://api.inhire.app/job-posts/public/pages"
+
+        headers = {
+            "Accept": "application/json, text/plain, */*",
+            "User-Agent": "Mozilla/5.0",
+            "Origin": "https://mfx.inhire.app",
+            "Referer": "https://mfx.inhire.app/",
+            "x-tenant": "mfx"  # 🔥 ESSENCIAL
+        }
+
+        response = requests.get(url, headers=headers)
+
+        if response.status_code != 200:
+            print("❌ erro na API:", response.status_code)
+            return vagas
+
+        data = response.json()
+
+        # 🔥 lista de vagas
+        jobs = data.get("jobsPage", [])
+
+        print(f"📦 total encontrado: {len(jobs)}")
+
+        # 🔥 cidades que você quer
+        cidades = ["Salvador, BA, BR", "Camaçari, BA, BR"]
+
+        total_empresa = 0
+
+        for job in jobs:
+            try:
+                titulo = job.get("displayName")
+                job_id = job.get("jobId")
+                location = job.get("location", "")
+
+                # ===========================
+                # 🔥 FILTRO POR CIDADE
+                # ===========================
+                if location not in cidades:
+                    continue
+
+                if not titulo or not job_id:
+                    continue
+
+                # 🔥 monta link correto
+                link = f"https://mfx.inhire.app/vagas/{job_id}"
+                link_limpo = link.split("?")[0]
+
+                if link_limpo in links_coletados:
+                    continue
+
+                links_coletados.add(link_limpo)
+
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo.strip(),
+                    "empresa": site["empresa"],
+                    "link": link_limpo
+                })
+
+                total_empresa += 1
+
+            except Exception as e:
+                print("erro vaga:", e)
+
+        print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
+        return vagas
+
+    except Exception as e:
+        print("❌ erro geral:", e)
+        return vagas
     
 
 # ===========================
@@ -1659,6 +1747,9 @@ def main():
 
                 elif site["tipo"] == "vagas":
                     vagas = coletar_white_martins(page, site)
+
+                elif site["tipo"] == "mfx":
+                    vagas = coletar_mfx(page, site)
                 
                 else:
                     print("⚠️ Tipo não reconhecido")
