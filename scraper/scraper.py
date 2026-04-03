@@ -27,7 +27,7 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["BRASKEM", "FORD", "BOMIX", "ZEENTECH", "HEINEKEN", "GOLDWIND"]
+EMPRESAS_DEBUG = ["GERDAU", "GRUPO PETRÓPOLIS"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -207,6 +207,11 @@ SITES = [
         "empresa": "GERDAU",
         "url": "https://jobs.gerdau.com/search/?createNewAlert=false&q&locationsearch&locale=pt_BR",
         "tipo": "gerdau"
+    },
+    {
+        "empresa": "GRUPO PETRÓPOLIS",
+        "url": "https://carreiras.grupopetropolis.com.br/search/?createNewAlert=false",
+        "tipo": "petropolis"
     },
     {
         "empresa": "MERCADO LIVRE",
@@ -509,6 +514,85 @@ def coletar_gerdau(page, site):
 
                 if not link.startswith("http"):
                     link = "https://jobs.gerdau.com" + link
+
+                link_limpo = link.split("?")[0]
+
+                if link_limpo in links_coletados:
+                    continue
+
+                links_coletados.add(link_limpo)
+
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo.strip(),
+                    "empresa": site["empresa"],
+                    "link": link_limpo
+                })
+
+            except Exception as e:
+                print("erro job:", e)
+
+    except Exception as e:
+        print("❌ erro geral:", e)
+        return vagas
+
+    print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
+    return vagas
+    
+
+# ===========================
+# GRUPO PETRÓPOLIS
+# ===========================
+def coletar_petropolis(page, site):
+
+    vagas = []
+    links_coletados = set()
+
+    try:
+        page.goto(site["url"], timeout=60000)
+
+        # 🔥 espera campo aparecer
+        page.wait_for_selector('input[name="locationsearch"]')
+
+        # 🔥 digita como humano
+        page.click('input[name="locationsearch"]')
+        page.fill('input[name="locationsearch"]', "alagoinhas")
+
+        # 🔥 ESSENCIAL: pressiona ENTER (isso dispara o search real do SAP)
+        page.keyboard.press("Enter")
+
+        # 🔥 fallback: botão também
+        try:
+            page.click('input.keywordsearchbutton')
+        except:
+            pass
+
+        # 🔥 espera REAL: algum job aparecer
+        page.wait_for_selector("#job-tile-list li", timeout=30000)
+
+        print("✅ vagas apareceram")
+
+        # 🔥 pequena pausa pra garantir render completo
+        time.sleep(2)
+
+        jobs = page.locator("#job-tile-list li")
+
+        total = jobs.count()
+        print("📦 total encontrado:", total)
+
+        for i in range(total):
+            try:
+                job = jobs.nth(i)
+
+                link_element = job.locator("a.jobTitle-link").first
+                titulo = link_element.inner_text().strip()
+                link = link_element.get_attribute("href")
+
+                if not titulo or not link:
+                    continue
+
+                if not link.startswith("http"):
+                    link = "https://carreiras.grupopetropolis.com.br" + link
 
                 link_limpo = link.split("?")[0]
 
@@ -1297,6 +1381,9 @@ def main():
 
                 elif site["tipo"] == "gerdau":
                     vagas = coletar_gerdau(page, site)
+
+                elif site["tipo"] == "petropolis":
+                    vagas = coletar_petropolis(page, site)
                 
                 elif site["tipo"] == "eightfold":
                     vagas = coletar_eightfold(page, site)
