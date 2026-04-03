@@ -471,6 +471,7 @@ def coletar_gerdau(page, site):
 
     try:
         page.goto(site["url"], timeout=60000)
+        print(page.title())
 
         # 🔥 espera campo aparecer
         page.wait_for_selector('input[name="locationsearch"]')
