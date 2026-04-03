@@ -650,12 +650,13 @@ def coletar_petropolis(page, site):
                 try:
                     titulo = job.get("title")
                     url_title = job.get("urltitle")
-
-                    if not titulo or not url_title:
+                    job_id = job.get("id")
+                    
+                    if not titulo or not url_title or not job_id:
                         continue
 
                     # 🔥 monta link corretamente
-                    link = f"https://carreiras.grupopetropolis.com.br/job/{url_title}"
+                    link = f"https://carreiras.grupopetropolis.com.br/job/{url_title}/{job_id}/"
 
                     link_limpo = link.split("?")[0]
 
