@@ -27,7 +27,7 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["WHITE MARTINS"]
+EMPRESAS_DEBUG = ["HALLIBURTON"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -270,6 +270,11 @@ SITES = [
         "empresa": "GOLDWIND",
         "url": "https://careers.goldwind.com/Brazil/search", 
         "tipo": "goldwind"
+    },
+    {
+        "empresa": "HALLIBURTON",
+        "url": "https://jobs.halliburton.com/Brazil/search", 
+        "tipo": "hallibuton"
     },
     {
         "empresa": "JDE PEET'S",
@@ -1142,6 +1147,95 @@ def coletar_goldwind(page, site):
     return vagas
 
 # ===========================
+# HALLIBURTON
+# ===========================
+def coletar_halliburton(page, site):
+
+    vagas = []
+    links_coletados = set()
+    total_empresa = 0
+
+    print("\n🔎 Buscando vagas da HALLIBURTON")
+
+    try:
+        # ===========================
+        # 1️⃣ CIDADES (PADRÃO URL)
+        # ===========================
+        cidades = [
+            ("catu", "CATU%2C+BA%2C+BR"),
+            ("salvador", "SALVADOR%2C+BA%2C+BR")
+        ]
+
+        for keyword, location in cidades:
+
+            print(f"📍 Buscando: {keyword} / {location}")
+
+            vagas_cidade = 0
+
+            try:
+                # ===========================
+                # 2️⃣ MONTA URL DINÂMICA
+                # ===========================
+                url = f"https://jobs.halliburton.com/search/?q={keyword}&locationsearch={location}"
+
+                page.goto(url, timeout=60000)
+                page.wait_for_load_state("networkidle")
+                time.sleep(3)
+
+                # ===========================
+                # 3️⃣ COLETA LINKS
+                # ===========================
+                links = page.locator("a[href*='/job/']")
+                total = links.count()
+
+                print(f"📦 total encontrado: {total}")
+
+                for i in range(total):
+                    try:
+                        link = links.nth(i).get_attribute("href")
+
+                        if not link:
+                            continue
+
+                        if link.startswith("/"):
+                            link = "https://jobs.halliburton.com" + link
+
+                        link_limpo = link.split("?")[0]
+
+                        if link_limpo in links_coletados:
+                            continue
+
+                        links_coletados.add(link_limpo)
+
+                        titulo = links.nth(i).inner_text().strip()
+
+                        vagas.append({
+                            "id": str(uuid.uuid4())[:8],
+                            "titulo": titulo,
+                            "empresa": site["empresa"],
+                            "link": link_limpo
+                        })
+
+                        vagas_cidade += 1
+                        total_empresa += 1
+
+                    except Exception as e:
+                        print("erro vaga:", e)
+
+                print(f"Total coletado em {keyword}: {vagas_cidade}")
+
+            except Exception as e:
+                print(f"Erro ao buscar {keyword}:", e)
+
+        print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
+        return vagas
+
+    except Exception as e:
+        print("❌ erro geral:", e)
+        return vagas
+        
+
+# ===========================
 # JDE PEETS
 # ===========================
 def coletar_jde(page, site):
@@ -1563,6 +1657,9 @@ def main():
 
                 elif site["tipo"] == "vagas":
                     vagas = coletar_white_martins(page, site)
+
+                elif site["tipo"] == "halliburton":
+                    vagas = coletar_halliburton(page, site)
                 
                 else:
                     print("⚠️ Tipo não reconhecido")
