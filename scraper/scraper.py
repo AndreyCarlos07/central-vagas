@@ -550,6 +550,7 @@ def coletar_petropolis(page, site):
 
     try:
         page.goto("https://carreiras.grupopetropolis.com.br", wait_until="domcontentloaded")
+        print(page.title())
         time.sleep(2)
         
         page.goto(site["url"], timeout=60000)
