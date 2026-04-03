@@ -27,7 +27,7 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["HALLIBURTON"]
+EMPRESAS_DEBUG = ["MFX"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
