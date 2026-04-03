@@ -586,7 +586,7 @@ def coletar_petropolis(page, site):
         # ===========================
         url = "https://carreiras.grupopetropolis.com.br/services/jobs/search/"
 
-        cidades = ["ALAGOINHAS", "CAMACARI", "SALVADOR"]
+        cidades = ["ALAGOINHAS, BA, BR", "CAMACARI, BA, BR", "SALVADOR, BA, BR"]
 
         total_empresa = 0
 
@@ -599,7 +599,7 @@ def coletar_petropolis(page, site):
 
             payload = {
                 "keywords": "",
-                "locationsearch": cidade,
+                "locationsearch": "",
                 "page": 0,
                 "recordsperpage": 50,
                 "sortby": "referencedate",
@@ -613,7 +613,9 @@ def coletar_petropolis(page, site):
                     "fields": ["location", "city", "state", "title"]
                 },
 
-                "filterquery": {}
+                 "filterquery": {
+                    "location": [cidade]  # 🔥 AQUI
+                }
             }
 
             time.sleep(1)  # 🔥 evita bloqueio silencioso
@@ -630,6 +632,9 @@ def coletar_petropolis(page, site):
                 continue
 
             data = response.json()
+
+            print(data.keys())
+            print(data)
 
             # 🔥 aqui muda dependendo da resposta
             jobs = data.get("jobs") or data.get("results") or []
