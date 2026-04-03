@@ -1748,7 +1748,7 @@ def main():
                     vagas = coletar_white_martins(page, site)
 
                 elif site["tipo"] == "mfx":
-                    vagas = coletar_mfx(page, site)
+                    vagas = coletar_mfx(site)
                 
                 else:
                     print("⚠️ Tipo não reconhecido")
