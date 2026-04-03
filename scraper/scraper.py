@@ -274,7 +274,7 @@ SITES = [
     {
         "empresa": "HALLIBURTON",
         "url": "https://jobs.halliburton.com/Brazil/search", 
-        "tipo": "hallibuton"
+        "tipo": "halliburton"
     },
     {
         "empresa": "JDE PEET'S",
@@ -551,7 +551,7 @@ def coletar_gerdau(page, site):
     
 
 # ===========================
-# GRUPO PETRÓPOLIS (API FINAL)
+# GRUPO PETRÓPOLIS (API)
 # ===========================
 def coletar_petropolis(page, site):
 
@@ -1649,6 +1649,9 @@ def main():
                 elif site["tipo"] == "goldwind":
                     vagas = coletar_goldwind(page, site)
 
+                elif site["tipo"] == "halliburton":
+                    vagas = coletar_halliburton(page, site)
+
                 elif site["tipo"] == "jde":
                     vagas = coletar_jde(page, site)
 
@@ -1657,9 +1660,6 @@ def main():
 
                 elif site["tipo"] == "vagas":
                     vagas = coletar_white_martins(page, site)
-
-                elif site["tipo"] == "halliburton":
-                    vagas = coletar_halliburton(page, site)
                 
                 else:
                     print("⚠️ Tipo não reconhecido")
