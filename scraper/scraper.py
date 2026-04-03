@@ -986,14 +986,14 @@ def coletar_pandape(page, site):
 
         # ✅ CLICAR NO FILTRO DE CIDADE (abre o dropdown)
         try:
-            page.locator("#FilterLocation3").click()
+            filtro_cidade = page.locator("#FilterLocation3")
             time.sleep(1)
         except:
             print("⚠️ não encontrou filtro cidade")
 
         # 🔥 NOVO: clicar em "Ver mais" se existir
         try:
-            page.locator("text=Ver mais")
+            botao_ver_mais = filtro_cidade.page.locator("text=Ver mais")
             if botao_ver_mais.count() > 0:
                 botao_ver_mais.first.click()
                 print("🔽 expandiu lista de cidades")
