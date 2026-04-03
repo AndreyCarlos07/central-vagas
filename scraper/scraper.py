@@ -986,7 +986,7 @@ def coletar_pandape(page, site):
 
         # ✅ CLICAR NO FILTRO DE CIDADE (abre o dropdown)
         #try:
-            #filtro_cidade = page.locator("#FilterLocation3")
+            #page.locator("#FilterLocation3").click()
             #time.sleep(1)
         #except:
             #print("⚠️ não encontrou filtro cidade")
@@ -995,7 +995,7 @@ def coletar_pandape(page, site):
 
         # 🔥 NOVO: clicar em "Ver mais" se existir
         try:
-            botao_ver_mais = filtro_cidade.page.locator("text=Ver mais")
+            botao_ver_mais = filtro_cidade.locator("text=Ver mais")
             if botao_ver_mais.count() > 0:
                 botao_ver_mais.first.click()
                 print("🔽 expandiu lista de cidades")
@@ -1019,6 +1019,7 @@ def coletar_pandape(page, site):
 
        # ✅ MARCAR CAMAÇARI
         try:
+            #page.wait_for_selector("span:has-text('Camaçari - BA')", timeout=5000)
             page.locator("span:has-text('Camaçari - BA')").click()
             print("📍 Camaçari selecionado")
         except:
@@ -1140,7 +1141,6 @@ def gerar_relatorio(total, sucesso, erro, zero, empresas_erro, empresas_zero, to
 def enviar_email_alerta(mensagem):
     remetente = os.getenv("EMAIL_USER")
     senha = os.getenv("EMAIL_PASS")
-    destinatario = "SEU_EMAIL@gmail.com"
 
     msg = MIMEText(mensagem)
     msg["Subject"] = "Relatório Diário - Scraper"
