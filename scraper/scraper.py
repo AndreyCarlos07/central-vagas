@@ -552,11 +552,11 @@ def coletar_petropolis(page, site):
         page.goto(site["url"], timeout=60000)
 
         # 🔥 espera campo aparecer
-        page.wait_for_selector('input[name="search-wrapper"]')
+        page.wait_for_selector('input[name="q"]')
 
         # 🔥 digita como humano
-        page.click('input[name="search-wrapper"]')
-        page.fill('input[name="lsearch-wrapper"]', "alagoinhas")
+        page.click('input[name="q"]')
+        page.fill('input[name="q"]', "alagoinhas")
 
         # 🔥 ESSENCIAL: pressiona ENTER (isso dispara o search real do SAP)
         page.keyboard.press("Enter")
