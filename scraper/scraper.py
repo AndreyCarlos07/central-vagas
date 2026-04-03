@@ -541,7 +541,7 @@ def coletar_gerdau(page, site):
     
 
 # ===========================
-# GRUPO PETRÓPOLIS (INTERCEPT)
+# GRUPO PETRÓPOLIS (API FINAL)
 # ===========================
 def coletar_petropolis(page, site):
 
@@ -558,7 +558,7 @@ def coletar_petropolis(page, site):
 
         print("🌐 sessão iniciada")
 
-        # interação fake
+        # interação fake (anti-bot)
         page.mouse.move(100, 200)
         page.mouse.wheel(0, 500)
         time.sleep(2)
@@ -586,7 +586,11 @@ def coletar_petropolis(page, site):
         # ===========================
         url = "https://carreiras.grupopetropolis.com.br/services/jobs/search/"
 
-        cidades = ["ALAGOINHAS, BA, BR", "CAMACARI, BA, BR", "SALVADOR, BA, BR"]
+        cidades = [
+            "ALAGOINHAS, BA, BR",
+            "CAMACARI, BA, BR",
+            "SALVADOR, BA, BR"
+        ]
 
         total_empresa = 0
 
@@ -605,7 +609,7 @@ def coletar_petropolis(page, site):
                 "sortby": "referencedate",
                 "sortdir": "desc",
 
-                # 🔥 ESSENCIAL (VOCÊ DESCOBRIU ISSO)
+                # 🔥 necessário pro backend responder certo
                 "facetquery": {
                     "facet": True,
                     "mincount": 1,
@@ -613,12 +617,13 @@ def coletar_petropolis(page, site):
                     "fields": ["location", "city", "state", "title"]
                 },
 
-                 "filterquery": {
-                    "location": [cidade]  # 🔥 AQUI
+                # 🔥 filtro correto
+                "filterquery": {
+                    "location": [cidade]
                 }
             }
 
-            time.sleep(1)  # 🔥 evita bloqueio silencioso
+            time.sleep(1)  # evita bloqueio silencioso
 
             response = requests.post(
                 url,
@@ -633,24 +638,24 @@ def coletar_petropolis(page, site):
 
             data = response.json()
 
-            print(data.keys())
-            print(data)
+            # 🔎 debug (pode remover depois)
+            print("🔎 KEYS:", data.keys())
 
-            # 🔥 aqui muda dependendo da resposta
-            jobs = data.get("jobs") or data.get("results") or []
+            # ✅ CORREÇÃO FINAL
+            jobs = data.get("jobList", [])
 
             print(f"📦 total encontrado em {cidade}: {len(jobs)}")
 
             for job in jobs:
                 try:
                     titulo = job.get("title")
-                    link = job.get("url") or job.get("applyUrl")
+                    url_title = job.get("urltitle")
 
-                    if not titulo or not link:
+                    if not titulo or not url_title:
                         continue
 
-                    if not link.startswith("http"):
-                        link = "https://carreiras.grupopetropolis.com.br" + link
+                    # 🔥 monta link corretamente
+                    link = f"https://carreiras.grupopetropolis.com.br/job/{url_title}"
 
                     link_limpo = link.split("?")[0]
 
