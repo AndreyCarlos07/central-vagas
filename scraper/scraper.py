@@ -295,7 +295,6 @@ SITES = [
         "empresa": "WHITE MARTINS",
         "url": "https://trabalheconosco.vagas.com.br/white-martins/oportunidades",
         "tipo": "vagas"
-    }
     },
     {
         "empresa": "MFX",
