@@ -1244,6 +1244,7 @@ def gerar_relatorio(total, sucesso, erro, zero, empresas_erro, empresas_zero, to
 def enviar_email_alerta(mensagem):
     remetente = os.getenv("EMAIL_USER")
     senha = os.getenv("EMAIL_PASS")
+    destinatario = andrey.engenhariamecatronica@gmail.com
 
     msg = MIMEText(mensagem)
     msg["Subject"] = "Relatório Diário - Scraper"
