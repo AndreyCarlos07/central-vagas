@@ -549,6 +549,15 @@ def coletar_petropolis(page, site):
     links_coletados = set()
 
     try:
+        page.set_extra_http_headers({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
+        "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"
+        })
+        
+        page.add_init_script("""
+        Object.defineProperty(navigator, 'webdriver', {get: () => undefined})
+        """)
+        
         page.goto("https://carreiras.grupopetropolis.com.br", wait_until="domcontentloaded")
         print(page.title())
         time.sleep(2)
