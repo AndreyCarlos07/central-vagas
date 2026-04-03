@@ -12,6 +12,7 @@ jobs:
     env:                       
       EMAIL_USER: ${{ secrets.EMAIL_USER }}
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+      GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
     
     steps:
       - uses: actions/checkout@v4
