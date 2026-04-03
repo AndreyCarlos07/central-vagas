@@ -12,6 +12,8 @@ import time
 import requests
 import base64
 import smtplib
+import re
+import unicodedata
 from email.mime.text import MIMEText
 from datetime import datetime
 
@@ -99,6 +101,24 @@ def backup_csv_github():
     requests.put(url, headers=headers, json=payload)
 
     print("✅ Backup realizado com sucesso!")
+
+# ===========================
+# GERAR SLUG
+# ===========================
+def gerar_slug(texto):
+    # remove acentos
+    texto = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('ascii')
+    
+    # minúsculo
+    texto = texto.lower()
+    
+    # substitui tudo que não é letra/número por hífen
+    texto = re.sub(r'[^a-z0-9]+', '-', texto)
+    
+    # remove hífen do início/fim
+    texto = texto.strip('-')
+    
+    return texto
 
 
 # ===========================
@@ -1592,7 +1612,8 @@ def coletar_mfx(site):
                     continue
 
                 # 🔥 monta link correto
-                link = f"https://mfx.inhire.app/vagas/{job_id}"
+                slug = gerar_slug(titulo)
+                link = f"https://mfx.inhire.app/vagas/{job_id}/{slug}"
                 link_limpo = link.split("?")[0]
 
                 if link_limpo in links_coletados:
