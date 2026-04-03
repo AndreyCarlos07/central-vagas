@@ -471,7 +471,6 @@ def coletar_gerdau(page, site):
 
     try:
         page.goto(site["url"], timeout=60000)
-        print(page.title())
 
         # 🔥 espera campo aparecer
         page.wait_for_selector('input[name="locationsearch"]')
@@ -542,97 +541,94 @@ def coletar_gerdau(page, site):
     
 
 # ===========================
-# GRUPO PETRÓPOLIS
+# GRUPO PETRÓPOLIS (API)
 # ===========================
-def coletar_petropolis(page, site):
+import requests
+import uuid
+
+def coletar_petropolis(site):
 
     vagas = []
     links_coletados = set()
 
+    url = "https://carreiras.grupopetropolis.com.br/services/jobs/search/"
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0",
+        "Origin": "https://carreiras.grupopetropolis.com.br",
+        "Referer": "https://carreiras.grupopetropolis.com.br/"
+    }
+
+    # 🔥 cidades que você quer
+    cidades = ["alagoinhas"]
+
+    total_empresa = 0
+
     try:
-        page.set_extra_http_headers({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
-        "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"
-        })
-        
-        page.add_init_script("""
-        Object.defineProperty(navigator, 'webdriver', {get: () => undefined})
-        """)
-        
-        page.goto("https://carreiras.grupopetropolis.com.br", wait_until="domcontentloaded")
-        print(page.title())
-        time.sleep(2)
-        
-        page.goto(site["url"], timeout=60000)
+        for cidade in cidades:
 
-        print(page.content()[:500])
+            print(f"📍 Buscando vagas em: {cidade}")
 
-        # 🔥 espera campo aparecer
-        page.wait_for_selector('input[name="q"]')
+            payload = {
+                "keywords": "",
+                "locationsearch": cidade,
+                "page": 0,
+                "recordsperpage": 50,
+                "sortby": "referencedate",
+                "sortdir": "desc"
+            }
 
-        # 🔥 digita como humano
-        page.click('input[name="q"]')
-        page.fill('input[name="q"]', "alagoinhas")
+            response = requests.post(url, json=payload, headers=headers)
 
-        # 🔥 ESSENCIAL: pressiona ENTER (isso dispara o search real do SAP)
-        page.keyboard.press("Enter")
+            if response.status_code != 200:
+                print(f"❌ erro na API ({cidade}):", response.status_code)
+                continue
 
-        # 🔥 fallback: botão também
-        try:
-            page.click('input.keywordsearchbutton')
-        except:
-            pass
+            data = response.json()
 
-        # 🔥 espera REAL: algum job aparecer
-        page.wait_for_selector("#job-tile-list li", timeout=30000)
+            jobs = data.get("jobs", [])
 
-        print("✅ vagas apareceram")
+            print(f"📦 total encontrado em {cidade}: {len(jobs)}")
 
-        # 🔥 pequena pausa pra garantir render completo
-        time.sleep(2)
+            for job in jobs:
+                try:
+                    titulo = job.get("title")
+                    link = job.get("url")
 
-        jobs = page.locator("#job-tile-list li")
+                    if not titulo or not link:
+                        continue
 
-        total = jobs.count()
-        print("📦 total encontrado:", total)
+                    # 🔥 monta link completo
+                    if not link.startswith("http"):
+                        link = "https://carreiras.grupopetropolis.com.br" + link
 
-        for i in range(total):
-            try:
-                job = jobs.nth(i)
+                    link_limpo = link.split("?")[0]
 
-                link_element = job.locator("a.jobTitle-link").first
-                titulo = link_element.inner_text().strip()
-                link = link_element.get_attribute("href")
+                    if link_limpo in links_coletados:
+                        continue
 
-                if not titulo or not link:
-                    continue
+                    links_coletados.add(link_limpo)
 
-                if not link.startswith("http"):
-                    link = "https://carreiras.grupopetropolis.com.br" + link
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo.strip(),
+                        "empresa": site["empresa"],
+                        "link": link_limpo
+                    })
 
-                link_limpo = link.split("?")[0]
+                    total_empresa += 1
 
-                if link_limpo in links_coletados:
-                    continue
+                except Exception as e:
+                    print("erro job:", e)
 
-                links_coletados.add(link_limpo)
-
-                vagas.append({
-                    "id": str(uuid.uuid4())[:8],
-                    "titulo": titulo.strip(),
-                    "empresa": site["empresa"],
-                    "link": link_limpo
-                })
-
-            except Exception as e:
-                print("erro job:", e)
+        print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
+        return vagas
 
     except Exception as e:
         print("❌ erro geral:", e)
         return vagas
-
-    print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
-    return vagas
     
 
 # ===========================
