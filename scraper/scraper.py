@@ -210,7 +210,7 @@ SITES = [
     },
     {
         "empresa": "GRUPO PETRÓPOLIS",
-        "url": "https://carreiras.grupopetropolis.com.br/search/?createNewAlert=false",
+        "url": "https://carreiras.grupopetropolis.com.br/search/?createNewAlert=false&q&locationsearch&locale=pt_BR",
         "tipo": "petropolis"
     },
     {
