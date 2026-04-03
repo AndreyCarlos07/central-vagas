@@ -319,7 +319,23 @@ SITES = [
     {
         "empresa": "MFX",
         "url": "https://mfx.inhire.app/vagas",
-        "tipo": "mfx"
+        "tipo": "inhire",
+        "tenant": "mfx",
+        "cidades": ["Salvador, BA, BR"]
+    },
+    {
+        "empresa": "TRESCAL",
+        "url": "https://trescal.inhire.app/vagas",
+        "tipo": "inhire",
+        "tenant": "trescal",
+        "cidades": ["Camaçari, BA, BR"]
+    },
+    {
+        "empresa": "INFOTEC BRASIL",
+        "url": "https://infotecbrasil.inhire.app/vagas",
+        "tipo": "inhire",
+        "tenant": "infotecbrasil",
+        "cidades": ["São Francisco do Conde, BA, BR", "Catu, BA, BR", "Salvador, BA, BR"]
     }
 ]
 
@@ -1557,15 +1573,16 @@ def coletar_white_martins(page, site):
         print("❌ erro geral:", e)
         return vagas
 
+
 # ===========================
-# MFX (API INHIRE)
+# INHIRE (UNIVERSAL)
 # ===========================
-def coletar_mfx(site):
+def coletar_inhire(site):
 
     vagas = []
     links_coletados = set()
 
-    print("\n🔎 Buscando vagas da MFX")
+    print(f"\n🔎 Buscando vagas da {site['empresa']}")
 
     try:
         url = "https://api.inhire.app/job-posts/public/pages"
@@ -1573,9 +1590,9 @@ def coletar_mfx(site):
         headers = {
             "Accept": "application/json, text/plain, */*",
             "User-Agent": "Mozilla/5.0",
-            "Origin": "https://mfx.inhire.app",
-            "Referer": "https://mfx.inhire.app/",
-            "x-tenant": "mfx"  # 🔥 ESSENCIAL
+            "Origin": f"https://{site['tenant']}.inhire.app",
+            "Referer": f"https://{site['tenant']}.inhire.app/",
+            "x-tenant": site["tenant"]  # 🔥 DINÂMICO
         }
 
         response = requests.get(url, headers=headers)
@@ -1585,14 +1602,12 @@ def coletar_mfx(site):
             return vagas
 
         data = response.json()
-
-        # 🔥 lista de vagas
         jobs = data.get("jobsPage", [])
 
         print(f"📦 total encontrado: {len(jobs)}")
 
-        # 🔥 cidades que você quer
-        cidades = ["Salvador, BA, BR", "Camaçari, BA, BR"]
+        # 🔥 cidades (opcional)
+        cidades = site.get("cidades", [])
 
         total_empresa = 0
 
@@ -1600,20 +1615,23 @@ def coletar_mfx(site):
             try:
                 titulo = job.get("displayName")
                 job_id = job.get("jobId")
-                location = job.get("location", "")
-
-                # ===========================
-                # 🔥 FILTRO POR CIDADE
-                # ===========================
-                if location not in cidades:
-                    continue
+                location = job.get("location", "").lower()
 
                 if not titulo or not job_id:
                     continue
 
-                # 🔥 monta link correto
+                # ===========================
+                # 🔥 FILTRO POR CIDADE (OPCIONAL)
+                # ===========================
+                if cidades:
+                    if not any(cidade.lower() in location for cidade in cidades):
+                        continue
+
+                # ===========================
+                # 🔥 MONTA LINK
+                # ===========================
                 slug = gerar_slug(titulo)
-                link = f"https://mfx.inhire.app/vagas/{job_id}/{slug}"
+                link = f"https://{site['tenant']}.inhire.app/vagas/{job_id}/{slug}"
                 link_limpo = link.split("?")[0]
 
                 if link_limpo in links_coletados:
@@ -1768,8 +1786,8 @@ def main():
                 elif site["tipo"] == "vagas":
                     vagas = coletar_white_martins(page, site)
 
-                elif site["tipo"] == "mfx":
-                    vagas = coletar_mfx(site)
+                elif site["tipo"] == "inhire":
+                    vagas = coletar_inhire(site)
                 
                 else:
                     print("⚠️ Tipo não reconhecido")
