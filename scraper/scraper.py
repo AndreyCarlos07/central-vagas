@@ -27,7 +27,7 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["GERDAU", "GRUPO PETRÓPOLIS"]
+EMPRESAS_DEBUG = ["WHITE MARTINS"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -285,6 +285,11 @@ SITES = [
         "empresa": "ZEENTECH",
         "url": "https://zeentech.pandape.infojobs.com.br",
         "tipo": "pandape"
+    },
+    {
+        "empresa": "WHITE MARTINS",
+        "url": "https://trabalheconosco.vagas.com.br/white-martins/oportunidades",
+        "tipo": "vagas"
     }
 ]
 
@@ -1352,6 +1357,90 @@ def coletar_pandape(page, site):
     
 
 # ===========================
+# WHITE MARTINS
+# ===========================
+def coletar_white_martins(page, site):
+
+    vagas = []
+    links_coletados = set()
+
+    try:
+        print("\n🔎 Buscando vagas da WHITE MARTINS")
+
+        # ===========================
+        # 1️⃣ ABRE SITE
+        # ===========================
+        page.goto("https://trabalheconosco.vagas.com.br/white-martins/oportunidades", timeout=60000)
+        page.wait_for_load_state("networkidle")
+        time.sleep(3)
+
+        # ===========================
+        # 2️⃣ ABRE FILTRO CIDADE
+        # ===========================
+        page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
+        time.sleep(1)
+
+        # ===========================
+        # 3️⃣ SELECIONA CAMAÇARI
+        # ===========================
+        page.locator("text=Camaçari").click()
+        time.sleep(3)
+
+        print("📍 Filtro aplicado: Camaçari")
+
+        # ===========================
+        # 4️⃣ AGUARDA VAGAS
+        # ===========================
+        page.wait_for_selector("a[href*='/oportunidade/']", timeout=15000)
+
+        cards = page.locator("a[href*='/oportunidade/']")
+        total = cards.count()
+
+        print(f"📦 total encontrado: {total}")
+
+        # ===========================
+        # 5️⃣ LOOP VAGAS
+        # ===========================
+        for i in range(total):
+            try:
+                card = cards.nth(i)
+
+                link = card.get_attribute("href")
+
+                if not link:
+                    continue
+
+                if not link.startswith("http"):
+                    link = "https://trabalheconosco.vagas.com.br" + link
+
+                link_limpo = link.split("?")[0]
+
+                if link_limpo in links_coletados:
+                    continue
+
+                links_coletados.add(link_limpo)
+
+                titulo = card.inner_text().strip()
+
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo,
+                    "empresa": site["empresa"],
+                    "link": link_limpo
+                })
+
+            except Exception as e:
+                print("erro vaga:", e)
+
+        print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
+        return vagas
+
+    except Exception as e:
+        print("❌ erro geral:", e)
+        return vagas
+    
+
+# ===========================
 # GERAR RELATÓRIO GMAIL
 # ===========================
 def gerar_relatorio(total, sucesso, erro, zero, empresas_erro, empresas_zero, total_vagas):
@@ -1471,6 +1560,9 @@ def main():
 
                 elif site["tipo"] == "pandape":
                     vagas = coletar_pandape(page, site)
+
+                elif site["tipo"] == "vagas":
+                    vagas = coletar_white_martins(page, site)
                 
                 else:
                     print("⚠️ Tipo não reconhecido")
