@@ -985,11 +985,13 @@ def coletar_pandape(page, site):
         time.sleep(2)
 
         # ✅ CLICAR NO FILTRO DE CIDADE (abre o dropdown)
-        try:
-            filtro_cidade = page.locator("#FilterLocation3")
-            time.sleep(1)
-        except:
-            print("⚠️ não encontrou filtro cidade")
+        #try:
+            #filtro_cidade = page.locator("#FilterLocation3")
+            #time.sleep(1)
+        #except:
+            #print("⚠️ não encontrou filtro cidade")
+
+        filtro_cidade = page.locator("#FilterLocation3")
 
         # 🔥 NOVO: clicar em "Ver mais" se existir
         try:
