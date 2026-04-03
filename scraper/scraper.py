@@ -1162,8 +1162,7 @@ def coletar_halliburton(page, site):
         # 1️⃣ CIDADES (PADRÃO URL)
         # ===========================
         cidades = [
-            ("catu", "CATU%2C+BA%2C+BR"),
-            ("salvador", "SALVADOR%2C+BA%2C+BR")
+            ("catu", "CATU%2C+BA%2C+BR")
         ]
 
         for keyword, location in cidades:
