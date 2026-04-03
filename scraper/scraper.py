@@ -794,9 +794,9 @@ def coletar_jobconvo(page, site):
     return vagas
 
 # ===========================
-# CAREERS
+# HEINEKEN
 # ===========================
-def coletar_careers(page, site):
+def coletar_heineken(page, site):
     vagas = []
     links_coletados = set()
     total_empresa = 0  # 👈 contador geral real
@@ -819,7 +819,7 @@ def coletar_careers(page, site):
 
         page.click("#input-date-submit")
         page.wait_for_load_state("networkidle")
-        page.goto(site["url"])
+        page.goto("https://careers.theheinekencompany.com/Brazil/search")
         page.wait_for_selector("#location", timeout=30000)
 
     else:
@@ -828,7 +828,7 @@ def coletar_careers(page, site):
     # ===========================
     # 2️⃣ CIDADES PARA FILTRAR
     # ===========================
-    cidades = ["Alagoinhas", "Salvador", "Camacari"]
+    cidades = ["Alagoinhas", "Salvador"]
 
     for cidade in cidades:
 
@@ -847,7 +847,6 @@ def coletar_careers(page, site):
             # ===========================
             links = page.locator("a[href*='/job/']")
             total = links.count()
-            base = site["url"].split("/")[0] + "//" + site["url"].split("/")[2]
 
             for i in range(total):
                 try:
@@ -857,7 +856,105 @@ def coletar_careers(page, site):
                         continue
 
                     if link.startswith("/"):
-                        llink = base + link
+                        link = "https://careers.theheinekencompany.com" + link
+
+                    link_limpo = link.split("?")[0]
+
+                    if link_limpo in links_coletados:
+                        continue
+
+                    links_coletados.add(link_limpo)
+
+                    # título direto da listagem
+                    titulo = links.nth(i).inner_text().strip()
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": site["empresa"],
+                        "link": link_limpo
+                    })
+
+                    vagas_cidade += 1
+                    total_empresa += 1
+
+                except Exception as e:
+                    print("Erro ao processar vaga:", e)
+                    continue
+
+            print(f"Total coletado em {cidade}: {vagas_cidade}")
+
+        except Exception as e:
+            print(f"Erro ao filtrar {cidade}:", e)
+            continue
+
+    print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
+    return vagas
+
+# ===========================
+# GOLDWIND
+# ===========================
+def coletar_goldwind(page, site):
+    vagas = []
+    links_coletados = set()
+    total_empresa = 0  # 👈 contador geral real
+
+    page.goto(site["url"], timeout=60000)
+    page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(3000)
+
+    print("🔎 Verificando age gate...")
+
+    # ===========================
+    # 1️⃣ VERIFICA AGE GATE
+    # ===========================
+    if page.locator("#input-date-day").count() > 0:
+        print("🔐 Age gate detectado. Preenchendo data...")
+
+        page.fill("#input-date-day", "23")
+        page.fill("#input-date-month", "09")
+        page.fill("#input-date-year", "1993")
+
+        page.click("#input-date-submit")
+        page.wait_for_load_state("networkidle")
+        page.goto("https://careers.goldwind.com/Brazil/search")
+        page.wait_for_selector("#location", timeout=30000)
+
+    else:
+        print("✅ Age gate não apareceu.")
+
+    # ===========================
+    # 2️⃣ CIDADES PARA FILTRAR
+    # ===========================
+    cidades = ["Camacari"]
+
+    for cidade in cidades:
+
+        print(f"📍 Filtrando cidade: {cidade}")
+
+        vagas_cidade = 0  # 👈 contador REAL dessa cidade
+
+        try:
+            page.fill("#location", cidade)
+            page.click("#searchfilter-submit")
+            page.wait_for_load_state("networkidle")
+            page.wait_for_timeout(3000)
+
+            # ===========================
+            # 3️⃣ COLETAR LINKS
+            # ===========================
+            links = page.locator("a[href*='/job/']")
+            total = links.count()
+
+            for i in range(total):
+                try:
+                    link = links.nth(i).get_attribute("href")
+
+                    if not link:
+                        continue
+
+                    if link.startswith("/"):
+                        link = "https://careers.goldwind.com" + link
 
                     link_limpo = link.split("?")[0]
 
@@ -1212,8 +1309,11 @@ def main():
                 elif site["tipo"] == "jobconvo":
                     vagas = coletar_jobconvo(page, site)
 
-                elif site["tipo"] == "careers":
-                    vagas = coletar_careers(page, site)
+                elif site["tipo"] == "heineken":
+                    vagas = coletar_heineken(page, site)
+
+                elif site["tipo"] == "goldiwnd":
+                    vagas = coletar_goldwind(page, site)
 
                 elif site["tipo"] == "jde":
                     vagas = coletar_jde(page, site)
