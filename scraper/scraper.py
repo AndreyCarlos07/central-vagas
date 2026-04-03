@@ -552,11 +552,11 @@ def coletar_petropolis(page, site):
         page.goto(site["url"], timeout=60000)
 
         # 🔥 espera campo aparecer
-        page.wait_for_selector('input[name="locationsearch"]')
+        page.wait_for_selector('input[name="search-wrapper"]')
 
         # 🔥 digita como humano
-        page.click('input[name="locationsearch"]')
-        page.fill('input[name="locationsearch"]', "alagoinhas")
+        page.click('input[name="search-wrapper"]')
+        page.fill('input[name="lsearch-wrapper"]', "alagoinhas")
 
         # 🔥 ESSENCIAL: pressiona ENTER (isso dispara o search real do SAP)
         page.keyboard.press("Enter")
@@ -1328,7 +1328,7 @@ def gerar_relatorio(total, sucesso, erro, zero, empresas_erro, empresas_zero, to
 def enviar_email_alerta(mensagem):
     remetente = os.getenv("EMAIL_USER")
     senha = os.getenv("EMAIL_PASS")
-    destinatario = andrey.engenhariamecatronica@gmail.com
+    destinatario = "andrey.engenhariamecatronica@gmail.com"
 
     msg = MIMEText(mensagem)
     msg["Subject"] = "Relatório Diário - Scraper"
