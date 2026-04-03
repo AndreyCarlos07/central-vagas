@@ -541,7 +541,7 @@ def coletar_gerdau(page, site):
     
 
 # ===========================
-# GRUPO PETRÓPOLIS (API FINAL)
+# GRUPO PETRÓPOLIS (API)
 # ===========================
 def coletar_petropolis(page, site):
 
@@ -637,9 +637,6 @@ def coletar_petropolis(page, site):
                 continue
 
             data = response.json()
-
-            # 🔎 debug (pode remover depois)
-            print("🔎 KEYS:", data.keys())
 
             # ✅ CORREÇÃO FINAL
             jobs = data.get("jobList", [])
