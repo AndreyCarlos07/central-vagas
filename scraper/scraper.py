@@ -315,20 +315,17 @@ SITES = [
     {
         "empresa": "WHITE MARTINS",
         "url": "https://trabalheconosco.vagas.com.br/white-martins/oportunidades",
-        "tipo": "vagas",
-        "cidades": ["Camaçari"]
+        "tipo": "vagas"
     },
     {
         "empresa": "CSN",
         "url": "https://trabalheconosco.vagas.com.br/csn/oportunidades",
-        "tipo": "vagas",
-        "cidades": ["Candeias", "Camaçari"]
+        "tipo": "vagas"
     },
     {
         "empresa": "ELEKEIROZ",
         "url": "https://trabalheconosco.vagas.com.br/elekeiroz/oportunidades",
-        "tipo": "vagas",
-        "cidades": ["Camaçari"]
+        "tipo": "vagas"
     },
     {
         "empresa": "MFX",
@@ -1505,9 +1502,9 @@ def coletar_pandape(page, site):
 
 
 # ===========================
-# VAGAS
+# VAGAS 
 # ===========================
-def coletar_vagas(page, site):
+def coletar_vagas(page, site): 
 
     vagas = []
     links_coletados = set()
@@ -1516,90 +1513,79 @@ def coletar_vagas(page, site):
         print(f"\n🔎 Buscando vagas da {site['empresa']}")
 
         # ===========================
-        # 1️⃣ ABRE SITE DINÂMICO
+        # 1️⃣ ABRE SITE
         # ===========================
         page.goto(site["url"], timeout=60000)
         page.wait_for_load_state("networkidle")
         time.sleep(3)
 
-        total_empresa = 0
+        # ===========================
+        # 2️⃣ ABRE FILTRO CIDADE
+        # ===========================
+        page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
+        time.sleep(1)
 
         # ===========================
-        # 2️⃣ LISTA DE CIDADES
+        # 3️⃣ SELECIONA CAMAÇARI
         # ===========================
-        cidades = site.get("cidades", [])
+        page.locator("text=Camaçari").click()
+        time.sleep(3)
 
-        for cidade in cidades:
+        print("📍 Filtro aplicado: Camaçari")
 
-            print(f"📍 Aplicando filtro: {cidade}")
+        # ===========================
+        # 4️⃣ SELECIONA CANDEIAS
+        # ===========================
+        page.locator("text=Candeias").click()
+        time.sleep(3)
 
+        print("📍 Filtro aplicado: Candeias")
+
+        # ===========================
+        # 5️⃣ AGUARDA VAGAS
+        # ===========================
+        page.wait_for_selector("a[href*='/oportunidade/']", timeout=15000)
+
+        cards = page.locator("a[href*='/oportunidade/']")
+        total = cards.count()
+
+        print(f"📦 total encontrado: {total}")
+
+        # ===========================
+        # 6️⃣ LOOP VAGAS
+        # ===========================
+        for i in range(total):
             try:
-                # abre dropdown cidade
-                page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
-                time.sleep(1)
+                card = cards.nth(i)
 
-                # 🔥 pega SOMENTE dentro da lista de filtros
-                filtro = page.locator(".jobs-filter__list")
+                link = card.get_attribute("href")
 
-                # 🔥 clica na cidade correta (dentro do filtro)
-                filtro.locator("span.facet__label-text", has_text=cidade).click()
-                time.sleep(3)
+                if not link:
+                    continue
 
-                # ===========================
-                # 3️⃣ AGUARDA VAGAS
-                # ===========================
-                page.wait_for_selector("a[href*='/oportunidade/']", timeout=15000)
+                if not link.startswith("http"):
+                    link = "https://trabalheconosco.vagas.com.br" + link
 
-                cards = page.locator("a[href*='/oportunidade/']")
-                total = cards.count()
+                link_limpo = link.split("?")[0]
 
-                print(f"📦 {cidade}: {total} vagas encontradas")
+                if link_limpo in links_coletados:
+                    continue
 
-                # ===========================
-                # 4️⃣ LOOP VAGAS
-                # ===========================
-                for i in range(total):
-                    try:
-                        card = cards.nth(i)
+                links_coletados.add(link_limpo)
 
-                        link = card.get_attribute("href")
+                titulo = card.inner_text().strip()
 
-                        if not link:
-                            continue
-
-                        if not link.startswith("http"):
-                            link = "https://trabalheconosco.vagas.com.br" + link
-
-                        link_limpo = link.split("?")[0]
-
-                        if link_limpo in links_coletados:
-                            continue
-
-                        links_coletados.add(link_limpo)
-
-                        titulo = card.inner_text().strip()
-
-                        vagas.append({
-                            "id": str(uuid.uuid4())[:8],
-                            "titulo": titulo,
-                            "empresa": site["empresa"],
-                            "link": link_limpo
-                        })
-
-                        total_empresa += 1
-
-                    except Exception as e:
-                        print("erro vaga:", e)
-
-                # 🔥 limpa filtro (importantíssimo)
-                page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
-                time.sleep(1)
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo,
+                    "empresa": site["empresa"],
+                    "link": link_limpo
+                })
 
             except Exception as e:
-                print(f"❌ erro ao filtrar {cidade}:", e)
-                continue
+                print("erro vaga:", e)
 
-        print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
+        print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
         return vagas
 
     except Exception as e:
