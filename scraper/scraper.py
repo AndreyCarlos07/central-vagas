@@ -1520,35 +1520,44 @@ def coletar_vagas(page, site):
         time.sleep(3)
 
         # ===========================
-        # 2️⃣ ABRE FILTRO CIDADE
+        # 🔹 FUNÇÃO AUXILIAR PRA CLICAR CIDADE
         # ===========================
-        page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
-        time.sleep(1)
+        def clicar_cidade(nome_cidade):
+            try:
+                # abre dropdown
+                page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
+                time.sleep(1)
+
+                filtro = page.locator(".jobs-filter__list")
+
+                cidade_locator = filtro.locator(
+                    "span.facet__label-text",
+                    has_text=nome_cidade
+                ).first
+
+                # 🔥 verifica se existe
+                if cidade_locator.count() == 0:
+                    print(f"⚠️ Cidade não encontrada: {nome_cidade}")
+                    return
+
+                # 🔥 espera aparecer e clica
+                cidade_locator.wait_for(state="visible")
+                cidade_locator.click()
+                time.sleep(5)
+
+                print(f"📍 Filtro aplicado: {nome_cidade}")
+
+            except Exception as e:
+                print(f"❌ erro ao clicar {nome_cidade}:", e)
 
         # ===========================
-        # 3️⃣ SELECIONA CAMAÇARI
+        # 2️⃣ APLICA FILTROS
         # ===========================
-        page.locator("text=Camaçari").click()
-        time.sleep(5)
-
-        print("📍 Filtro aplicado: Camaçari")
+        clicar_cidade("Camaçari")
+        clicar_cidade("Candeias")
 
         # ===========================
-        # 2️⃣ ABRE FILTRO CIDADE
-        # ===========================
-        page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
-        time.sleep(1)
-
-        # ===========================
-        # 4️⃣ SELECIONA CANDEIAS
-        # ===========================
-        page.locator("text=Candeias").click()
-        time.sleep(5)
-
-        print("📍 Filtro aplicado: Candeias")
-
-        # ===========================
-        # 5️⃣ AGUARDA VAGAS
+        # 3️⃣ AGUARDA VAGAS
         # ===========================
         page.wait_for_selector("a[href*='/oportunidade/']", timeout=15000)
 
@@ -1558,7 +1567,7 @@ def coletar_vagas(page, site):
         print(f"📦 total encontrado: {total}")
 
         # ===========================
-        # 6️⃣ LOOP VAGAS
+        # 4️⃣ LOOP VAGAS
         # ===========================
         for i in range(total):
             try:
@@ -1597,7 +1606,6 @@ def coletar_vagas(page, site):
     except Exception as e:
         print("❌ erro geral:", e)
         return vagas
-
 
 # ===========================
 # INHIRE (UNIVERSAL)
