@@ -1529,15 +1529,21 @@ def coletar_vagas(page, site):
         # 3️⃣ SELECIONA CAMAÇARI
         # ===========================
         page.locator("text=Camaçari").click()
-        time.sleep(3)
+        time.sleep(5)
 
         print("📍 Filtro aplicado: Camaçari")
+
+        # ===========================
+        # 2️⃣ ABRE FILTRO CIDADE
+        # ===========================
+        page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
+        time.sleep(1)
 
         # ===========================
         # 4️⃣ SELECIONA CANDEIAS
         # ===========================
         page.locator("text=Candeias").click()
-        time.sleep(3)
+        time.sleep(5)
 
         print("📍 Filtro aplicado: Candeias")
 
