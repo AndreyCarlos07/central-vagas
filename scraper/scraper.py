@@ -1538,8 +1538,11 @@ def coletar_vagas(page, site):
                 page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
                 time.sleep(1)
 
-                # clica na cidade
-                page.locator(f"text={cidade}").click()
+                # 🔥 pega SOMENTE dentro da lista de filtros
+                filtro = page.locator(".jobs-filter__list")
+
+                # 🔥 clica na cidade correta (dentro do filtro)
+                filtro.locator("span.facet__label-text", has_text=cidade).click()
                 time.sleep(3)
 
                 # ===========================
