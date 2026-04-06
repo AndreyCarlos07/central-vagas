@@ -316,19 +316,19 @@ SITES = [
         "empresa": "WHITE MARTINS",
         "url": "https://trabalheconosco.vagas.com.br/white-martins/oportunidades",
         "tipo": "vagas",
-        "cidades": "Camaçari"
+        "cidades": ["Camaçari"]
     },
     {
         "empresa": "CSN",
         "url": "https://trabalheconosco.vagas.com.br/csn/oportunidades",
         "tipo": "vagas",
-        "cidades": "Candeias", "Camaçari"
+        "cidades": ["Candeias", "Camaçari"]
     },
     {
         "empresa": "ELEKEIROZ",
         "url": "https://trabalheconosco.vagas.com.br/elekeiroz/oportunidades",
         "tipo": "vagas",
-        "cidades": "Camaçari"
+        "cidades": ["Camaçari"]
     },
     {
         "empresa": "MFX",
