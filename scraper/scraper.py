@@ -1814,9 +1814,6 @@ def main():
                     vagas = coletar_pandape(page, site)
 
                 elif site["tipo"] == "vagas":
-                    vagas = coletar_white_martins(page, site)
-
-                elif site["tipo"] == "vagas":
                     vagas = coletar_vagas(page, site)
 
                 elif site["tipo"] == "inhire":
