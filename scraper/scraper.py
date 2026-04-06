@@ -1519,45 +1519,40 @@ def coletar_vagas(page, site):
         page.wait_for_load_state("networkidle")
         time.sleep(3)
 
-        # ===========================
-        # 🔹 FUNÇÃO AUXILIAR PRA CLICAR CIDADE
-        # ===========================
-        def clicar_cidade(nome_cidade):
+        cidades = ["Camaçari", "Candeias"]
+
+        for cidade in cidades:
+
             try:
-                # abre dropdown
+                # ===========================
+                # ABRE DROPDOWN SEMPRE
+                # ===========================
                 page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
                 time.sleep(1)
 
-                filtro = page.locator(".jobs-filter__list")
+                locator = page.locator(f"text={cidade}")
 
-                cidade_locator = filtro.locator(
-                    "span.facet__label-text",
-                    has_text=nome_cidade
-                ).first
+                # ===========================
+                # VERIFICA SE EXISTE
+                # ===========================
+                if locator.count() == 0:
+                    print(f"⚠️ Cidade não encontrada: {cidade}")
+                    continue
 
-                # 🔥 verifica se existe
-                if cidade_locator.count() == 0:
-                    print(f"⚠️ Cidade não encontrada: {nome_cidade}")
-                    return
+                # ===========================
+                # CLICA COM SEGURANÇA
+                # ===========================
+                locator.first.click(force=True)
+                time.sleep(4)
 
-                # 🔥 espera aparecer e clica
-                cidade_locator.wait_for(state="visible")
-                cidade_locator.click()
-                time.sleep(5)
-
-                print(f"📍 Filtro aplicado: {nome_cidade}")
+                print(f"📍 Filtro aplicado: {cidade}")
 
             except Exception as e:
-                print(f"❌ erro ao clicar {nome_cidade}:", e)
+                print(f"❌ erro ao aplicar {cidade}:", e)
+                continue
 
         # ===========================
-        # 2️⃣ APLICA FILTROS
-        # ===========================
-        clicar_cidade("Camaçari")
-        clicar_cidade("Candeias")
-
-        # ===========================
-        # 3️⃣ AGUARDA VAGAS
+        # AGUARDA VAGAS
         # ===========================
         page.wait_for_selector("a[href*='/oportunidade/']", timeout=15000)
 
@@ -1567,7 +1562,7 @@ def coletar_vagas(page, site):
         print(f"📦 total encontrado: {total}")
 
         # ===========================
-        # 4️⃣ LOOP VAGAS
+        # LOOP VAGAS
         # ===========================
         for i in range(total):
             try:
