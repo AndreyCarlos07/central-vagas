@@ -28,8 +28,8 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["MFX", "TRESCAL", "INFOTEC BRASIL"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["WHITE MARTINS", "CSN", "ELEKEIROZ"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -315,7 +315,20 @@ SITES = [
     {
         "empresa": "WHITE MARTINS",
         "url": "https://trabalheconosco.vagas.com.br/white-martins/oportunidades",
-        "tipo": "vagas"
+        "tipo": "vagas",
+        "cidades": "Camaçari"
+    },
+    {
+        "empresa": "CSN",
+        "url": "https://trabalheconosco.vagas.com.br/csn/oportunidades",
+        "tipo": "vagas",
+        "cidades": "Candeias", "Camaçari"
+    },
+    {
+        "empresa": "ELEKEIROZ",
+        "url": "https://trabalheconosco.vagas.com.br/elekeiroz/oportunidades",
+        "tipo": "vagas",
+        "cidades": "Camaçari"
     },
     {
         "empresa": "MFX",
@@ -1574,6 +1587,105 @@ def coletar_white_martins(page, site):
         print("❌ erro geral:", e)
         return vagas
 
+# ===========================
+# VAGAS
+# ===========================
+def coletar_vagas(page, site):
+
+    vagas = []
+    links_coletados = set()
+
+    try:
+        print(f"\n🔎 Buscando vagas da {site['empresa']}")
+
+        # ===========================
+        # 1️⃣ ABRE SITE DINÂMICO
+        # ===========================
+        page.goto(site["url"], timeout=60000)
+        page.wait_for_load_state("networkidle")
+        time.sleep(3)
+
+        total_empresa = 0
+
+        # ===========================
+        # 2️⃣ LISTA DE CIDADES
+        # ===========================
+        cidades = site.get("cidades", [])
+
+        for cidade in cidades:
+
+            print(f"📍 Aplicando filtro: {cidade}")
+
+            try:
+                # abre dropdown cidade
+                page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
+                time.sleep(1)
+
+                # clica na cidade
+                page.locator(f"text={cidade}").click()
+                time.sleep(3)
+
+                # ===========================
+                # 3️⃣ AGUARDA VAGAS
+                # ===========================
+                page.wait_for_selector("a[href*='/oportunidade/']", timeout=15000)
+
+                cards = page.locator("a[href*='/oportunidade/']")
+                total = cards.count()
+
+                print(f"📦 {cidade}: {total} vagas encontradas")
+
+                # ===========================
+                # 4️⃣ LOOP VAGAS
+                # ===========================
+                for i in range(total):
+                    try:
+                        card = cards.nth(i)
+
+                        link = card.get_attribute("href")
+
+                        if not link:
+                            continue
+
+                        if not link.startswith("http"):
+                            link = "https://trabalheconosco.vagas.com.br" + link
+
+                        link_limpo = link.split("?")[0]
+
+                        if link_limpo in links_coletados:
+                            continue
+
+                        links_coletados.add(link_limpo)
+
+                        titulo = card.inner_text().strip()
+
+                        vagas.append({
+                            "id": str(uuid.uuid4())[:8],
+                            "titulo": titulo,
+                            "empresa": site["empresa"],
+                            "link": link_limpo
+                        })
+
+                        total_empresa += 1
+
+                    except Exception as e:
+                        print("erro vaga:", e)
+
+                # 🔥 limpa filtro (importantíssimo)
+                page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
+                time.sleep(1)
+
+            except Exception as e:
+                print(f"❌ erro ao filtrar {cidade}:", e)
+                continue
+
+        print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
+        return vagas
+
+    except Exception as e:
+        print("❌ erro geral:", e)
+        return vagas
+
 
 # ===========================
 # INHIRE (UNIVERSAL)
@@ -1786,6 +1898,9 @@ def main():
 
                 elif site["tipo"] == "vagas":
                     vagas = coletar_white_martins(page, site)
+
+                elif site["tipo"] == "vagas":
+                    vagas = coletar_vagas(page, site)
 
                 elif site["tipo"] == "inhire":
                     vagas = coletar_inhire(site)
