@@ -1826,6 +1826,7 @@ def main():
                 print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
 
                 fim = time.time()
+                tempo_execucao = fim - inicio
                 minutos = tempo_execucao / 60
 
                 print(f"⏱️ {site['empresa']}: {tempo_execucao:.2f}s ({minutos:.2f} min)")
