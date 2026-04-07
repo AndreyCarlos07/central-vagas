@@ -1,26 +1,173 @@
 id,titulo,empresa,link,data_coleta
-ec3ccb1a,"Almoxarife
-Camaçari - BA
-Efetivo",KORDSA,https://kordsa.gupy.io/jobs/10501320?jobBoardSource=gupy_public_page,2026-04-07T12:45:33.458434
-30cd44f0,"OPERADOR LOGÍSTICO I (PCD) - CANDEIAS/BA
-Candeias - BA
-Efetivo",TIMAC AGRO,https://timacagro.gupy.io/jobs/9647882?jobBoardSource=gupy_public_page,2026-04-07T12:45:33.458434
-15cdab82,"Tecnico de Segurança do Trabalho
-Camaçari - BA
-Efetivo",CIBRA,https://cibra.gupy.io/jobs/10284150?jobBoardSource=gupy_public_page,2026-04-07T12:45:33.458434
-7aecadc2,"Supervisor(a) de Manutenção Elétrica
-Simões Filho - BA
-Efetivo",SOLAR COCA COLA,https://solarcocacola.gupy.io/jobs/11097295?jobBoardSource=gupy_public_page,2026-04-07T12:45:33.458434
-b92c99ab,"Técnico(a) de Manutenção Mecânica I
-Simões Filho - BA
-Efetivo",SOLAR COCA COLA,https://solarcocacola.gupy.io/jobs/11084711?jobBoardSource=gupy_public_page,2026-04-07T12:45:33.458434
-d3eaf447,"Técnico(a) de Manutenção Mecânica II
-Simões Filho - BA
-Efetivo",SOLAR COCA COLA,https://solarcocacola.gupy.io/jobs/11091015?jobBoardSource=gupy_public_page,2026-04-07T12:45:33.458434
-d6e95e21,"Auxiliar de Operações Logísticas - PCD
+cd751e37,"TRILHOS | BANCO DE TALENTOS - TÉCNICO DE ATENDIMENTO MANUTENÇÃO VIA PERMANENTE
 Salvador - BA
-Efetivo",M. DIAS BRANCO,https://mdiasbranco.gupy.io/jobs/9247677?jobBoardSource=gupy_public_page,2026-04-07T12:45:33.458434
-2c1d9085,"Promotor de Vendas - PCD
+Banco de talentos",MOTIVA,https://motiva.gupy.io/jobs/10093730?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+fe324b98,"ASSISTENTE DE COBRANÇA - SALVADOR/BA
 Salvador - BA
-Efetivo",M. DIAS BRANCO,https://mdiasbranco.gupy.io/jobs/10907437?jobBoardSource=gupy_public_page,2026-04-07T12:45:33.458434
-cab3edfc,ANALISTA JR CIENTISTA DE DADOS - SUPRIMENTOS,BRASKEM,https://epiw.fa.la1.oraclecloud.com/hcmUI/CandidateExperience/pt-BR/sites/CX_1001/job/6555/,2026-04-07T12:45:33.458434
+Efetivo",LM MOBILIDADE,https://lmvagas.gupy.io/jobs/11018177?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+5fd7b674,"Técnico de Segurança do Trabalho
+Camaçari - BA
+Efetivo",CIBRA,https://cibra.gupy.io/jobs/10313628?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+bbcfabda,"Assistente Administrativo
+Simões Filho - BA
+Efetivo",SOLAR COCA COLA,https://solarcocacola.gupy.io/jobs/11095328?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+92667c81,"Auxiliar de Entrega
+Simões Filho - BA
+Efetivo",SOLAR COCA COLA,https://solarcocacola.gupy.io/jobs/11095354?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+e875d011,"Auxiliar de Entrega
+Simões Filho - BA
+Efetivo",SOLAR COCA COLA,https://solarcocacola.gupy.io/jobs/11095341?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+00095591,"Auxiliar de Entrega
+Simões Filho - BA
+Efetivo",SOLAR COCA COLA,https://solarcocacola.gupy.io/jobs/11095356?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+32a479f3,"Auxiliar de Entrega
+Simões Filho - BA
+Efetivo",SOLAR COCA COLA,https://solarcocacola.gupy.io/jobs/11095355?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+2010adc1,"Auxiliar de Entrega
+Simões Filho - BA
+Efetivo",SOLAR COCA COLA,https://solarcocacola.gupy.io/jobs/11095358?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+6de775df,"Operador(a) de Empilhadeira
+Simões Filho - BA
+Efetivo",SOLAR COCA COLA,https://solarcocacola.gupy.io/jobs/11095337?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+119f2217,"Operador(a) de Empilhadeira
+Simões Filho - BA
+Efetivo",SOLAR COCA COLA,https://solarcocacola.gupy.io/jobs/11075876?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+5e7c1420,"Técnico de Controle de Qualidade I - PCR
+Simões Filho - BA
+Efetivo",ENGEPACK,https://engepack.gupy.io/jobs/11099347?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+083b7e38,"SUPERVISOR DE LOGISTICA - ARMAZÉM
+Salvador - BA
+Efetivo",3CORAÇÕES,https://3coracoes.gupy.io/jobs/10746500?jobBoardSource=gupy_public_page,2026-04-07T21:18:42.987813
+febfd1ed,Ajudante de Produção (Vaga Exclusiva para PCD),BRIDGESTONE,https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers/job/Baha-Brazil/Ajudante-de-Produo--Vaga-Exclusiva-para-PCD-_2026_07679?q=Bahia,2026-04-07T21:18:42.987813
+1f64af99,Condutor de empilhadeira,BRACELL,https://averis.wd3.myworkdayjobs.com/pt-BR/RGE/job/Camaari/Condutor-de-empilhadeira_R196483?q=Cama%C3%A7ari,2026-04-07T21:18:42.987813
+8fd7ae0b,OPERADOR(A) CORTE DOBRA I,GERDAU,https://jobs.gerdau.com/job/SIMOES-FILHO-OPERADOR%28A%29-CORTE-DOBRA-I-BR-43700-000/1330792962/,2026-04-07T21:18:42.987813
+0bfbd042,ANALISTA TRANSPORTE JR,GRUPO PETRÓPOLIS,https://carreiras.grupopetropolis.com.br/job/ALAGOINHAS-ANALISTA-TRANSPORTE-JR-BA/1331364762/,2026-04-07T21:18:42.987813
+82062112,Analista de Governança JPAZHE,MDC ENERGIA,https://mdcnossostalentos.jobs.recrut.ai/job/JPAZHE,2026-04-07T21:18:42.987813
+5e9958e1,"Corretor (a) de Imóveis - Associado (a) - São Paulo e Rio de Janeiro
+
+São Paulo, SP
+
+Pleno
+
+A combinar
+
+Ver descrição da vaga
+
+ Faltam 0 dias para encerrar esta vaga",WHITE MARTINS,https://trabalheconosco.vagas.com.br/white-martins/oportunidade/corretor-a-de-imoveis-associado-a-sao-paulo-e-rio-de-janeiro/1337319,2026-04-07T21:18:42.987813
+c481c3fc,"Consultor(a) de Vendas - Pessoa Preta Ou Parda
+(1 vaga)
+
+MT/Brasil
+
+Auxiliar/
+Operacional
+
+A combinar
+
+Ver descrição da vaga
+
+ Faltam 0 dias para encerrar esta vaga",WHITE MARTINS,https://trabalheconosco.vagas.com.br/white-martins/oportunidade/consultor-a-de-vendas-pessoa-preta-ou-parda/2712637,2026-04-07T21:18:42.987813
+77a344f3,"Consultor(a) de Vendas - Pessoa Preta Ou Parda
+(1 vaga)
+
+RO/Brasil
+
+Auxiliar/
+Operacional
+
+A combinar
+
+Ver descrição da vaga
+
+ Faltam 0 dias para encerrar esta vaga",WHITE MARTINS,https://trabalheconosco.vagas.com.br/white-martins/oportunidade/consultor-a-de-vendas-pessoa-preta-ou-parda/2712630,2026-04-07T21:18:42.987813
+256efc5e,"Consultor(a) de Vendas - Pessoa Preta Ou Parda
+(1 vaga)
+
+GO/Brasil
+
+Auxiliar/
+Operacional
+
+A combinar
+
+Ver descrição da vaga
+
+ Faltam 0 dias para encerrar esta vaga",WHITE MARTINS,https://trabalheconosco.vagas.com.br/white-martins/oportunidade/consultor-a-de-vendas-pessoa-preta-ou-parda/2712635,2026-04-07T21:18:42.987813
+dbc0cb94,"Consultor(a) de Vendas - Pessoa Preta Ou Parda
+(1 vaga)
+
+PA/Brasil
+
+Auxiliar/
+Operacional
+
+A combinar
+
+Ver descrição da vaga
+
+ Faltam 0 dias para encerrar esta vaga",WHITE MARTINS,https://trabalheconosco.vagas.com.br/white-martins/oportunidade/consultor-a-de-vendas-pessoa-preta-ou-parda/2712643,2026-04-07T21:18:42.987813
+a40cd222,"Consultor(a) de Vendas - Pessoa Preta Ou Parda
+(1 vaga)
+
+RS/Brasil
+
+Auxiliar/
+Operacional
+
+A combinar
+
+Ver descrição da vaga
+
+ Faltam 0 dias para encerrar esta vaga",WHITE MARTINS,https://trabalheconosco.vagas.com.br/white-martins/oportunidade/consultor-a-de-vendas-pessoa-preta-ou-parda/2712629,2026-04-07T21:18:42.987813
+1938bdd9,"Consultor(a) de Vendas - Pessoa Preta Ou Parda
+(1 vaga)
+
+CE/Brasil
+
+Auxiliar/
+Operacional
+
+A combinar
+
+Ver descrição da vaga
+
+ Faltam 0 dias para encerrar esta vaga",WHITE MARTINS,https://trabalheconosco.vagas.com.br/white-martins/oportunidade/consultor-a-de-vendas-pessoa-preta-ou-parda/2712631,2026-04-07T21:18:42.987813
+f5ab2f8c,"Consultor(a) de Vendas - Pessoa Preta Ou Parda
+(1 vaga)
+
+PE/Brasil
+
+Auxiliar/
+Operacional
+
+A combinar
+
+Ver descrição da vaga
+
+ Faltam 0 dias para encerrar esta vaga",WHITE MARTINS,https://trabalheconosco.vagas.com.br/white-martins/oportunidade/consultor-a-de-vendas-pessoa-preta-ou-parda/2712648,2026-04-07T21:18:42.987813
+88474d2f,"Consultor(a) de Vendas - Pessoa Preta Ou Parda
+(1 vaga)
+
+PB/Brasil
+
+Auxiliar/
+Operacional
+
+A combinar
+
+Ver descrição da vaga
+
+ Faltam 0 dias para encerrar esta vaga",WHITE MARTINS,https://trabalheconosco.vagas.com.br/white-martins/oportunidade/consultor-a-de-vendas-pessoa-preta-ou-parda/2712644,2026-04-07T21:18:42.987813
+d98a98c5,"Programa de Estágio B3 - 2026
+
+SP/Brasil
+
+Estágio
+
+R$2.300,00 - R$2.300,00
+
+Ver descrição da vaga
+
+ Faltam 0 dias para encerrar esta vaga",WHITE MARTINS,https://trabalheconosco.vagas.com.br/white-martins/oportunidade/programa-de-estagio-b3-2026/2783038,2026-04-07T21:18:42.987813
+d84b7fa9,ENGENHEIRO ELETRICISTA,MFX,https://mfx.inhire.app/vagas/20816625-5457-4855-988b-67900b39ef72/engenheiro-eletricista,2026-04-07T21:18:42.987813
+dfb1c203,Comprador De Materiais Senior - São Francisco do Conde/BA,INFOTEC BRASIL,https://infotecbrasil.inhire.app/vagas/60df76d5-19d6-48c8-b49e-4702748e42cc/comprador-de-materiais-senior-sao-francisco-do-conde-ba,2026-04-07T21:18:42.987813
