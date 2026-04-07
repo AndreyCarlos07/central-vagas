@@ -28,7 +28,7 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["WHITE MARTINS", "CSN", "ELEKEIROZ"]
 
 CSV_HISTORICO = "vagas.csv"
@@ -1521,35 +1521,62 @@ def coletar_vagas(page, site):
 
         cidades = ["Camaçari", "Candeias"]
 
+        filtros_aplicados = 0  # 🔒 CONTROLE DE SEGURANÇA
+
         for cidade in cidades:
 
-            try:
-                # ===========================
-                # ABRE DROPDOWN SEMPRE
-                # ===========================
-                page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
-                time.sleep(1)
+            tentativas = 3
+            sucesso = False
 
-                locator = page.locator(f"text={cidade}")
+            for tentativa in range(tentativas):
+                try:
+                    # ===========================
+                    # ABRE DROPDOWN SEMPRE
+                    # ===========================
+                    page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
+                    time.sleep(1)
 
-                # ===========================
-                # VERIFICA SE EXISTE
-                # ===========================
-                if locator.count() == 0:
-                    print(f"⚠️ Cidade não encontrada: {cidade}")
-                    continue
+                    locator = page.locator(f"text={cidade}")
 
-                # ===========================
-                # CLICA COM SEGURANÇA
-                # ===========================
-                locator.first.click(force=True)
-                time.sleep(4)
+                    # ===========================
+                    # VERIFICA SE EXISTE
+                    # ===========================
+                    if locator.count() == 0:
+                        print(f"⚠️ Cidade não encontrada: {cidade} (tentativa {tentativa+1})")
+                        time.sleep(2)
+                        continue
 
-                print(f"📍 Filtro aplicado: {cidade}")
+                    # ===========================
+                    # CLICA COM SEGURANÇA
+                    # ===========================
+                    locator.first.click(force=True)
+                    time.sleep(3)
 
-            except Exception as e:
-                print(f"❌ erro ao aplicar {cidade}:", e)
-                continue
+                    # ===========================
+                    # 🔥 VALIDAÇÃO REAL (ESSA É A CHAVE)
+                    # ===========================
+                    if cidade.lower() in page.content().lower():
+                        print(f"📍 Filtro aplicado: {cidade}")
+                        sucesso = True
+                        filtros_aplicados += 1
+                        break
+                    else:
+                        print(f"⚠️ Clique falhou: {cidade} (tentativa {tentativa+1})")
+
+                except Exception as e:
+                    print(f"❌ erro ao aplicar {cidade} (tentativa {tentativa+1}):", e)
+
+                time.sleep(2)
+
+            if not sucesso:
+                print(f"🚨 Falha total ao aplicar cidade: {cidade}")
+
+        # ===========================
+        # 🔒 TRAVA DE SEGURANÇA
+        # ===========================
+        if filtros_aplicados == 0:
+            print("🚫 Nenhum filtro aplicado, abortando coleta")
+            return []
 
         # ===========================
         # AGUARDA VAGAS
@@ -1602,8 +1629,9 @@ def coletar_vagas(page, site):
         print("❌ erro geral:", e)
         return vagas
 
+
 # ===========================
-# INHIRE (UNIVERSAL)
+# INHIRE
 # ===========================
 def coletar_inhire(site):
 
