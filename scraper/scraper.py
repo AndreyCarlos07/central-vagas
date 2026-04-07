@@ -28,7 +28,7 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["WHITE MARTINS", "CSN", "ELEKEIROZ"]
 
 CSV_HISTORICO = "vagas.csv"
@@ -1766,6 +1766,8 @@ def main():
 
             print(f"\n🔎 Buscando vagas da {site['empresa']}")
 
+            inicio = time.time()
+
             try:
 
                 if site["tipo"] == "gupy":
@@ -1822,6 +1824,11 @@ def main():
                     vagas = []
 
                 print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
+
+                fim = time.time()
+                minutos = tempo_execucao / 60
+
+                print(f"⏱️ {site['empresa']}: {tempo_execucao:.2f}s ({minutos:.2f} min)")
 
                 if len(vagas) == 0:
                     empresas_zero.add(site["empresa"])
