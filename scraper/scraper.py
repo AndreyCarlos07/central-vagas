@@ -1896,7 +1896,7 @@ def main():
 
                 if site["tipo"] == "gupy":
                     vagas = coletar_gupy(page, site)
-                    vagas = filtrar_gupy_bahia(vagas)
+                    #vagas = filtrar_gupy_bahia(vagas)
 
                 elif site["tipo"] == "workday":
                     vagas = coletar_workday(page, site)
