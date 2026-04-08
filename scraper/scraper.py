@@ -28,8 +28,8 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["WHITE MARTINS", "CSN", "ELEKEIROZ"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["BYD"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -351,10 +351,26 @@ SITES = [
 ]
 
 # 📍 filtro Bahia (somente GUPY)
-PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVILA", "CANDEIAS", "POJUCA - BA", "CATU", "SIMÕES FILHO", "ALAGOINHAS"]
+#PALAVRAS_BA = ["BAHIA", "SALVADOR", "CAMAÇARI", "LAURO", "FEIRA", "DIAS D'ÁVILA", "CANDEIAS", "POJUCA - BA", "CATU", "SIMÕES FILHO", "ALAGOINHAS"]
 
 # ===========================
 # GUPY
+# ===========================
+CIDADES_BA = [
+    "Salvador",
+    "Camaçari",
+    "Lauro de Freitas",
+    "Feira de Santana",
+    "Dias d'Ávila",
+    "Candeias",
+    "Pojuca",
+    "Catu",
+    "Simões Filho",
+    "Alagoinhas"
+]
+
+# ===========================
+# SCROLL INTELIGENTE
 # ===========================
 def carregar_scroll_gupy(page):
     last_count = 0
@@ -362,65 +378,145 @@ def carregar_scroll_gupy(page):
         page.wait_for_timeout(1000)
         cards = page.locator('a[href*="/jobs/"]')
         count = cards.count()
+
         if count == last_count:
             break
+
         last_count = count
         page.mouse.wheel(0, 8000)
 
 
+# ===========================
+# SELECIONAR ESTADO
+# ===========================
+def selecionar_estado(page, estado="Bahia"):
+    page.wait_for_selector("#state-select", timeout=10000)
+
+    estado_input = page.locator("#state-select")
+    estado_input.click(force=True)
+    estado_input.fill(estado)
+
+    # tenta enter
+    page.keyboard.press("Enter")
+
+    # fallback (caso não selecione)
+    try:
+        page.get_by_role("option", name=estado).click(timeout=2000)
+    except:
+        pass
+
+    page.wait_for_timeout(2000)
+
+
+# ===========================
+# SELECIONAR CIDADE
+# ===========================
+def selecionar_cidade(page, cidade):
+    page.wait_for_selector("#city-select", timeout=10000)
+
+    cidade_input = page.locator("#city-select")
+    cidade_input.click(force=True)
+    cidade_input.fill(cidade)
+
+    page.keyboard.press("Enter")
+
+    # fallback
+    try:
+        page.get_by_role("option", name=cidade).click(timeout=2000)
+    except:
+        pass
+
+    page.wait_for_timeout(2000)
+
+
+# ===========================
+# LIMPAR CIDADE
+# ===========================
+def limpar_cidade(page):
+    cidade_input = page.locator("#city-select")
+    cidade_input.click()
+    page.keyboard.press("Control+A")
+    page.keyboard.press("Backspace")
+    page.wait_for_timeout(1000)
+
+
+# ===========================
+# GUPY
+# ===========================
 def coletar_gupy(page, site):
     vagas = []
+    links_vistos = set()  # 🔥 evita duplicadas
 
     page.goto(site["url"], timeout=60000)
     page.wait_for_timeout(4000)
 
-    carregar_scroll_gupy(page)
+    # 🔥 seleciona Bahia
+    selecionar_estado(page, "Bahia")
 
-    pagina_atual = 1
+    for cidade in CIDADES_BA:
+        print(f"📍 Buscando cidade: {cidade}")
 
-    while True:
+        selecionar_cidade(page, cidade)
+
         page.wait_for_timeout(3000)
-        cards = page.locator('a[href*="/jobs/"]')
 
-        for i in range(cards.count()):
-            el = cards.nth(i)
+        carregar_scroll_gupy(page)
+
+        pagina_atual = 1
+
+        while True:
+            page.wait_for_timeout(2000)
+            cards = page.locator('a[href*="/jobs/"]')
+
+            for i in range(cards.count()):
+                el = cards.nth(i)
+
+                try:
+                    titulo = el.inner_text().strip()
+                    link = el.get_attribute("href")
+
+                    if not link:
+                        continue
+
+                    if not link.startswith("http"):
+                        link = site["url"] + link
+
+                    # 🔥 evita duplicadas
+                    if link in links_vistos:
+                        continue
+
+                    links_vistos.add(link)
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": site["empresa"],
+                        "link": link
+                    })
+
+                except:
+                    continue
+
+            # 🔥 paginação
+            proxima = page.locator(
+                f'button[data-testid="pagination-page-button"]:has-text("{pagina_atual + 1}")'
+            )
+
+            if proxima.count() == 0:
+                break
+
             try:
-                titulo = el.inner_text().strip()
-                link = el.get_attribute("href")
-
-                if not link.startswith("http"):
-                    link = site["url"] + link
-
-                vagas.append({
-                    "id": str(uuid.uuid4())[:8],
-                    "titulo": titulo,
-                    "empresa": site["empresa"],
-                    "link": link
-                })
+                proxima.first.click()
+                pagina_atual += 1
+                page.wait_for_timeout(2000)
             except:
-                continue
+                break
 
-        proxima = page.locator(
-            f'button[data-testid="pagination-page-button"]:has-text("{pagina_atual + 1}")'
-        )
-
-        if proxima.count() == 0:
-            break
-
-        proxima.first.click()
-        pagina_atual += 1
+        # 🔥 limpa cidade antes da próxima
+        limpar_cidade(page)
 
     print(f"📌 {site['empresa']} (GUPY): {len(vagas)} vagas coletadas")
     return vagas
-
-
-def filtrar_gupy_bahia(vagas):
-    filtradas = [
-        vaga for vaga in vagas
-        if any(p in vaga["titulo"].upper() for p in PALAVRAS_BA)
-    ]
-    print(f"📌 GUPY após filtro Bahia: {len(filtradas)}")
-    return filtradas
 
 
 # ===========================
