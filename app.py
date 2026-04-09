@@ -489,10 +489,10 @@ def home():
         <div style="margin-bottom:15px;">
             <a href="/"
                 onmouseover="this.style.background='#0066cc'"
-                onmouseout="this.style.background='#f4f6f8'"
+                onmouseout="this.style.background='#f4f6f8'" 
                 style="
                     background:#f4f6f8;
-                    color:black;
+                    color:black
                     padding:8px 12px;
                     border-radius:6px;
                     text-decoration:none;
@@ -503,7 +503,7 @@ def home():
 
             <a href="/sobre"
                 onmouseover="this.style.background='#0066cc'"
-                onmouseout="this.style.background='#f4f6f8'"
+                onmouseout="this.style.background='#f4f6f8'"  
                 style="
                     background:#f4f6f8;
                     color:black;
