@@ -16,7 +16,8 @@
     }
   ],
   "andamento": [],
-  "resolvidos": [
+  "resolvidos": [],
+  "excluidos": [
     {
       "id": "ba74904c",
       "nome": "Teste",
@@ -24,6 +25,5 @@
       "mensagem": "Teste",
       "data": "2026-04-09T16:13:19.755268"
     }
-  ],
-  "excluidos": []
+  ]
 }
