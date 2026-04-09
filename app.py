@@ -170,7 +170,7 @@ def salvar_avaliacoes(dados):
     
 
 def carregar_contatos():
-    url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_CONTATOS}"
+    url = f"https://api.github.com/repos/{REPO}/contents/contatos.json"
 
     headers = {
         "Authorization": f"Bearer {GITHUB_TOKEN}",
@@ -180,15 +180,27 @@ def carregar_contatos():
     r = requests.get(url, headers=headers)
 
     if r.status_code != 200:
-        return {"contatos": []}
+        return {
+            "contatos": [],
+            "andamento": [],
+            "resolvidos": [],
+            "excluidos": []
+        }
 
     data = r.json()
     conteudo = base64.b64decode(data["content"]).decode()
 
-    return json.loads(conteudo)
+    dados = json.loads(conteudo)
+
+    # garante estrutura
+    for key in ["contatos", "andamento", "resolvidos", "excluidos"]:
+        if key not in dados:
+            dados[key] = []
+
+    return dados
 
 def salvar_contatos(dados):
-    url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_CONTATOS}"
+    url = f"https://api.github.com/repos/{REPO}/contents/contatos.json"
 
     headers = {
         "Authorization": f"token {GITHUB_TOKEN}"
@@ -702,7 +714,7 @@ def home():
         {% if admin %}
         <p>
         <a href="/admin/avaliacoes?admin={{token}}">
-        📝 Ver avaliações pendentes
+        📝 Ver avaliações pendentes ({{ total_pendentes_av }})
         </a>
         </p>
         {% endif %}
@@ -710,7 +722,7 @@ def home():
         {% if admin %}
         <p>
         <a href="/admin/contatos?admin={{token}}">
-        📩 Ver solicitações de contato
+        📩 Ver solicitações de contato  ({{ total_contatos }})
         </a>
         </p>
         {% endif %}
@@ -936,6 +948,12 @@ def home():
     avaliacoes_paginadas = avaliacoes[inicio:fim]
 
     total_paginas_av = (len(avaliacoes) + AVALIACOES_POR_PAGINA - 1) // AVALIACOES_POR_PAGINA
+
+    dados_av = carregar_avaliacoes()
+    total_pendentes_av = len(dados_av["pendentes"])
+
+    dados_cont = carregar_contatos()
+    total_contatos = len(dados_cont["contatos"])
 
     return render_template_string(
         html,
@@ -1173,15 +1191,15 @@ def aprovar(id):
     return redirect("/admin/avaliacoes?admin=" + ADMIN_TOKEN)
     
 
+import smtplib
+from email.mime.text import MIMEText
+
 @app.route("/enviar_contato", methods=["POST"])
 def enviar_contato():
 
     nome = request.form.get("nome")
     tipo = request.form.get("tipo")
     mensagem = request.form.get("mensagem")
-
-    if not nome or not mensagem:
-        return "Preencha os campos"
 
     novo = {
         "id": str(uuid.uuid4())[:8],
@@ -1195,6 +1213,21 @@ def enviar_contato():
     dados["contatos"].append(novo)
 
     salvar_contatos(dados)
+
+    # 📧 ENVIO DE EMAIL
+    try:
+        msg = MIMEText(f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}")
+        msg["Subject"] = "Novo contato recebido - Central de Vagas"
+        msg["From"] = EMAIL_USER
+        msg["To"] = EMAIL_USER
+
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(EMAIL_USER, EMAIL_PASS)
+        server.send_message(msg)
+        server.quit()
+    except Exception as e:
+        print("Erro ao enviar email:", e)
 
     return redirect("/contato?msg=ok")
     
@@ -1210,27 +1243,48 @@ def admin_contatos():
     html = """
     <a href="/?admin={{token}}">← voltar</a>
 
-    <h2>📩 Contatos recebidos</h2>
-
+    <h2>📥 Contatos recebidos</h2>
     {% for c in contatos %}
         <p>
-        <strong>{{ c.nome }}</strong> ({{ c.tipo }})<br>
-        {{ c.mensagem }}
-        </p>
-        <hr>
+        <strong>{{ c.nome }}</strong><br>
+        {{ c.mensagem }}<br>
+        <a href="/andamento/{{c.id}}?admin={{token}}">Mover p/ andamento</a>
+        </p><hr>
     {% endfor %}
 
-    {% if not contatos %}
-    <p>Nenhum contato recebido.</p>
-    {% endif %}
+    <h2>🔄 Em andamento</h2>
+    {% for c in andamento %}
+        <p>
+        <strong>{{ c.nome }}</strong><br>
+        <a href="/resolver/{{c.id}}?admin={{token}}">Resolver</a>
+        </p><hr>
+    {% endfor %}
+
+    <h2>✅ Resolvidos</h2>
+    {% for c in resolvidos %}
+        <p>
+        <strong>{{ c.nome }}</strong><br>
+        <a href="/excluir_contato/{{c.id}}?admin={{token}}">Excluir</a>
+        </p><hr>
+    {% endfor %}
+
+    <h2>🗑️ Excluídos</h2>
+    {% for c in excluidos %}
+        <p>
+        <strong>{{ c.nome }}</strong><br>
+        <a href="/restaurar_contato/{{c.id}}?admin={{token}}">Restaurar</a>
+        </p><hr>
+    {% endfor %}
     """
 
     return render_template_string(
         html,
         contatos=dados["contatos"],
+        andamento=dados["andamento"],
+        resolvidos=dados["resolvidos"],
+        excluidos=dados["excluidos"],
         token=ADMIN_TOKEN
     )
-
 
 @app.route("/ads.txt")
 def ads_txt():
