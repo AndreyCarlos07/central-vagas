@@ -488,6 +488,8 @@ def home():
 
         <div style="margin-bottom:15px;">
             <a href="/" style="
+                onmouseover="this.style.background='#f0f0f0'"
+                onmouseout="this.style.background='white'"
                 background:#f4f6f8;
                 color:black;
                 padding:8px 12px;
@@ -499,6 +501,8 @@ def home():
             ">Vagas</a>
 
             <a href="/sobre" style="
+                onmouseover="this.style.background='#f4f6f8"
+                onmouseout="this.style.background='white'"
                 background:#f4f6f8;
                 color:black;
                 padding:8px 12px;
