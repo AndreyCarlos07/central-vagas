@@ -163,6 +163,7 @@ SITES = [
     {"empresa": "3CORAÇÕES", "url": "https://3coracoes.gupy.io", "tipo": "gupy"},
     {"empresa": "ALVOAR LÁCTEOS", "url": "https://alvoarlacteos.gupy.io", "tipo": "gupy"},
     {"empresa": "GRUPO MARATÁ", "url": "https://grupomarata.gupy.io", "tipo": "gupy"},
+    {"empresa": "GRUPO FERTIPAR", "url": "https://grupofertipar.gupy.io", "tipo": "gupy"}
     {
         "empresa": "BRIDGESTONE",
         "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers",
@@ -276,6 +277,12 @@ SITES = [
         "url": "https://mdcnossostalentos.jobs.recrut.ai/#openings",
         "tipo": "recrutai",
         "cidade": ["Camaçari / BA", "Salvador / BA"]
+    },
+    {
+        "empresa": "ACELEN RENOVÁVEIS",
+        "url": ""https://acelen.jobs.recrut.ai/acelenrenewables#openings",
+        "tipo": "recrutai",
+        "cidade": "São Francisco do Conde / BA
     },
     {
         "empresa": "SOTREQ",
