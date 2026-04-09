@@ -447,6 +447,108 @@ def contato():
     return render_template_string(html)
 
 
+@app.route("/privacidade")
+def privacidade():
+
+    html = """
+    <html>
+    <head>
+        <title>Política de Privacidade</title>
+
+        <style>
+            body {
+                font-family: Arial;
+                background: #f4f6f8;
+                padding: 30px;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: auto;
+                background: white;
+                padding: 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            }
+
+            .top-buttons a {
+                background: #0066cc;
+                color: white;
+                padding: 10px 15px;
+                border-radius: 6px;
+                text-decoration: none;
+                margin-right: 10px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="container">
+
+            <div class="top-buttons">
+                <a href="/">🏠 Vagas</a>
+            </div>
+
+            <h1>Política de Privacidade</h1>
+
+            <p>
+            A Central de Vagas respeita a sua privacidade e se compromete
+            a proteger seus dados pessoais.
+            </p>
+
+            <h3>Coleta de informações</h3>
+            <p>
+            Podemos coletar informações como páginas acessadas, tempo de navegação
+            e interações no site, com o objetivo de melhorar a experiência do usuário.
+            </p>
+
+            <h3>Uso de cookies</h3>
+            <p>
+            Este site utiliza cookies para melhorar a navegação do usuário
+            e para exibir anúncios mais relevantes.
+            </p>
+
+            <h3>Google AdSense</h3>
+            <p>
+            Utilizamos serviços de terceiros, como o Google AdSense, que podem usar
+            cookies para exibir anúncios com base nas visitas anteriores dos usuários.
+            </p>
+
+            <h3>Google Analytics</h3>
+            <p>
+            Utilizamos o Google Analytics para entender como os usuários interagem
+            com o site e melhorar continuamente nossos serviços.
+            </p>
+
+            <h3>Compartilhamento de informações</h3>
+            <p>
+            As informações coletadas podem ser processadas por serviços de terceiros,
+            como ferramentas de análise e publicidade, respeitando suas próprias
+            políticas de privacidade.
+            </p>
+
+            <h3>Formulários</h3>
+            <p>
+            As informações enviadas pelos usuários através de formulários, como nome
+            e mensagem, são utilizadas apenas para contato e melhoria do serviço,
+            não sendo utilizadas para fins comerciais.
+            </p>
+
+            <h3>Contato</h3>
+            <p>
+            Caso tenha dúvidas, utilize a página de contato disponível no site.
+            </p>
+
+        </div>
+
+    </body>
+    </html>
+    """
+
+    return render_template_string(html)
+
+
 @app.route("/")
 def home():
     vagas = vagas_ativas()
@@ -700,9 +802,24 @@ def home():
                     padding:8px 12px;
                     border-radius:6px;
                     text-decoration:none;
+                    margin-right:8px;
                     font-weight:normal;                
                     border:1px solid #ddd;
                 ">Contato</a>
+        </div>
+
+            <a href="/privacidade"
+                onmouseover="this.style.background='#0066cc'"
+                onmouseout="this.style.background='#f4f6f8'"  
+                style="
+                    background:#f4f6f8;
+                    color:black;
+                    padding:8px 12px;
+                    border-radius:6px;
+                    text-decoration:none;
+                    font-weight:normal;                
+                    border:1px solid #ddd;
+                ">Privacidde</a>
         </div>
 
         <h1>Central de Vagas - Engenharia / BA</h1>
