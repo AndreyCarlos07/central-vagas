@@ -22,6 +22,10 @@ ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN")
 
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 
+EMAIL_USER = os.environ.get("EMAIL_USER")
+
+EMAIL_PASS = os.environ.get("EMAIL_PASS")
+
 REPO = "AndreyCarlos07/central-vagas"
 ARQUIVO_OCULTAS = "vagas_ocultas.json"
 ARQUIVO_AVALIACOES = "avaliacoes.json"
@@ -1287,6 +1291,75 @@ def admin_contatos():
         excluidos=dados["excluidos"],
         token=ADMIN_TOKEN
     )
+    
+
+@app.route("/andamento/<id>")
+def mover_andamento(id):
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_contatos()
+
+    for c in dados["contatos"]:
+        if c["id"] == id:
+            dados["contatos"].remove(c)
+            dados["andamento"].append(c)
+            break
+
+    salvar_contatos(dados)
+    return redirect("/admin/contatos?admin=" + ADMIN_TOKEN)
+    
+
+@app.route("/resolver/<id>")
+def resolver(id):
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_contatos()
+
+    for c in dados["andamento"]:
+        if c["id"] == id:
+            dados["andamento"].remove(c)
+            dados["resolvidos"].append(c)
+            break
+
+    salvar_contatos(dados)
+    return redirect("/admin/contatos?admin=" + ADMIN_TOKEN)
+    
+
+@app.route("/excluir_contato/<id>")
+def excluir_contato(id):
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_contatos()
+
+    for c in dados["resolvidos"]:
+        if c["id"] == id:
+            dados["resolvidos"].remove(c)
+            dados["excluidos"].append(c)
+            break
+
+    salvar_contatos(dados)
+    return redirect("/admin/contatos?admin=" + ADMIN_TOKEN)
+    
+
+@app.route("/restaurar_contato/<id>")
+def restaurar_contato(id):
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_contatos()
+
+    for c in dados["excluidos"]:
+        if c["id"] == id:
+            dados["excluidos"].remove(c)
+            dados["contatos"].append(c)
+            break
+
+    salvar_contatos(dados)
+    return redirect("/admin/contatos?admin=" + ADMIN_TOKEN)
+    
 
 @app.route("/ads.txt")
 def ads_txt():
