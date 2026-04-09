@@ -191,6 +191,85 @@ def vagas_ativas():
     except FileNotFoundError:
         pass
     return vagas
+    
+
+@app.route("/sobre")
+def sobre():
+
+    html = """
+    <html>
+    <head>
+        <title>Sobre</title>
+
+        <style>
+            body {
+                font-family: Arial;
+                background: #f4f6f8;
+                padding: 30px;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: auto;
+                background: white;
+                padding: 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            }
+
+            .top-buttons {
+                margin-bottom: 20px;
+            }
+
+            .top-buttons a {
+                background: #0066cc;
+                color: white;
+                padding: 10px 15px;
+                border-radius: 6px;
+                text-decoration: none;
+                margin-right: 10px;
+                font-weight: bold;
+            }
+
+            .top-buttons a:hover {
+                background: #004999;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="container">
+
+            <div class="top-buttons">
+                <a href="/">🏠 Vagas</a>
+                <a href="/sobre">ℹ️ Sobre</a>
+            </div>
+
+            <h1>Sobre a Central de Vagas</h1>
+
+            <p>
+            A Central de Vagas foi criada para ajudar profissionais
+            a encontrar oportunidades de forma rápida e centralizada.
+            </p>
+
+            <p>
+            Nosso objetivo é facilitar o acesso às vagas e melhorar as chances
+            de contratação dos candidatos, reunindo oportunidades em um só lugar.
+            </p>
+
+            <p>
+            O projeto é independente e tem como missão simplificar o processo
+            de busca por emprego, oferecendo uma experiência prática e eficiente.
+            </p>
+
+        </div>
+
+    </body>
+    </html>
+    """
+
+    return render_template_string(html)
 
 
 @app.route("/")
@@ -407,6 +486,27 @@ def home():
         }, 4000);
         </script>
         {% endif %}
+
+        <div style="margin-bottom:15px;">
+            <a href="/" style="
+                background:#0066cc;
+                color:white;
+                padding:8px 12px;
+                border-radius:6px;
+                text-decoration:none;
+                font-weight:bold;
+                margin-right:8px;
+            ">🏠 Vagas</a>
+
+            <a href="/sobre" style="
+                background:#6c757d;
+                color:white;
+                padding:8px 12px;
+                border-radius:6px;
+                text-decoration:none;
+                font-weight:bold;
+            ">ℹ️ Sobre</a>
+        </div>
 
         <h1>Central de Vagas - Engenharia / BA</h1>
 
