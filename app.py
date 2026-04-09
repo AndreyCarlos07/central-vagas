@@ -806,7 +806,6 @@ def home():
                     font-weight:normal;                
                     border:1px solid #ddd;
                 ">Contato</a>
-        </div>
 
             <a href="/privacidade"
                 onmouseover="this.style.background='#0066cc'"
@@ -820,6 +819,7 @@ def home():
                     font-weight:normal;                
                     border:1px solid #ddd;
                 ">Privacidade</a>
+                
         </div>
 
         <h1>Central de Vagas - Engenharia / BA</h1>
