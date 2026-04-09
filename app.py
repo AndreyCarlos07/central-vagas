@@ -643,6 +643,7 @@ def home():
             .linkedin-btn {
                 display: inline-flex;
                 align-items: center;
+                justify-content: center;
                 gap: 8px;
                 min-width: 180px;
                 background: #0a66c2;
@@ -658,6 +659,7 @@ def home():
             .whatsapp-btn {
                 display: inline-flex;
                 align-items: center;
+                justify-content: center;
                 gap: 8px;
                 min-width: 180px;
                 background: #25D366;
@@ -673,6 +675,7 @@ def home():
             .avaliar-btn {
                 display: inline-flex;
                 align-items: center;
+                justify-content: center;
                 gap: 8px;
                 min-width: 180px;
                 background: #28a745;
