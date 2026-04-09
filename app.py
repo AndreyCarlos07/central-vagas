@@ -971,6 +971,8 @@ def home():
         avaliacoes=avaliacoes_paginadas,
         page_av=page_av,
         total_paginas_av=total_paginas_av
+        total_pendentes_av=total_pendentes_av,
+        total_contatos=total_contatos
     )
 
 
