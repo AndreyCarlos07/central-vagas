@@ -7,6 +7,8 @@ import os
 import csv
 import time
 from flask import Flask, redirect, render_template_string, request
+import smtplib
+from email.mime.text import MIMEText
 import json
 import base64
 import requests
@@ -1334,9 +1336,6 @@ def aprovar(id):
 
     return redirect("/admin/avaliacoes?admin=" + ADMIN_TOKEN)
     
-
-import smtplib
-from email.mime.text import MIMEText
 
 @app.route("/enviar_contato", methods=["POST"])
 def enviar_contato():
