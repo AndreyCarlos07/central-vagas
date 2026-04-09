@@ -243,7 +243,6 @@ def sobre():
 
             <div class="top-buttons">
                 <a href="/">🏠 Vagas</a>
-                <a href="/sobre">ℹ️ Sobre</a>
             </div>
 
             <h1>Sobre a Central de Vagas</h1>
@@ -489,23 +488,21 @@ def home():
 
         <div style="margin-bottom:15px;">
             <a href="/" style="
-                background:#0066cc;
+                background:#d4edda;
                 color:white;
                 padding:8px 12px;
                 border-radius:6px;
                 text-decoration:none;
-                font-weight:bold;
                 margin-right:8px;
-            ">🏠 Vagas</a>
+            ">Vagas</a>
 
             <a href="/sobre" style="
-                background:#6c757d;
+                background:#d4edda;
                 color:white;
                 padding:8px 12px;
                 border-radius:6px;
                 text-decoration:none;
-                font-weight:bold;
-            ">ℹ️ Sobre</a>
+            ">Sobre</a>
         </div>
 
         <h1>Central de Vagas - Engenharia / BA</h1>
