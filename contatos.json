@@ -1,0 +1,11 @@
+{
+  "contatos": [
+    {
+      "id": "ba74904c",
+      "nome": "Teste",
+      "tipo": "sugestao",
+      "mensagem": "Teste",
+      "data": "2026-04-09T16:13:19.755268"
+    }
+  ]
+}
