@@ -376,6 +376,27 @@ def contato():
 
         <div class="container">
 
+            <!-- ✅ MENSAGEM DE SUCESSO -->
+            {% if request.args.get("msg") == "ok" %}
+            <div id="msg-sucesso" style="
+                background:#d4edda;
+                color:#155724;
+                padding:15px;
+                border-radius:6px;
+                margin-bottom:20px;
+                font-weight:bold;
+            ">
+                ✅ Contato enviado com sucesso!
+            </div>
+
+            <script>
+            setTimeout(() => {
+                const msg = document.getElementById("msg-sucesso");
+                if (msg) msg.style.display = "none";
+            }, 4000);
+            </script>
+            {% endif %}
+
             <div class="top-buttons">
                 <a href="/">🏠 Vagas</a>
             </div>
@@ -1176,6 +1197,39 @@ def enviar_contato():
     salvar_contatos(dados)
 
     return redirect("/contato?msg=ok")
+    
+
+@app.route("/admin/contatos")
+def admin_contatos():
+
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_contatos()
+
+    html = """
+    <a href="/?admin={{token}}">← voltar</a>
+
+    <h2>📩 Contatos recebidos</h2>
+
+    {% for c in contatos %}
+        <p>
+        <strong>{{ c.nome }}</strong> ({{ c.tipo }})<br>
+        {{ c.mensagem }}
+        </p>
+        <hr>
+    {% endfor %}
+
+    {% if not contatos %}
+    <p>Nenhum contato recebido.</p>
+    {% endif %}
+    """
+
+    return render_template_string(
+        html,
+        contatos=dados["contatos"],
+        token=ADMIN_TOKEN
+    )
 
 
 @app.route("/ads.txt")
