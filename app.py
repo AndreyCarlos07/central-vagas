@@ -819,7 +819,7 @@ def home():
                     text-decoration:none;
                     font-weight:normal;                
                     border:1px solid #ddd;
-                ">Privacidde</a>
+                ">Privacidade</a>
         </div>
 
         <h1>Central de Vagas - Engenharia / BA</h1>
