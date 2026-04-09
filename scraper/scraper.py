@@ -280,7 +280,7 @@ SITES = [
     },
     {
         "empresa": "ACELEN RENOVÁVEIS",
-        "url": ""https://acelen.jobs.recrut.ai/acelenrenewables#openings",
+        "url": "https://acelen.jobs.recrut.ai/acelenrenewables#openings",
         "tipo": "recrutai",
         "cidade": "São Francisco do Conde / BA"
     },
