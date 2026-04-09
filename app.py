@@ -488,20 +488,24 @@ def home():
 
         <div style="margin-bottom:15px;">
             <a href="/" style="
-                background:#d4edda;
-                color:white;
+                background:#fff;
+                color:black;
                 padding:8px 12px;
                 border-radius:6px;
                 text-decoration:none;
                 margin-right:8px;
+                font-weight:normal;
+                border:1px solid #ddd;
             ">Vagas</a>
 
             <a href="/sobre" style="
-                background:#d4edda;
-                color:white;
+                background:#fff;
+                color:black;
                 padding:8px 12px;
                 border-radius:6px;
                 text-decoration:none;
+                font-weight:normal;                
+                border:1px solid #ddd;
             ">Sobre</a>
         </div>
 
