@@ -493,8 +493,8 @@ def privacidade():
             <h1>Política de Privacidade</h1>
 
             <p>
-            A Central de Vagas respeita a sua privacidade e se compromete
-            a proteger seus dados pessoais.
+            A Central de Vagas respeita a sua privacidade e busca oferecer uma experiência
+            segura e transparente para todos os usuários.
             </p>
 
             <h3>Coleta de informações</h3>
@@ -864,6 +864,15 @@ def home():
                 Entrar no WhatsApp
             </a>
 
+            <a href="#"
+               onclick="document.getElementById('form-avaliacao').style.display='block'; return false;"
+               class="avaliar-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+                    <path d="M12 .587l3.668 7.431L24 9.748l-6 5.847 1.416 8.255L12 19.771l-7.416 4.079L6 15.595 0 9.748l8.332-1.73z"/>
+                </svg>
+                Avaliar página
+            </a>
+
             <div class="info-box">
                 📌 {{ total_vagas }} vagas encontradas
             </div>
@@ -871,11 +880,6 @@ def home():
             <div class="info-box">
                 🏢 {{ total_empresas }} empresas monitoradas
             </div>
-
-            <button style="background:#28a745; font-weight: bold;" 
-            onclick="document.getElementById('form-avaliacao').style.display='block'">
-                ⭐ Avaliar página / Agradecimento
-            </button>
 
             <!-- banner_home_topo -->
             <ins class="adsbygoogle"
@@ -1060,7 +1064,7 @@ def home():
 
     # pega só as 5
 
-    AVALIACOES_POR_PAGINA = 5
+    AVALIACOES_POR_PAGINA = 3
     page_av = int(request.args.get("page_av", 1))
 
     inicio = (page_av - 1) * AVALIACOES_POR_PAGINA
