@@ -343,30 +343,65 @@ def contato():
                 border:none;
                 border-radius:5px;
             }
+
+            .container {
+                max-width: 800px;
+                margin: auto;
+                background: white;
+                padding: 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            }
+
+            .top-buttons {
+                margin-bottom: 20px;
+            }
+
+            .top-buttons a {
+                background: #0066cc;
+                color: white;
+                padding: 10px 15px;
+                border-radius: 6px;
+                text-decoration: none;
+                margin-right: 10px;
+                font-weight: bold;
+            }
+
+            .top-buttons a:hover {
+                background: #004999;
+            }
         </style>
     </head>
     <body>
 
-    <div class="box">
+        <div class="container">
 
-    <h2>📩 Entre em contato</h2>
+            <div class="top-buttons">
+                <a href="/">🏠 Vagas</a>
+            </div>
 
-    <form method="POST" action="/enviar_contato">
+            <div class="box">
 
-        <input name="nome" placeholder="Seu nome" required>
+                <h2>📩 Entre em contato:</h2>
 
-        <select name="tipo">
-            <option value="sugestao">Sugestão</option>
-            <option value="problema">Problemas no Site/Vagas</option>
-        </select>
+                <form method="POST" action="/enviar_contato">
 
-        <textarea name="mensagem" placeholder="Escreva sua mensagem..." required></textarea>
+                    <input name="nome" placeholder="Seu nome" required>
 
-        <button type="submit">Enviar</button>
+                    <select name="tipo">
+                        <option value="sugestao">Sugestão</option>
+                        <option value="problema">Problemas no Site/Vagas</option>
+                    </select>
 
-    </form>
+                    <textarea name="mensagem" placeholder="Escreva sua mensagem..." required></textarea>
 
-    </div>
+                    <button type="submit">Enviar</button>
+
+                </form>
+
+            </div>
+
+        </div>
 
     </body>
     </html>
@@ -614,6 +649,7 @@ def home():
                     padding:8px 12px;
                     border-radius:6px;
                     text-decoration:none;
+                    margin-right:8px;
                     font-weight:normal;                
                     border:1px solid #ddd;
                 ">Sobre</a>
