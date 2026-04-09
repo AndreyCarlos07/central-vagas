@@ -666,6 +666,20 @@ def home():
 
             .whatsapp-btn:hover { background: #1ebe5d; }
 
+            .avaliar-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: #28a745;
+                color: white;
+                padding: 8px 15px;
+                border-radius: 6px;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+            .avaliar-btn:hover { background: #218838; }
+
             .info-box {
                 background: white;
                 padding: 8px 15px;
