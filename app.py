@@ -25,6 +25,7 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 REPO = "AndreyCarlos07/central-vagas"
 ARQUIVO_OCULTAS = "vagas_ocultas.json"
 ARQUIVO_AVALIACOES = "avaliacoes.json"
+ARQUIVO_CONTATOS = "contatos.json"
 
 
 # ==========================
@@ -168,6 +169,46 @@ def salvar_avaliacoes(dados):
     requests.put(url, headers=headers, json=payload)
     
 
+def carregar_contatos():
+    url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_CONTATOS}"
+
+    headers = {
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github+json"
+    }
+
+    r = requests.get(url, headers=headers)
+
+    if r.status_code != 200:
+        return {"contatos": []}
+
+    data = r.json()
+    conteudo = base64.b64decode(data["content"]).decode()
+
+    return json.loads(conteudo)
+
+def salvar_contatos(dados):
+    url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_CONTATOS}"
+
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}"
+    }
+
+    r = requests.get(url, headers=headers)
+    sha = r.json()["sha"] if r.status_code == 200 else None
+
+    conteudo = json.dumps(dados, indent=2, ensure_ascii=False)
+    encoded = base64.b64encode(conteudo.encode()).decode()
+
+    payload = {
+        "message": "Atualizando contatos",
+        "content": encoded,
+        "sha": sha
+    }
+
+    requests.put(url, headers=headers, json=payload)
+    
+
 def vagas_ativas():
     vagas = []
     ocultas = vagas_ocultas()
@@ -263,6 +304,69 @@ def sobre():
             </p>
 
         </div>
+
+    </body>
+    </html>
+    """
+
+    return render_template_string(html)
+    
+
+@app.route("/contato")
+def contato():
+
+    html = """
+    <html>
+    <head>
+        <title>Contato</title>
+        <style>
+            body { font-family: Arial; background:#f4f6f8; padding:30px; }
+
+            .box {
+                max-width:600px;
+                margin:auto;
+                background:white;
+                padding:20px;
+                border-radius:8px;
+            }
+
+            input, select, textarea {
+                width:100%;
+                padding:10px;
+                margin-bottom:10px;
+            }
+
+            button {
+                background:#0066cc;
+                color:white;
+                padding:10px;
+                border:none;
+                border-radius:5px;
+            }
+        </style>
+    </head>
+    <body>
+
+    <div class="box">
+
+    <h2>📩 Entre em contato</h2>
+
+    <form method="POST" action="/enviar_contato">
+
+        <input name="nome" placeholder="Seu nome" required>
+
+        <select name="tipo">
+            <option value="sugestao">Sugestão</option>
+            <option value="problema">Problemas no Site/Vagas</option>
+        </select>
+
+        <textarea name="mensagem" placeholder="Escreva sua mensagem..." required></textarea>
+
+        <button type="submit">Enviar</button>
+
+    </form>
+
+    </div>
 
     </body>
     </html>
@@ -489,10 +593,10 @@ def home():
         <div style="margin-bottom:15px;">
             <a href="/"
                 onmouseover="this.style.background='#0066cc'"
-                onmouseout="this.style.background='#f4f6f8'" 
+                onmouseout="this.style.background='#f4f6f8'"
                 style="
                     background:#f4f6f8;
-                    color:black
+                    color:black;
                     padding:8px 12px;
                     border-radius:6px;
                     text-decoration:none;
@@ -513,6 +617,19 @@ def home():
                     font-weight:normal;                
                     border:1px solid #ddd;
                 ">Sobre</a>
+
+            <a href="/contato"
+                onmouseover="this.style.background='#0066cc'"
+                onmouseout="this.style.background='#f4f6f8'"  
+                style="
+                    background:#f4f6f8;
+                    color:black;
+                    padding:8px 12px;
+                    border-radius:6px;
+                    text-decoration:none;
+                    font-weight:normal;                
+                    border:1px solid #ddd;
+                ">Contato</a>
         </div>
 
         <h1>Central de Vagas - Engenharia / BA</h1>
@@ -529,6 +646,14 @@ def home():
         <p>
         <a href="/admin/avaliacoes?admin={{token}}">
         📝 Ver avaliações pendentes
+        </a>
+        </p>
+        {% endif %}
+
+        {% if admin %}
+        <p>
+        <a href="/admin/contatos?admin={{token}}">
+        📩 Ver solicitações de contato
         </a>
         </p>
         {% endif %}
@@ -989,6 +1114,33 @@ def aprovar(id):
     salvar_avaliacoes(dados)
 
     return redirect("/admin/avaliacoes?admin=" + ADMIN_TOKEN)
+    
+
+@app.route("/enviar_contato", methods=["POST"])
+def enviar_contato():
+
+    nome = request.form.get("nome")
+    tipo = request.form.get("tipo")
+    mensagem = request.form.get("mensagem")
+
+    if not nome or not mensagem:
+        return "Preencha os campos"
+
+    novo = {
+        "id": str(uuid.uuid4())[:8],
+        "nome": nome,
+        "tipo": tipo,
+        "mensagem": mensagem,
+        "data": datetime.now().isoformat()
+    }
+
+    dados = carregar_contatos()
+    dados["contatos"].append(novo)
+
+    salvar_contatos(dados)
+
+    return redirect("/contato?msg=ok")
+
 
 @app.route("/ads.txt")
 def ads_txt():
