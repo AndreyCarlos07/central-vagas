@@ -13,11 +13,7 @@
       "tipo": "sugestao",
       "mensagem": "Teste3",
       "data": "2026-04-09T16:48:35.686075"
-    }
-  ],
-  "andamento": [],
-  "resolvidos": [],
-  "excluidos": [
+    },
     {
       "id": "ba74904c",
       "nome": "Teste",
@@ -25,5 +21,8 @@
       "mensagem": "Teste",
       "data": "2026-04-09T16:13:19.755268"
     }
-  ]
+  ],
+  "andamento": [],
+  "resolvidos": [],
+  "excluidos": []
 }
