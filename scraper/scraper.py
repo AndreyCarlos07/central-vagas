@@ -28,8 +28,8 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["BYD", "MOTIVA", "KORDSA", "LM MOBILIDADE"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "WHITE MARTINS"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
@@ -1526,7 +1526,7 @@ def coletar_vagas(page, site):
         page.wait_for_load_state("networkidle")
         time.sleep(3)
 
-        cidades = ["Camaçari", "Candeias"]
+        cidades = ["Camaçari", "Candeias", "Salvador"]
 
         filtros_aplicados = 0  # 🔒 CONTROLE DE SEGURANÇA
 
