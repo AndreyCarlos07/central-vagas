@@ -1617,6 +1617,10 @@ def vaga(id):
                             LinkedIn
                             </a>
 
+                            <br><br>
+
+                            <br><br>
+
                             <a href="https://chat.whatsapp.com/LedWVo8O6TSES0kG6smJcT?mode=gi_t" target="_blank" 
                                 style="background:#25D366;color:white;padding:12px 20px;
                                     text-decoration:none;border-radius:6px;display:inline-flex;align-items:center;gap:8px;min-width:180px;">
