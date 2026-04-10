@@ -59,6 +59,45 @@ PALAVRAS_BLOQUEADAS = {
     "loja"
 }
 
+# ==========================
+# MAPAS DE FILTRO PRO
+# ==========================
+
+MAPA_NIVEL = {
+    "jovem_aprendiz": ["jovem aprendiz", "aprendiz"],
+    "estagio": ["estagio", "estagiário", "estagiária"],
+    "junior": ["junior", "jr", "jr.", " i ", " i-", " i/"],
+    "pleno": ["pleno", "pl", "pl.", " ii ", " ii-", " ii/"],
+    "senior": ["senior", "sr", "sr.", " iii", " iv", " v"]
+}
+
+MAPA_HIERARQUIA = {
+    "diretor": ["diretor"],
+    "gerente": ["gerente", "lider", "líder", "gestor", "head"],
+    "coordenador": ["coordenador", "lider", "líder", "gestor"],
+    "supervisor": ["supervisor", "lider", "líder", "chefe"],
+    "especialista": ["especialista"],
+    "engenheiro": ["engenheiro"],
+    "analista": ["analista"],
+    "tecnico": ["tecnico", "técnico", "manutenedor", "reparador"],
+    "inspetor": ["inspetor"],
+    "operador": ["operador"],
+    "auxiliar": ["auxiliar", "conferente", "abastecedor", "alimentador"],
+    "assistente": ["assistente", "conferente", "abastecedor", "alimentador"]
+}
+
+MAPA_AREA = {
+    "manutencao": ["manutencao", "manutenção", "automacao", "automação", "robô", "robo", "roboticista", "instrumentação", "instrumentacao", "eletrica", "elétrica", "eletricista", "mecanica", "mecânica", "soldador", "solda", "corte", "ferramentaria", "soldagem", "refrigeracao"],
+    "producao": ["producao", "produção"],
+    "produto": ["produto"],
+    "operacao": ["operacao", "operacional"],
+    "administracao/rh": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner"],
+    "marketing": ["marketing"],
+    "qualidade/qsms/quimico": ["qualidade", "qa", "segurança", "meio ambiente", "químico", "trabalho"],
+    "logistica": ["logística", "logistica", "estoque", "almoxarifado", "estoquista"],
+    "civil": ["civil", "obras", "obra"]
+}
+
 def carregar_ocultas():
 
     url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_OCULTAS}"
@@ -299,14 +338,31 @@ def filtrar_vagas(vagas, user):
     for v in vagas:
         titulo = v["titulo"].lower()
 
-        if user["cargo"] and user["cargo"] not in titulo:
-            continue
+        # NÍVEL
+        if user.get("tipo_filtro") == "nivel":
+            palavras = MAPA_NIVEL.get(user.get("valor"), [])
 
-        if user["nivel"] and user["nivel"] not in titulo:
-            continue
+            if not any(p in titulo for p in palavras):
+                continue
 
-        if user["empresa"] and user["empresa"].lower() != v["empresa"].lower():
-            continue
+        # HIERARQUIA
+        elif user.get("tipo_filtro") == "hierarquia":
+            palavras = MAPA_HIERARQUIA.get(user.get("valor"), [])
+
+            if not any(p in titulo for p in palavras):
+                continue
+
+        # EMPRESA
+        elif user.get("tipo_filtro") == "empresa":
+            if v["empresa"] not in user.get("valor", []):
+                continue
+
+        # ÁREA
+        elif user.get("tipo_filtro") == "area":
+            palavras = MAPA_AREA.get(user.get("valor"), [])
+
+            if not any(p in titulo for p in palavras):
+                continue
 
         resultado.append(v)
 
@@ -709,6 +765,119 @@ def pro():
 
         </form>
 
+        <form method="POST" action="/assinar_pro">
+
+            <input name="nome" placeholder="Seu nome" required>
+            <input type="email" name="email" placeholder="Seu email" required>
+
+            <h3>🎯 Escolha como deseja receber suas vagas:</h3>
+
+            <select name="tipo_filtro" id="tipo_filtro" onchange="mostrarCampos()" required>
+                <option value="">Selecione</option>
+                <option value="nivel">Por nível</option>
+                <option value="hierarquia">Por hierarquia</option>
+                <option value="empresa">Por empresa</option>
+            <option value="area">Por área</option>
+            </select>
+
+            <br><br>
+
+            <!-- NÍVEL -->
+            <div id="campo_nivel" style="display:none;">
+                <p>📌 Você receberá vagas conforme o nível escolhido</p>
+                <select name="nivel">
+                    <option value="">Selecione</option>
+                    <option value="jovem_aprendiz">Jovem Aprendiz</option>
+                    <option value="estagio">Estágio</option>
+                    <option value="junior">Júnior</option>
+                    <option value="pleno">Pleno</option>
+                    <option value="senior">Sênior</option>
+                </select>
+            </div>
+
+            <!-- HIERARQUIA -->
+            <div id="campo_hierarquia" style="display:none;">
+                <p>📌 Você receberá vagas conforme a hierarquia escolhida</p>
+                <select name="hierarquia">
+                    <option value="">Selecione</option>
+                    <option value="diretor">Diretor</option>
+                    <option value="gerente">Gerente</option>
+                    <option value="coordenador">Coordenador</option>
+                    <option value="supervisor">Supervisor</option>
+                    <option value="especialista">Especialista</option>
+                    <option value="engenheiro">Engenheiro</option>
+                    <option value="analista">Analista</option>
+                    <option value="tecnico">Técnico</option>
+                    <option value="inspetor">Inspetor</option>
+                    <option value="operador">Operador</option>
+                    <option value="auxiliar">Auxiliar</option>
+                    <option value="assistente">Assistente</option>
+                </select>
+            </div>
+
+            <!-- EMPRESA -->
+            <div id="campo_empresa" style="display:none;">
+                <p>📌 Você receberá vagas das empresas selecionadas</p>
+                <select name="empresa" multiple size="5">
+                    {% for empresa in empresas %}
+                        <option value="{{ empresa }}">{{ empresa }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- ÁREA -->
+            <div id="campo_area" style="display:none;">
+                <p>📌 Você receberá vagas da área escolhida</p>
+                <select name="area">
+                    <option value="">Selecione</option>
+                    <option value="manutencao">Manutenção</option>
+                    <option value="producao">Produção</option>
+                    <option value="automacao">Automação</option>
+                    <option value="produto">Produto</option>
+                    <option value="operacao">Operação</option>
+                    <option value="eletrica">Elétrica</option>
+                    <option value="administracao">Administração</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="qualidade">Qualidade</option>
+                    <option value="soldador">Soldador</option>
+                    <option value="refrigeracao">Refrigeração</option>
+                    <option value="almoxarifado">Almoxarifado</option>
+                    <option value="obras">Obras</option>
+                    <option value="civil">Civil</option>
+                    <option value="mecanica">Mecânica</option>
+                </select>
+            </div>
+
+            <br>
+
+            <button type="submit">🚀 Ativar Alerta PRO</button>
+
+        </form>
+
+        <script>
+        function mostrarCampos() {
+            let tipo = document.getElementById("tipo_filtro").value;
+
+            document.getElementById("campo_nivel").style.display = "none";
+            document.getElementById("campo_hierarquia").style.display = "none";
+            document.getElementById("campo_empresa").style.display = "none";
+            document.getElementById("campo_area").style.display = "none";
+
+            if (tipo === "nivel") {
+                document.getElementById("campo_nivel").style.display = "block";
+            }
+            else if (tipo === "hierarquia") {
+                document.getElementById("campo_hierarquia").style.display = "block";
+            }
+            else if (tipo === "empresa") {
+                document.getElementById("campo_empresa").style.display = "block";
+            }
+            else if (tipo === "area") {
+                document.getElementById("campo_area").style.display = "block";
+            }
+        }
+        </script>
+
         <p style="margin-top:15px;font-size:12px;color:#555;">
         ⚠️ Pode haver dias sem envio de vagas, caso não existam novas oportunidades no perfil selecionado.
         </p>
@@ -723,8 +892,9 @@ def pro():
     </html>
     """
 
-    return render_template_string(html)
+    empresas = sorted(set(v["empresa"] for v in vagas_ativas()))
 
+    return render_template_string(html, empresas=empresas)
 
 @app.route("/")
 def home():
@@ -1021,7 +1191,6 @@ def home():
             <a href="/pro"
                 onmouseover="this.style.background='#0066cc'"
                 onmouseout="this.style.background='#f4f6f8'" 
-                onclick="return false;"
                 style="
                     background:#fff3e0;
                     color:#ff9800;
@@ -1030,9 +1199,6 @@ def home():
                     text-decoration:none;
                     font-weight:normal;                
                     border:1px solid #ff9800;
-                    pointer-events:none;
-                    cursor:not-allowed;
-                    opacity:0.7;
                 ">💎 Versão PRO</a>
                 
         </div>
@@ -1722,17 +1888,32 @@ def assinar_pro():
 
     nome = request.form.get("nome")
     email = request.form.get("email")
-    cargo = request.form.get("cargo").lower()
-    nivel = (request.form.get("nivel") or "").lower()
-    empresa = (request.form.get("empresa") or "").strip()
+    tipo = request.form.get("tipo_filtro")
+
+    valor = None
+
+    if tipo == "nivel":
+        valor = request.form.get("nivel")
+
+    elif tipo == "hierarquia":
+        valor = request.form.get("hierarquia")
+
+    elif tipo == "empresa":
+        valor = request.form.getlist("empresa")
+
+    elif tipo == "area":
+        valor = request.form.get("area")
+
+    # ✅ VALIDAÇÃO
+    if not nome or not email or not tipo or not valor:
+        return "Selecione corretamente o filtro"
 
     novo = {
         "id": str(uuid.uuid4())[:8],
         "nome": nome,
         "email": email,
-        "cargo": cargo,
-        "nivel": nivel,
-        "empresa": empresa,
+        "tipo_filtro": tipo,
+        "valor": valor,
         "status": "pendente",
         "data_inicio": None,
         "expira_em": None,
