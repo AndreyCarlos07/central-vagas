@@ -846,6 +846,29 @@ def home():
 
         <h1>Central de Vagas - Engenharia / BA</h1>
 
+        <div class="vaga">
+            <h3>💡 Dicas para conseguir emprego mais rápido</h3>
+
+            <p>
+            Muitas empresas utilizam plataformas automatizadas para recrutamento,
+            como sistemas de triagem de currículos. 
+            Para aumentar suas chances de aprovação nos processos seletivos:
+            </p>
+
+            <ul>
+                <li>Preencha seu currículo de forma completa e atualizada</li>
+                <li>Utilize palavras-chave relacionadas à vaga desejada</li>
+                <li>Evite erros de português e revise suas informações</li>
+                <li>Mantenha seu perfil sempre atualizado nas plataformas</li>
+                <li>Candidate-se rapidamente após a publicação da vaga</li>
+            </ul>
+
+            <p>
+            Pequenos ajustes podem aumentar significativamente suas chances
+            de ser chamado para entrevistas e avançar nas etapas do processo seletivo.
+            </p>
+        </div>
+
         {% if admin %}
         <p>
         <a href="/admin/ocultas?admin={{token}}">
@@ -1542,10 +1565,30 @@ def vaga(id):
                     <body style="font-family: Arial; padding: 30px; background:#f4f6f8;">
 
                         <div style="background:white;padding:20px;border-radius:8px;max-width:600px;margin:auto;">
+
+                        <hr>
                             
                             <h2>{{ vaga.titulo }}</h2>
 
                             <p><strong>Empresa:</strong> {{ vaga.empresa }}</p>
+
+                            <h3>📌 Sobre esta vaga</h3>
+
+                            <p>
+                            Esta vaga foi coletada automaticamente pela Central de Vagas para facilitar sua busca por oportunidades.
+                            </p>
+
+                            <p>
+                            Recomendamos que o candidato leia atentamente os requisitos da vaga
+                            e mantenha seu currículo atualizado antes de se candidatar.
+                            </p>
+
+                            <h3>💡 Dica</h3>
+
+                            <p>
+                            Para aumentar suas chances, adapte seu currículo com palavras-chave
+                            da descrição da vaga e destaque experiências relevantes.
+                            </p>
 
                             <br>
 
