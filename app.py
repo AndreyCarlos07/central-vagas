@@ -846,29 +846,6 @@ def home():
 
         <h1>Central de Vagas - Engenharia / BA</h1>
 
-        <div class="vaga">
-            <h3>💡 Dicas para conseguir emprego mais rápido</h3>
-
-            <p>
-            Muitas empresas utilizam plataformas automatizadas para recrutamento,
-            como sistemas de triagem de currículos. 
-            Para aumentar suas chances de aprovação nos processos seletivos:
-            </p>
-
-            <ul>
-                <li>Preencha seu currículo de forma completa e atualizada</li>
-                <li>Utilize palavras-chave relacionadas à vaga desejada</li>
-                <li>Evite erros de português e revise suas informações</li>
-                <li>Mantenha seu perfil sempre atualizado nas plataformas</li>
-                <li>Candidate-se rapidamente após a publicação da vaga</li>
-            </ul>
-
-            <p>
-            Pequenos ajustes podem aumentar significativamente suas chances
-            de ser chamado para entrevistas e avançar nas etapas do processo seletivo.
-            </p>
-        </div>
-
         {% if admin %}
         <p>
         <a href="/admin/ocultas?admin={{token}}">
@@ -925,6 +902,29 @@ def home():
             <div class="info-box">
                 🏢 {{ total_empresas }} empresas monitoradas
             </div>
+
+            <div class="vaga">
+                <h3>💡 Dicas para conseguir emprego mais rápido</h3>
+
+                <p>
+                Muitas empresas utilizam plataformas automatizadas para recrutamento,
+                como sistemas de triagem de currículos. 
+                Para aumentar suas chances de aprovação nos processos seletivos:
+                </p>
+
+                <ul>
+                    <li>Preencha seu currículo de forma completa e atualizada</li>
+                    <li>Utilize palavras-chave relacionadas à vaga desejada</li>
+                    <li>Evite erros de português e revise suas informações</li>
+                    <li>Mantenha seu perfil sempre atualizado nas plataformas</li>
+                    <li>Candidate-se rapidamente após a publicação da vaga</li>
+                </ul>
+
+                <p>
+                Pequenos ajustes podem aumentar significativamente suas chances
+                de ser chamado para entrevistas e avançar nas etapas do processo seletivo.
+                </p>
+                </div>
 
             <!-- banner_home_topo -->
             <ins class="adsbygoogle"
