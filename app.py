@@ -926,12 +926,6 @@ def home():
                 </p>
                 </div>
 
-            <!-- banner_home_topo -->
-            <ins class="adsbygoogle"
-                style="display:block; width:300px;height:50px"
-                data-ad-client="ca-pub-2211390415336582"
-                data-ad-slot="8168087096"></ins>
-
         </div>   
                
         <script>
@@ -1065,6 +1059,12 @@ def home():
             {% endif %}
             
         </div>
+
+        <!-- banner_home_topo -->
+        <ins class="adsbygoogle"
+            style="display:block; width:300px;height:50px"
+            data-ad-client="ca-pub-2211390415336582"
+            data-ad-slot="8168087096"></ins>
 
         <h2>⭐ Avaliações</h2>
 
@@ -1616,8 +1616,6 @@ def vaga(id):
                                 </svg>
                             LinkedIn
                             </a>
-
-                            <br><br>
 
                             <br><br>
 
