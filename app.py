@@ -1021,7 +1021,7 @@ def home():
             <a href="/pro"
                 onmouseover="this.style.background='#0066cc'"
                 onmouseout="this.style.background='#f4f6f8'" 
-                onclick="return false;
+                onclick="return false;"
                 style="
                     background:#fff3e0;
                     color:#ff9800;
