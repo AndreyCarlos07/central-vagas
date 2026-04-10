@@ -32,6 +32,7 @@ REPO = "AndreyCarlos07/central-vagas"
 ARQUIVO_OCULTAS = "vagas_ocultas.json"
 ARQUIVO_AVALIACOES = "avaliacoes.json"
 ARQUIVO_CONTATOS = "contatos.json"
+ARQUIVO_PRO = "pro.json"
 
 
 # ==========================
@@ -227,6 +228,46 @@ def salvar_contatos(dados):
     requests.put(url, headers=headers, json=payload)
     
 
+def carregar_pro():
+    url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_PRO}"
+
+    headers = {
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github+json"
+    }
+
+    r = requests.get(url, headers=headers)
+
+    if r.status_code != 200:
+        return {"pendentes": [], "ativos": [], "expirados": []}
+
+    data = r.json()
+    conteudo = base64.b64decode(data["content"]).decode()
+
+    return json.loads(conteudo)
+
+def salvar_pro(dados):
+    url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_PRO}"
+
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}"
+    }
+
+    r = requests.get(url, headers=headers)
+    sha = r.json()["sha"] if r.status_code == 200 else None
+
+    conteudo = json.dumps(dados, indent=2, ensure_ascii=False)
+    encoded = base64.b64encode(conteudo.encode()).decode()
+
+    payload = {
+        "message": "Atualizando PRO",
+        "content": encoded,
+        "sha": sha
+    }
+
+    requests.put(url, headers=headers, json=payload)
+    
+
 def vagas_ativas():
     vagas = []
     ocultas = vagas_ocultas()
@@ -250,6 +291,56 @@ def vagas_ativas():
     except FileNotFoundError:
         pass
     return vagas
+    
+
+def filtrar_vagas(vagas, user):
+    resultado = []
+
+    for v in vagas:
+        titulo = v["titulo"].lower()
+
+        if user["cargo"] and user["cargo"] not in titulo:
+            continue
+
+        if user["nivel"] and user["nivel"] not in titulo:
+            continue
+
+        if user["empresa"] and user["empresa"].lower() != v["empresa"].lower():
+            continue
+
+        resultado.append(v)
+
+    return resultado
+    
+
+def enviar_vagas_pro():
+
+    dados = carregar_pro()
+    vagas = vagas_ativas()
+
+    for user in dados["ativos"]:
+
+        vagas_filtradas = filtrar_vagas(vagas, user)
+
+        if not vagas_filtradas:
+            continue
+
+        lista = "\n".join([
+            f"{v['titulo']} - {v['empresa']}\n{v['link']}"
+            for v in vagas_filtradas[:10]
+        ])
+
+        msg = MIMEText(f"Vagas para você:\n\n{lista}")
+
+        msg["Subject"] = "Novas vagas para você"
+        msg["From"] = EMAIL_USER
+        msg["To"] = user["email"]
+
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(EMAIL_USER, EMAIL_PASS)
+        server.send_message(msg)
+        server.quit()
     
 
 @app.route("/sobre")
@@ -549,6 +640,90 @@ def privacidade():
     """
 
     return render_template_string(html)
+    
+
+@app.route("/pro")
+def pro():
+
+    html = """
+    <html>
+    <head>
+        <title>Versão PRO</title>
+        <style>
+            body { font-family: Arial; background:#f4f6f8; padding:30px; }
+
+            .box {
+                max-width:600px;
+                margin:auto;
+                background:white;
+                padding:25px;
+                border-radius:8px;
+            }
+
+            input, select {
+                width:100%;
+                padding:10px;
+                margin-bottom:10px;
+            }
+
+            button {
+                background:#28a745;
+                color:white;
+                padding:10px;
+                border:none;
+                border-radius:5px;
+            }
+        </style>
+    </head>
+    <body>
+
+    <div class="box">
+
+        <h2>💎 Versão PRO</h2>
+
+        <p>
+        Receba vagas filtradas direto no seu email com base no seu perfil.
+        </p>
+
+        <form method="POST" action="/assinar_pro">
+
+            <input name="nome" placeholder="Seu nome" required>
+
+            <input type="email" name="email" placeholder="Seu email" required>
+
+            <input name="cargo" placeholder="Ex: engenheiro, analista" required>
+
+            <select name="nivel">
+                <option value="">Qualquer nível</option>
+                <option value="estagio">Estágio</option>
+                <option value="junior">Júnior</option>
+                <option value="pleno">Pleno</option>
+                <option value="senior">Sênior</option>
+                <option value="supervisor">Supervisor</option>
+                <option value="gerente">Gerente</option>
+            </select>
+
+            <input name="empresa" placeholder="Empresa (opcional)">
+
+            <button type="submit">Solicitar acesso PRO</button>
+
+        </form>
+
+        <p style="margin-top:15px;font-size:12px;color:#555;">
+        ⚠️ Pode haver dias sem envio de vagas, caso não existam novas oportunidades no perfil selecionado.
+        </p>
+
+        <p style="font-size:12px;color:#555;">
+        Este serviço não garante contratação e não possui vínculo com empresas.
+        </p>
+
+    </div>
+
+    </body>
+    </html>
+    """
+
+    return render_template_string(html)
 
 
 @app.route("/")
@@ -838,9 +1013,23 @@ def home():
                     padding:8px 12px;
                     border-radius:6px;
                     text-decoration:none;
+                    margin-right:8px;                    
                     font-weight:normal;                
                     border:1px solid #ddd;
                 ">Privacidade</a>
+
+            <a href="/pro"
+                onmouseover="this.style.background='#0066cc'"
+                onmouseout="this.style.background='#f4f6f8'"  
+                style="
+                    background:#fff3e0;
+                    color:#ff9800;
+                    padding:8px 12px;
+                    border-radius:6px;
+                    text-decoration:none;
+                    font-weight:normal;                
+                    border:1px solid #ff9800;
+                ">💎 Versão PRO</a>
                 
         </div>
 
@@ -1524,11 +1713,53 @@ def restaurar_contato(id):
     return redirect("/admin/contatos?admin=" + ADMIN_TOKEN)
     
 
+@app.route("/assinar_pro", methods=["POST"])
+def assinar_pro():
+
+    nome = request.form.get("nome")
+    email = request.form.get("email")
+    cargo = request.form.get("cargo").lower()
+    nivel = (request.form.get("nivel") or "").lower()
+    empresa = (request.form.get("empresa") or "").strip()
+
+    novo = {
+        "id": str(uuid.uuid4())[:8],
+        "nome": nome,
+        "email": email,
+        "cargo": cargo,
+        "nivel": nivel,
+        "empresa": empresa,
+        "status": "pendente",
+        "data_inicio": None,
+        "expira_em": None,
+        "data_criacao": datetime.now().isoformat()
+    }
+
+    dados = carregar_pro()
+    dados["pendentes"].append(novo)
+
+    salvar_pro(dados)
+
+    return """
+    <h2>✅ Solicitação recebida!</h2>
+
+    <p>Para ativar seu acesso PRO:</p>
+
+    <p><strong>PIX:</strong> seuemail@gmail.com FASE DE TESTE</p>
+    <p><strong>Valor:</strong> R$ 9,90</p>
+
+    <p>Após o pagamento, você começará a receber as vagas filtradas.</p>
+
+    <a href="/">← Voltar</a>
+    """
+    
+
 @app.route("/ads.txt")
 def ads_txt():
     return "google.com, pub-2211390415336582, DIRECT, f08c47fec0942fa0", 200, {
         'Content-Type': 'text/plain'
     }
+    
 
 @app.route("/vaga/<id>")
 def vaga(id):
