@@ -1607,7 +1607,7 @@ def vaga(id):
 
                             <br><br>
 
-                            <a href="https://www.linkedin.com/in/engandreycarlos/" target="_blank" class="linkedin-btn">
+                            <a href="https://www.linkedin.com/in/engandreycarlos/" target="_blank"
                                 style="background:#0a66c2;color:white;padding:12px 20px;
                                     text-decoration:none;border-radius:6px;display:inline-flex;align-items:center;gap:8px;min-width:180px;">
                                     
@@ -1617,9 +1617,9 @@ def vaga(id):
                             LinkedIn
                             </a>
 
-                            <a href="https://chat.whatsapp.com/LedWVo8O6TSES0kG6smJcT?mode=gi_t" target="_blank"
-                               style="background:#25D366;color:white;padding:12px 20px;
-                                      text-decoration:none;border-radius:6px;display:inline-flex;align-items:center;gap:8px;min-width:180px;">
+                            <a href="https://chat.whatsapp.com/LedWVo8O6TSES0kG6smJcT?mode=gi_t" target="_blank" 
+                                style="background:#25D366;color:white;padding:12px 20px;
+                                    text-decoration:none;border-radius:6px;display:inline-flex;align-items:center;gap:8px;min-width:180px;">
 
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
                                     <path d="M20.52 3.48A11.86 11.86 0 0012.01 0C5.38 0 .01 5.37.01 12c0 2.12.56 4.19 1.62 6.01L0 24l6.17-1.61A11.96 11.96 0 0012.01 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.2-3.49-8.52zM12 21.8c-1.8 0-3.55-.48-5.08-1.39l-.36-.21-3.66.96.98-3.57-.23-.37A9.8 9.8 0 012.2 12c0-5.4 4.4-9.8 9.8-9.8 2.62 0 5.08 1.02 6.93 2.87A9.74 9.74 0 0121.8 12c0 5.4-4.4 9.8-9.8 9.8zm5.39-7.35c-.3-.15-1.78-.88-2.06-.98-.28-.1-.48-.15-.68.15-.2.3-.78.98-.96 1.18-.18.2-.36.23-.66.08-.3-.15-1.26-.46-2.4-1.46-.89-.79-1.5-1.76-1.68-2.06-.18-.3-.02-.46.13-.6.14-.14.3-.36.46-.54.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.68-1.64-.93-2.24-.24-.58-.49-.5-.68-.51h-.58c-.2 0-.53.08-.8.38-.27.3-1.04 1.02-1.04 2.5s1.07 2.9 1.22 3.1c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.35.2 1.86.12.57-.08 1.78-.73 2.03-1.43.25-.7.25-1.3.18-1.43-.07-.13-.27-.2-.57-.35z"/>
