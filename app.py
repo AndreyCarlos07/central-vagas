@@ -1191,6 +1191,7 @@ def home():
             <a href="/pro"
                 onmouseover="this.style.background='#0066cc'"
                 onmouseout="this.style.background='#f4f6f8'" 
+                onclick="return false;"
                 style="
                     background:#fff3e0;
                     color:#ff9800;
@@ -1199,6 +1200,9 @@ def home():
                     text-decoration:none;
                     font-weight:normal;                
                     border:1px solid #ff9800;
+                    pointer-events:none;
+                    cursor:not-allowed;
+                    opacity:0.7;
                 ">💎 Versão PRO</a>
                 
         </div>
