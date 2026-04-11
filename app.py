@@ -241,6 +241,11 @@ def verificar_expiracao():
     salvar_pro(dados)
     
 
+def log_email(msg):
+    with open("log_email.txt", "a", encoding="utf-8") as f:
+        f.write(f"{datetime.now()} - {msg}\n")
+    
+
 def carregar_contatos():
     url = f"https://api.github.com/repos/{REPO}/contents/contatos.json"
 
@@ -294,6 +299,7 @@ def salvar_contatos(dados):
     
 
 def enviar_email_contato(nome, tipo, mensagem):
+    log_email("INICIO ENVIO EMAIL")
     try:
         msg = MIMEText(f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}")
         msg["Subject"] = "Novo contato recebido - Central de Vagas"
@@ -1829,6 +1835,15 @@ def teste_email():
     print("ROTA TESTE EMAIL CHAMADA")
     enviar_email_contato("teste", "teste", "mensagem teste")
     return "ok"
+    
+
+@app.route("/ver_log")
+def ver_log():
+    try:
+        with open("log_email.txt", "r", encoding="utf-8") as f:
+            return "<pre>" + f.read() + "</pre>"
+    except:
+        return "sem log ainda"
     
 
 @app.route("/admin/contatos")
