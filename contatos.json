@@ -34,6 +34,13 @@
       "tipo": "sugestao",
       "mensagem": "tESTE3",
       "data": "2026-04-09T21:18:46.464647"
+    },
+    {
+      "id": "8a287494",
+      "nome": "Andrey Carlos",
+      "tipo": "problema",
+      "mensagem": "Vaga não encontrada",
+      "data": "2026-04-11T16:36:50.087225"
     }
   ],
   "andamento": [],
