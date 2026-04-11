@@ -1814,7 +1814,7 @@ def enviar_contato():
         msg["From"] = EMAIL_USER
         msg["To"] = EMAIL_USER
 
-        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=5)
         server.starttls()
         server.login(EMAIL_USER, EMAIL_PASS)
         server.send_message(msg)
