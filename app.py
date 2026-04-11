@@ -2052,8 +2052,10 @@ def ativar_pro(id):
     dados = carregar_pro()
 
     for u in dados["pendentes"]:
-        if str(u["id"]) == str(id):
+        if True:
 
+            print("CHEGUEI NO LOOP")
+            print("USUARIO:", u)
             print("ATIVANDO USUARIO:", u["email"])
             
             dados["pendentes"].remove(u)
@@ -2064,8 +2066,9 @@ def ativar_pro(id):
 
             dados["ativos"].append(u)
 
+            print("ANTES DE ENVIAR EMAIL")
             enviar_email_boas_vindas(u)
-
+            print("DEPOIS DE ENVIAR EMAIL")
             break
 
     salvar_pro(dados)
