@@ -427,6 +427,8 @@ def enviar_vagas_pro():
         
 
 def enviar_email_boas_vindas(user):
+    print("CHEGUEI NA FUNÇÃO EMAIL")
+    print("EMAIL:", user["email"])
 
     vagas = vagas_ativas()
     vagas_filtradas = filtrar_vagas(vagas, user)
@@ -2052,7 +2054,7 @@ def ativar_pro(id):
     dados = carregar_pro()
 
     for u in dados["pendentes"]:
-        if True:
+        if str(u["id"]) == str(id):
 
             print("CHEGUEI NO LOOP")
             print("USUARIO:", u)
@@ -2067,7 +2069,8 @@ def ativar_pro(id):
             dados["ativos"].append(u)
 
             print("ANTES DE ENVIAR EMAIL")
-            enviar_email_boas_vindas(u)
+            # 🔥 NÃO BLOQUEIA O SITE
+            threading.Thread(target=enviar_email_boas_vindas,args=(u,)).start()
             print("DEPOIS DE ENVIAR EMAIL")
             break
 
