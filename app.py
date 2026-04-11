@@ -301,7 +301,9 @@ def enviar_email_contato(nome, tipo, mensagem):
         msg["To"] = EMAIL_USER
 
         server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.ehlo()
         server.starttls()
+        server.ehlo()
         server.login(EMAIL_USER, EMAIL_PASS)
         server.send_message(msg)
         server.quit()
@@ -439,7 +441,9 @@ def enviar_vagas_pro():
         msg["To"] = user["email"]
 
         server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.ehlo()
         server.starttls()
+        server.ehlo()
         server.login(EMAIL_USER, EMAIL_PASS)
         server.send_message(msg)
         server.quit()
@@ -482,7 +486,9 @@ def enviar_email_boas_vindas(user):
 
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.ehlo()
         server.starttls()
+        server.ehlo()
         server.login(EMAIL_USER, EMAIL_PASS)
         server.send_message(msg)
         server.quit()
@@ -1816,6 +1822,13 @@ def enviar_contato():
     threading.Thread(target=enviar_email_contato,args=(nome, tipo, mensagem)).start()
 
     return redirect("/contato?msg=ok")
+    
+
+@app.route("/teste_email")
+def teste_email():
+    print("ROTA TESTE EMAIL CHAMADA")
+    enviar_email_contato("teste", "teste", "mensagem teste")
+    return "ok"
     
 
 @app.route("/admin/contatos")
