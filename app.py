@@ -451,6 +451,9 @@ def enviar_email_boas_vindas(user):
         "<p>A partir de hoje você receberá diariamente novas oportunidades no seu email.</p>"
     )
 
+    print("ENVIANDO EMAIL PARA:", user["email"])
+    print("VAGAS ENCONTRADAS:", len(vagas_filtradas))
+
     msg = MIMEText(html, "html")
     msg["Subject"] = "🚀 Seu acesso PRO foi ativado!"
     msg["From"] = EMAIL_USER
