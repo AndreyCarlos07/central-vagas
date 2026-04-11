@@ -301,16 +301,16 @@ def salvar_contatos(dados):
 def enviar_email_contato(nome, tipo, mensagem):
     log_email("INICIO ENVIO EMAIL")
     try:
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=5)
+        server.ehlo()
+        server.starttls()
+        server.login(EMAIL_USER, EMAIL_PASS)
+        
         msg = MIMEText(f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}")
         msg["Subject"] = "Novo contato recebido - Central de Vagas"
         msg["From"] = EMAIL_USER
         msg["To"] = EMAIL_USER
 
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
-        server.login(EMAIL_USER, EMAIL_PASS)
         server.send_message(msg)
         server.quit()
 
