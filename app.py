@@ -293,6 +293,25 @@ def salvar_contatos(dados):
     requests.put(url, headers=headers, json=payload)
     
 
+def enviar_email_contato(nome, tipo, mensagem):
+    try:
+        msg = MIMEText(f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}")
+        msg["Subject"] = "Novo contato recebido - Central de Vagas"
+        msg["From"] = EMAIL_USER
+        msg["To"] = EMAIL_USER
+
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(EMAIL_USER, EMAIL_PASS)
+        server.send_message(msg)
+        server.quit()
+
+        print("EMAIL CONTATO ENVIADO")
+
+    except Exception as e:
+        print("Erro ao enviar email:", e)
+    
+
 def carregar_pro():
     url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_PRO}"
 
@@ -1793,20 +1812,8 @@ def enviar_contato():
 
     salvar_contatos(dados)
 
-    # 📧 ENVIO DE EMAIL
-    try:
-        msg = MIMEText(f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}")
-        msg["Subject"] = "Novo contato recebido - Central de Vagas"
-        msg["From"] = EMAIL_USER
-        msg["To"] = EMAIL_USER
-
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login(EMAIL_USER, EMAIL_PASS)
-        server.send_message(msg)
-        server.quit()
-    except Exception as e:
-        print("Erro ao enviar email:", e)
+    # 🔥 NÃO BLOQUEIA O SITE
+    threading.Thread(target=enviar_email_contato,args=(nome, tipo, mensagem)).start()
 
     return redirect("/contato?msg=ok")
     
