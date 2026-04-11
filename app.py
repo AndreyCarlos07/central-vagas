@@ -2049,10 +2049,12 @@ def ativar_pro(id):
     if request.args.get("admin") != ADMIN_TOKEN:
         return "Acesso negado"
 
+    print("ATIVANDO USUARIO:", u["email"])
+
     dados = carregar_pro()
 
     for u in dados["pendentes"]:
-        if u["id"] == id:
+        if str(u["id"]) == str(id):
             dados["pendentes"].remove(u)
 
             u["status"] = "ativo"
@@ -2061,7 +2063,7 @@ def ativar_pro(id):
 
             dados["ativos"].append(u)
 
-            threading.Thread(target=enviar_email_boas_vindas, args=(u,)).start()
+            enviar_email_boas_vindas(u)
 
             break
 
