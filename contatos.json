@@ -48,6 +48,13 @@
       "tipo": "sugestao",
       "mensagem": "teste",
       "data": "2026-04-11T16:38:26.878800"
+    },
+    {
+      "id": "03da329c",
+      "nome": "Andrey Carlos",
+      "tipo": "problema",
+      "mensagem": "vaga",
+      "data": "2026-04-11T16:42:33.852014"
     }
   ],
   "andamento": [],
