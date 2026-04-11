@@ -13,7 +13,6 @@ import json
 import base64
 import requests
 import uuid
-import threading
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
@@ -1748,16 +1747,10 @@ def enviar_contato():
     salvar_contatos(dados)
 
     # 🔥 NÃO BLOQUEIA O SITE
-    threading.Thread(target=enviar_email_contato,args=(nome, tipo, mensagem)).start()
+    #threading.Thread(target=enviar_email_contato,args=(nome, tipo, mensagem)).start()
+    enviar_email_boas_vindas(nome, tipo, mensagem)
 
     return redirect("/contato?msg=ok")
-    
-
-@app.route("/teste_email")
-def teste_email():
-    print("ROTA TESTE EMAIL CHAMADA")
-    enviar_email_contato("teste", "teste", "mensagem teste")
-    return "ok"
     
 
 @app.route("/ver_log")
