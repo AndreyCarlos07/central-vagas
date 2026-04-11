@@ -79,7 +79,7 @@ MAPA_HIERARQUIA = {
     "especialista": ["especialista"],
     "engenheiro": ["engenheiro"],
     "analista": ["analista"],
-    "tecnico": ["tecnico", "técnico", "manutenedor", "reparador"],
+    "tecnico": ["tecnico", "técnico", "manutenedor", "reparador", "planejador"],
     "inspetor": ["inspetor"],
     "operador": ["operador"],
     "auxiliar": ["auxiliar", "conferente", "abastecedor", "alimentador"],
@@ -90,10 +90,11 @@ MAPA_AREA = {
     "manutencao": ["manutencao", "manutenção", "automacao", "automação", "robô", "robo", "roboticista", "instrumentação", "instrumentacao", "eletrica", "elétrica", "eletricista", "mecanica", "mecânica", "soldador", "solda", "corte", "ferramentaria", "soldagem", "refrigeracao"],
     "producao": ["producao", "produção"],
     "produto": ["produto"],
+    "projeto": ["projeto"],
     "operacao": ["operacao", "operacional"],
-    "administracao/rh": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner"],
+    "administracao": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner"],
     "marketing": ["marketing"],
-    "qualidade/qsms/quimico": ["qualidade", "qa", "segurança", "meio ambiente", "químico", "trabalho"],
+    "qualidade": ["qualidade", "qa", "segurança", "meio ambiente", "químico", "trabalho"],
     "logistica": ["logística", "logistica", "estoque", "almoxarifado", "estoquista"],
     "civil": ["civil", "obras", "obra"]
 }
@@ -744,30 +745,6 @@ def pro():
         <form method="POST" action="/assinar_pro">
 
             <input name="nome" placeholder="Seu nome" required>
-
-            <input type="email" name="email" placeholder="Seu email" required>
-
-            <input name="cargo" placeholder="Ex: engenheiro, analista" required>
-
-            <select name="nivel">
-                <option value="">Qualquer nível</option>
-                <option value="estagio">Estágio</option>
-                <option value="junior">Júnior</option>
-                <option value="pleno">Pleno</option>
-                <option value="senior">Sênior</option>
-                <option value="supervisor">Supervisor</option>
-                <option value="gerente">Gerente</option>
-            </select>
-
-            <input name="empresa" placeholder="Empresa (opcional)">
-
-            <button type="submit">Solicitar acesso PRO</button>
-
-        </form>
-
-        <form method="POST" action="/assinar_pro">
-
-            <input name="nome" placeholder="Seu nome" required>
             <input type="email" name="email" placeholder="Seu email" required>
 
             <h3>🎯 Escolha como deseja receber suas vagas:</h3>
@@ -832,25 +809,20 @@ def pro():
                     <option value="">Selecione</option>
                     <option value="manutencao">Manutenção</option>
                     <option value="producao">Produção</option>
-                    <option value="automacao">Automação</option>
                     <option value="produto">Produto</option>
+                    <option value="projeto">Projetos</option>
                     <option value="operacao">Operação</option>
-                    <option value="eletrica">Elétrica</option>
                     <option value="administracao">Administração</option>
                     <option value="marketing">Marketing</option>
-                    <option value="qualidade">Qualidade</option>
-                    <option value="soldador">Soldador</option>
-                    <option value="refrigeracao">Refrigeração</option>
-                    <option value="almoxarifado">Almoxarifado</option>
-                    <option value="obras">Obras</option>
+                    <option value="qualidade">Qualidade/SMS/Químico</option>
+                    <option value="logistica">Logística</option>
                     <option value="civil">Civil</option>
-                    <option value="mecanica">Mecânica</option>
                 </select>
             </div>
 
             <br>
 
-            <button type="submit">🚀 Ativar Alerta PRO</button>
+            <button type="submit">Solicitar acesso PRO</button>
 
         </form>
 
@@ -1191,7 +1163,6 @@ def home():
             <a href="/pro"
                 onmouseover="this.style.background='#0066cc'"
                 onmouseout="this.style.background='#f4f6f8'" 
-                onclick="return false;"
                 style="
                     background:#fff3e0;
                     color:#ff9800;
@@ -1200,9 +1171,6 @@ def home():
                     text-decoration:none;
                     font-weight:normal;                
                     border:1px solid #ff9800;
-                    pointer-events:none;
-                    cursor:not-allowed;
-                    opacity:0.7;
                 ">💎 Versão PRO</a>
                 
         </div>
