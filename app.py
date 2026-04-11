@@ -13,6 +13,7 @@ import json
 import base64
 import requests
 import uuid
+import threading
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
@@ -419,8 +420,87 @@ def filtrar_vagas(vagas, user):
         resultado.append(v)
 
     return resultado
+    
 
+def enviar_vagas_pro():
 
+    verificar_expiracao()
+
+    dados = carregar_pro()
+    vagas = vagas_ativas()
+
+    for user in dados["ativos"]:
+
+        vagas_filtradas = filtrar_vagas(vagas, user)
+
+        if not vagas_filtradas:
+            continue
+
+        lista = "\n".join([
+            f"{v['titulo']} - {v['empresa']}\n{v['link']}"
+            for v in vagas_filtradas[:10]
+        ])
+
+        msg = MIMEText(f"Vagas para você:\n\n{lista}")
+
+        msg["Subject"] = "Novas vagas para você"
+        msg["From"] = EMAIL_USER
+        msg["To"] = user["email"]
+
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(EMAIL_USER, EMAIL_PASS)
+       # server.send_message(msg)
+        server.quit()
+        
+
+def enviar_email_boas_vindas(user):
+    print("CHEGUEI NA FUNÇÃO EMAIL")
+    print("EMAIL:", user["email"])
+
+    vagas = vagas_ativas()
+    vagas_filtradas = filtrar_vagas(vagas, user)
+
+    lista = ""
+
+    for v in vagas_filtradas[:10]:
+        lista += (
+            "<li>"
+            "<strong>" + v["titulo"] + "</strong><br>"
+            + v["empresa"] + "<br>"
+            + "<a href='" + v["link"] + "'>Ver vaga</a>"
+            "</li>"
+        )
+
+    html = (
+        "<h2>🚀 Acesso PRO ativado!</h2>"
+        "<p>Olá, " + user["nome"] + " 👋</p>"
+        "<p>Seu acesso foi ativado com sucesso.</p>"
+        "<h3>📌 Vagas para você:</h3>"
+        "<ul>" + lista + "</ul>"
+        "<p>A partir de hoje você receberá diariamente novas oportunidades no seu email.</p>"
+    )
+
+    print("ENVIANDO EMAIL PARA:", user["email"])
+    print("VAGAS ENCONTRADAS:", len(vagas_filtradas))
+
+    msg = MIMEText(html, "html")
+    msg["Subject"] = "🚀 Seu acesso PRO foi ativado!"
+    msg["From"] = EMAIL_USER
+    msg["To"] = user["email"]
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(EMAIL_USER, EMAIL_PASS)
+     #   server.send_message(msg)
+        server.quit()
+    except Exception as e:
+        print("ERRO AO ENVIAR EMAIL:", e)
 
 
 
@@ -2021,8 +2101,8 @@ def ativar_pro(id):
 
             print("ANTES DE ENVIAR EMAIL")
             # 🔥 NÃO BLOQUEIA O SITE
-            threading.Thread(target=enviar_email_boas_vindas,args=(u,)).start()
-            print("DEPOIS DE ENVIAR EMAIL")
+            #threading.Thread(target=enviar_email_boas_vindas,args=(u,)).start()
+            #print("DEPOIS DE ENVIAR EMAIL")
             break
 
     salvar_pro(dados)
