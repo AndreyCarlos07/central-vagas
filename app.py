@@ -29,6 +29,8 @@ EMAIL_USER = os.environ.get("EMAIL_USER")
 
 EMAIL_PASS = os.environ.get("EMAIL_PASS")
 
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
+
 REPO = "AndreyCarlos07/central-vagas"
 ARQUIVO_OCULTAS = "vagas_ocultas.json"
 ARQUIVO_AVALIACOES = "avaliacoes.json"
@@ -298,25 +300,24 @@ def salvar_contatos(dados):
     requests.put(url, headers=headers, json=payload)
     
 
-
 def enviar_email_contato(nome, tipo, mensagem):
-    log_email("INICIO ENVIO EMAIL")
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
-        server.ehlo()
-        server.starttls()
-        server.login(EMAIL_USER, EMAIL_PASS)
-        
-        msg = MIMEText(f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}")
-        msg["Subject"] = "Novo contato recebido - Central de Vagas 2"
-        msg["From"] = EMAIL_USER
-        msg["To"] = EMAIL_USER
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {RESEND_API_KEY}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "from": "onboarding@resend.dev",  # depois pode trocar
+                "to": [EMAIL_USER],
+                "subject": "Novo contato recebido - Central de Vagas",
+                "text": f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}"
+            }
+        )
 
-        server.send_message(msg)
-        server.set_debuglevel(1)
-        server.quit()
-
-        print("EMAIL CONTATO ENVIADO")
+        print("STATUS:", response.status_code)
+        print("RESPOSTA:", response.text)
 
     except Exception as e:
         print("Erro ao enviar email:", e)
