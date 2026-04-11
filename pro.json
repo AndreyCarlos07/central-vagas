@@ -1,5 +1,17 @@
 {
-  "pendentes": [],
+  "pendentes": [
+    {
+      "id": "00ae15ad",
+      "nome": "Andrey Carlos",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-11T16:29:41.225878"
+    }
+  ],
   "ativos": [
     {
       "id": "9e5b64b1",
