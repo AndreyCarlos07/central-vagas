@@ -13,6 +13,7 @@ import json
 import base64
 import requests
 import uuid
+import threading
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
@@ -2057,8 +2058,7 @@ def ativar_pro(id):
 
             dados["ativos"].append(u)
 
-            # 🔥 AQUI É O SEGREDO
-            enviar_email_boas_vindas(u)
+            threading.Thread(target=enviar_email_boas_vindas, args=(u,)).start()
 
             break
 
