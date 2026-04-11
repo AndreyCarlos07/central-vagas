@@ -298,27 +298,7 @@ def salvar_contatos(dados):
     requests.put(url, headers=headers, json=payload)
     
 
-def enviar_email_contato(nome, tipo, mensagem):
-    log_email("INICIO ENVIO EMAIL")
-    try:
-        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
-        server.ehlo()
-        server.starttls()
-        server.login(EMAIL_USER, EMAIL_PASS)
-        
-        msg = MIMEText(f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}")
-        msg["Subject"] = "Novo contato recebido - Central de Vagas 2"
-        msg["From"] = EMAIL_USER
-        msg["To"] = EMAIL_USER
 
-        server.send_message(msg)
-        server.set_debuglevel(1)
-        server.quit()
-
-        print("EMAIL CONTATO ENVIADO")
-
-    except Exception as e:
-        print("Erro ao enviar email:", e)
     
 
 def carregar_pro():
@@ -1806,7 +1786,7 @@ def aprovar(id):
 
     return redirect("/admin/avaliacoes?admin=" + ADMIN_TOKEN)
     
-
+    
 @app.route("/enviar_contato", methods=["POST"])
 def enviar_contato():
 
@@ -1827,14 +1807,23 @@ def enviar_contato():
 
     salvar_contatos(dados)
 
-    # 🔥 NÃO BLOQUEIA O SITE
-    #threading.Thread(target=enviar_email_contato,args=(nome, tipo, mensagem)).start()
-    enviar_email_contato(nome, tipo, mensagem)
-    #print("SIMULANDO ENVIO DE EMAIL")
-    #print(nome, tipo, mensagem)
+    # 📧 ENVIO DE EMAIL
+    try:
+        msg = MIMEText(f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}")
+        msg["Subject"] = "Novo contato recebido - Central de Vagas"
+        msg["From"] = EMAIL_USER
+        msg["To"] = EMAIL_USER
+
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(EMAIL_USER, EMAIL_PASS)
+        server.send_message(msg)
+        server.quit()
+    except Exception as e:
+        print("Erro ao enviar email:", e)
 
     return redirect("/contato?msg=ok")
-    
+
 
 @app.route("/ver_log")
 def ver_log():
