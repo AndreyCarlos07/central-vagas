@@ -9,6 +9,7 @@ import time
 from flask import Flask, redirect, render_template_string, request
 import smtplib
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import json
 import base64
 import requests
@@ -28,6 +29,10 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 EMAIL_USER = os.environ.get("EMAIL_USER")
 
 EMAIL_PASS = os.environ.get("EMAIL_PASS")
+
+OUTLOOK_USER = os.environ.get("OUTLOOK_USER")
+
+OUTLOOK_PASS = os.environ.get("OUTLOOK_PASS")
 
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
 
@@ -298,29 +303,38 @@ def salvar_contatos(dados):
     }
 
     requests.put(url, headers=headers, json=payload)
-    
+
 
 def enviar_email_contato(nome, tipo, mensagem):
-    try:
-        response = requests.post(
-            "https://api.resend.com/emails",
-            headers={
-                "Authorization": f"Bearer {RESEND_API_KEY}",
-                "Content-Type": "application/json"
-            },
-            json={
-                "from": "onboarding@resend.dev",  # depois pode trocar
-                "to": [EMAIL_USER],
-                "subject": "Novo contato recebido - Central de Vagas",
-                "text": f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}"
-            }
-        )
 
-        print("STATUS:", response.status_code)
-        print("RESPOSTA:", response.text)
+    destinatario = "andrey.engenhariamecatronica@gmail.com"
+
+    msg = MIMEMultipart()
+    msg["From"] = OUTLOOK_USER
+    msg["To"] = destinatario
+    msg["Subject"] = "Novo contato recebido"
+
+    corpo = f"""
+    Novo contato:
+
+    Nome: {nome}
+    Tipo: {tipo}
+    Mensagem: {mensagem}
+    """
+
+    msg.attach(MIMEText(corpo, "plain"))
+
+    try:
+        servidor = smtplib.SMTP("smtp.office365.com", 587)
+        servidor.starttls()
+        servidor.login(OUTLOOK_USER, OUTLOOK_PASS)
+        servidor.send_message(msg)
+        servidor.quit()
+
+        print("EMAIL ENVIADO COM SUCESSO")
 
     except Exception as e:
-        print("Erro ao enviar email:", e)
+        print("ERRO AO ENVIAR EMAIL:", e)
 
 
 def carregar_pro():
