@@ -424,6 +424,51 @@ def enviar_vagas_pro():
         server.login(EMAIL_USER, EMAIL_PASS)
         server.send_message(msg)
         server.quit()
+
+def enviar_email_boas_vindas(user):
+
+    vagas = vagas_ativas()
+    vagas_filtradas = filtrar_vagas(vagas, user)
+
+    lista = "".join([
+        f"""
+        <li>
+            <strong>{v['titulo']}</strong><br>
+            {v['empresa']}<br>
+            <a href="{v['link']}">Ver vaga</a>
+        </li>
+        """
+        for v in vagas_filtradas[:10]
+    ])
+
+    html = f"""
+    <h2>🚀 Acesso PRO ativado!</h2>
+
+    <p>Olá, {user['nome']} 👋</p>
+
+    <p>Seu acesso foi ativado com sucesso.</p>
+
+    <h3>📌 Vagas para você:</h3>
+
+    <ul>
+        {lista}
+    </ul>
+
+    <p>
+    A partir de hoje você receberá diariamente novas oportunidades no seu email.
+    </p>
+    """
+
+    msg = MIMEText(html, "html")
+    msg["Subject"] = "🚀 Seu acesso PRO foi ativado!"
+    msg["From"] = EMAIL_USER
+    msg["To"] = user["email"]
+
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(EMAIL_USER, EMAIL_PASS)
+    server.send_message(msg)
+    server.quit()
     
 
 @app.route("/sobre")
@@ -2017,6 +2062,10 @@ def ativar_pro(id):
             u["expira_em"] = (datetime.now() + timedelta(days=30)).isoformat()
 
             dados["ativos"].append(u)
+
+            # 🔥 AQUI É O SEGREDO
+            enviar_email_boas_vindas(u)
+
             break
 
     salvar_pro(dados)
