@@ -1748,7 +1748,7 @@ def enviar_contato():
 
     # 🔥 NÃO BLOQUEIA O SITE
     #threading.Thread(target=enviar_email_contato,args=(nome, tipo, mensagem)).start()
-    enviar_email_boas_vindas(nome, tipo, mensagem)
+    enviar_email_contato(nome, tipo, mensagem)
 
     return redirect("/contato?msg=ok")
     
