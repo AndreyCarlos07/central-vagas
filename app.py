@@ -2077,12 +2077,7 @@ def ativar_pro(id):
     dados = carregar_pro()
 
     for u in dados["pendentes"]:
-        if str(u["id"]) == str(id):
-
-            print("CHEGUEI NO LOOP")
-            print("USUARIO:", u)
-            print("ATIVANDO USUARIO:", u["email"])
-            
+        if u["id"] == id:
             dados["pendentes"].remove(u)
 
             u["status"] = "ativo"
@@ -2091,10 +2086,9 @@ def ativar_pro(id):
 
             dados["ativos"].append(u)
 
-            print("ANTES DE ENVIAR EMAIL")
-            # 🔥 NÃO BLOQUEIA O SITE
-            #threading.Thread(target=enviar_email_boas_vindas,args=(u,)).start()
-            #print("DEPOIS DE ENVIAR EMAIL")
+            # 🔥 AQUI É O SEGREDO
+            enviar_email_boas_vindas(u)
+
             break
 
     salvar_pro(dados)
