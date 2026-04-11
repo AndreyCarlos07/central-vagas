@@ -14,7 +14,7 @@ import base64
 import requests
 import uuid
 import threading
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -299,7 +299,28 @@ def salvar_contatos(dados):
     
 
 
-    
+def enviar_email_contato(nome, tipo, mensagem):
+    log_email("INICIO ENVIO EMAIL")
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
+        server.ehlo()
+        server.starttls()
+        server.login(EMAIL_USER, EMAIL_PASS)
+        
+        msg = MIMEText(f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}")
+        msg["Subject"] = "Novo contato recebido - Central de Vagas 2"
+        msg["From"] = EMAIL_USER
+        msg["To"] = EMAIL_USER
+
+        server.send_message(msg)
+        server.set_debuglevel(1)
+        server.quit()
+
+        print("EMAIL CONTATO ENVIADO")
+
+    except Exception as e:
+        print("Erro ao enviar email:", e)
+
 
 def carregar_pro():
     url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_PRO}"
@@ -318,6 +339,7 @@ def carregar_pro():
     conteudo = base64.b64decode(data["content"]).decode()
 
     return json.loads(conteudo)
+    
 
 def salvar_pro(dados):
     url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_PRO}"
@@ -1807,31 +1829,13 @@ def enviar_contato():
 
     salvar_contatos(dados)
 
-    # 📧 ENVIO DE EMAIL
-    try:
-        msg = MIMEText(f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}")
-        msg["Subject"] = "Novo contato recebido - Central de Vagas"
-        msg["From"] = EMAIL_USER
-        msg["To"] = EMAIL_USER
-
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login(EMAIL_USER, EMAIL_PASS)
-        server.send_message(msg)
-        server.quit()
-    except Exception as e:
-        print("Erro ao enviar email:", e)
+    # 🔥 NÃO BLOQUEIA O SITE
+    #threading.Thread(target=enviar_email_contato,args=(nome, tipo, mensagem)).start()
+    enviar_email_contato(nome, tipo, mensagem)
+    #print("SIMULANDO ENVIO DE EMAIL")
+    #print(nome, tipo, mensagem)
 
     return redirect("/contato?msg=ok")
-
-
-@app.route("/ver_log")
-def ver_log():
-    try:
-        with open("log_email.txt", "r", encoding="utf-8") as f:
-            return "<pre>" + f.read() + "</pre>"
-    except:
-        return "sem log ainda"
     
 
 @app.route("/admin/contatos")
@@ -2077,7 +2081,12 @@ def ativar_pro(id):
     dados = carregar_pro()
 
     for u in dados["pendentes"]:
-        if u["id"] == id:
+        if str(u["id"]) == str(id):
+
+            print("CHEGUEI NO LOOP")
+            print("USUARIO:", u)
+            print("ATIVANDO USUARIO:", u["email"])
+            
             dados["pendentes"].remove(u)
 
             u["status"] = "ativo"
@@ -2086,9 +2095,10 @@ def ativar_pro(id):
 
             dados["ativos"].append(u)
 
-            # 🔥 AQUI É O SEGREDO
-            enviar_email_boas_vindas(u)
-
+            print("ANTES DE ENVIAR EMAIL")
+            # 🔥 NÃO BLOQUEIA O SITE
+            #threading.Thread(target=enviar_email_boas_vindas,args=(u,)).start()
+            #print("DEPOIS DE ENVIAR EMAIL")
             break
 
     salvar_pro(dados)
