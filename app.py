@@ -452,7 +452,7 @@ def enviar_vagas_pro():
         server.starttls()
         server.ehlo()
         server.login(EMAIL_USER, EMAIL_PASS)
-       # server.send_message(msg)
+        server.send_message(msg)
         server.quit()
         
 
@@ -497,7 +497,7 @@ def enviar_email_boas_vindas(user):
         server.starttls()
         server.ehlo()
         server.login(EMAIL_USER, EMAIL_PASS)
-     #   server.send_message(msg)
+        server.send_message(msg)
         server.quit()
     except Exception as e:
         print("ERRO AO ENVIAR EMAIL:", e)
@@ -1828,7 +1828,9 @@ def enviar_contato():
 
     # 🔥 NÃO BLOQUEIA O SITE
     #threading.Thread(target=enviar_email_contato,args=(nome, tipo, mensagem)).start()
-    enviar_email_contato(nome, tipo, mensagem)
+    #enviar_email_contato(nome, tipo, mensagem)
+    print("SIMULANDO ENVIO DE EMAIL")
+    print(nome, tipo, mensagem)
 
     return redirect("/contato?msg=ok")
     
