@@ -2049,12 +2049,13 @@ def ativar_pro(id):
     if request.args.get("admin") != ADMIN_TOKEN:
         return "Acesso negado"
 
-    print("ATIVANDO USUARIO:", u["email"])
-
     dados = carregar_pro()
 
     for u in dados["pendentes"]:
         if str(u["id"]) == str(id):
+
+            print("ATIVANDO USUARIO:", u["email"])
+            
             dados["pendentes"].remove(u)
 
             u["status"] = "ativo"
