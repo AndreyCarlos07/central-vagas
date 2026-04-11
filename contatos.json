@@ -55,6 +55,13 @@
       "tipo": "problema",
       "mensagem": "vaga",
       "data": "2026-04-11T16:42:33.852014"
+    },
+    {
+      "id": "98a945bc",
+      "nome": "Andrey Carlos",
+      "tipo": "sugestao",
+      "mensagem": "teste",
+      "data": "2026-04-11T16:57:23.046211"
     }
   ],
   "andamento": [],
