@@ -13,7 +13,7 @@ import json
 import base64
 import requests
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -216,6 +216,30 @@ def salvar_avaliacoes(dados):
     requests.put(url, headers=headers, json=payload)
     
 
+def verificar_expiracao():
+    dados = carregar_pro()
+    agora = datetime.now()
+
+    ativos = []
+    expirados = dados["expirados"]
+
+    for user in dados["ativos"]:
+        if user["expira_em"]:
+            data_exp = datetime.fromisoformat(user["expira_em"])
+
+            if agora > data_exp:
+                user["status"] = "expirado"
+                expirados.append(user)
+                continue
+
+        ativos.append(user)
+
+    dados["ativos"] = ativos
+    dados["expirados"] = expirados
+
+    salvar_pro(dados)
+    
+
 def carregar_contatos():
     url = f"https://api.github.com/repos/{REPO}/contents/contatos.json"
 
@@ -371,6 +395,8 @@ def filtrar_vagas(vagas, user):
     
 
 def enviar_vagas_pro():
+
+    verificar_expiracao()
 
     dados = carregar_pro()
     vagas = vagas_ativas()
@@ -1179,6 +1205,14 @@ def home():
 
         {% if admin %}
         <p>
+        <a href="/admin/pro?admin={{token}}">
+        💰 Gerenciar PRO
+        </a>
+        </p>
+        {% endif %}
+
+        {% if admin %}
+        <p>
         <a href="/admin/ocultas?admin={{token}}">
         ⚙️ Ver vagas ocultas
         </a>
@@ -1909,7 +1943,131 @@ def assinar_pro():
 
     <a href="/">← Voltar</a>
     """
+
+
+@app.route("/admin/pro")
+def admin_pro():
+
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_pro()
+
+    html = """
+    <a href="/?admin={{token}}">← voltar</a>
+
+    <h2>💰 Pendentes</h2>
+    {% for u in pendentes %}
+        <p>
+        {{ u.nome }} - {{ u.email }}
+        <br>
+        <a href="/ativar_pro/{{u.id}}?admin={{token}}">✅ Ativar</a>
+        </p>
+        <hr>
+    {% endfor %}
+
+    <h2>🚀 Ativos</h2>
+    {% for u in ativos %}
+        <p>
+        {{ u.nome }} - expira em {{ u.expira_em }}
+        <br>
+        <a href="/expirar_pro/{{u.id}}?admin={{token}}" style="color:red;">
+        Expirar
+        </a>
+        </p>
+        <hr>
+    {% endfor %}
+
+    <h2>⛔ Expirados</h2>
+    {% for u in expirados %}
+        <p>
+        {{ u.nome }}
+        <br>
+        <a href="/reativar_pro/{{u.id}}?admin={{token}}" style="color:green;">
+        Reativar
+        </a>
+        </p>
+        <hr>
+    {% endfor %}
+    """
+
+    return render_template_string(
+        html,
+        pendentes=dados["pendentes"],
+        ativos=dados["ativos"],
+        expirados=dados["expirados"],
+        token=ADMIN_TOKEN
+    )
     
+    
+@app.route("/ativar_pro/<id>")
+def ativar_pro(id):
+
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_pro()
+
+    for u in dados["pendentes"]:
+        if u["id"] == id:
+            dados["pendentes"].remove(u)
+
+            u["status"] = "ativo"
+            u["data_inicio"] = datetime.now().isoformat()
+            u["expira_em"] = (datetime.now() + timedelta(days=30)).isoformat()
+
+            dados["ativos"].append(u)
+            break
+
+    salvar_pro(dados)
+
+    return redirect("/admin/pro?admin=" + ADMIN_TOKEN)
+    
+
+@app.route("/expirar_pro/<id>")
+def expirar_pro(id):
+
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_pro()
+
+    for u in dados["ativos"]:
+        if u["id"] == id:
+            dados["ativos"].remove(u)
+
+            u["status"] = "expirado"
+            dados["expirados"].append(u)
+            break
+
+    salvar_pro(dados)
+
+    return redirect("/admin/pro?admin=" + ADMIN_TOKEN)
+    
+
+@app.route("/reativar_pro/<id>")
+def reativar_pro(id):
+
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_pro()
+
+    for u in dados["expirados"]:
+        if u["id"] == id:
+            dados["expirados"].remove(u)
+
+            u["status"] = "ativo"
+            u["data_inicio"] = datetime.now().isoformat()
+            u["expira_em"] = (datetime.now() + timedelta(days=30)).isoformat()
+
+            dados["ativos"].append(u)
+            break
+
+    salvar_pro(dados)
+
+    return redirect("/admin/pro?admin=" + ADMIN_TOKEN)
+
 
 @app.route("/ads.txt")
 def ads_txt():
