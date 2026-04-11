@@ -1,17 +1,5 @@
 {
-  "pendentes": [
-    {
-      "id": "918e4021",
-      "nome": "Negao veiudo torado",
-      "email": "negaoveiudo@hotnail.com",
-      "tipo_filtro": "area",
-      "valor": "projeto",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-11T15:51:45.776027"
-    }
-  ],
+  "pendentes": [],
   "ativos": [
     {
       "id": "9e5b64b1",
@@ -23,6 +11,17 @@
       "data_inicio": "2026-04-11T15:34:09.611768",
       "expira_em": "2026-05-11T15:34:09.611778",
       "data_criacao": "2026-04-11T15:17:00.337804"
+    },
+    {
+      "id": "918e4021",
+      "nome": "Negao veiudo torado",
+      "email": "negaoveiudo@hotnail.com",
+      "tipo_filtro": "area",
+      "valor": "projeto",
+      "status": "ativo",
+      "data_inicio": "2026-04-11T16:00:13.387986",
+      "expira_em": "2026-05-11T16:00:13.387997",
+      "data_criacao": "2026-04-11T15:51:45.776027"
     }
   ],
   "expirados": [
