@@ -784,11 +784,6 @@ def pro():
     html = """
     <html>
     <head>
-
-        <div class="top-buttons">
-            <a href="/">🏠 Vagas</a>
-        </div>
-        
         <title>Versão PRO</title>
         <style>
             body { font-family: Arial; background:#f4f6f8; padding:30px; }
@@ -819,6 +814,10 @@ def pro():
     <body>
 
     <div class="box">
+
+        <div class="top-buttons">
+            <a href="/">🏠 Vagas</a>
+        </div>
 
         <h2>💎 Versão PRO</h2>
 
