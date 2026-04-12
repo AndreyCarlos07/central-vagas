@@ -809,25 +809,10 @@ def pro():
                 border:none;
                 border-radius:5px;
             }
-
-            .top-buttons a {
-                background: #0066cc;
-                color: white;
-                padding: 10px 15px;
-                border-radius: 6px;
-                text-decoration: none;
-                margin-right: 10px;
-            }
+            
         </style>
     </head>
     <body>
-
-    <div class="box">
-
-        <div class="top-buttons">
-            <a href="/">🏠 Vagas</a>
-        </div>
-
         <h2>💎 Versão PRO</h2>
 
         <p>
@@ -949,6 +934,8 @@ def pro():
         <p style="font-size:12px;color:#555;">
         Este serviço não garante contratação e não possui vínculo com empresas.
         </p>
+
+        <a href="/">← Voltar para central</a>
 
     </div>
 
