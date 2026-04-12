@@ -397,6 +397,8 @@ def verificar_expiracao():
     ativos = []
     expirados = dados["expirados"]
 
+    mudou = False  # 🔥 CONTROLE
+
     for user in dados["ativos"]:
         if user["expira_em"]:
             data_exp = datetime.fromisoformat(user["expira_em"])
@@ -404,14 +406,15 @@ def verificar_expiracao():
             if agora > data_exp:
                 user["status"] = "expirado"
                 expirados.append(user)
+                mudou = True  # 🔥 marcou mudança
                 continue
 
         ativos.append(user)
 
-    dados["ativos"] = ativos
-    dados["expirados"] = expirados
-
-    salvar_pro(dados)
+    if mudou:  # 🔥 SÓ SALVA SE PRECISAR
+        dados["ativos"] = ativos
+        dados["expirados"] = expirados
+        salvar_pro(dados)
     
 
 def vagas_ativas():
