@@ -242,11 +242,6 @@ def verificar_expiracao():
     salvar_pro(dados)
     
 
-def log_email(msg):
-    with open("log_email.txt", "a", encoding="utf-8") as f:
-        f.write(f"{datetime.now()} - {msg}\n")
-    
-
 def carregar_contatos():
     url = f"https://api.github.com/repos/{REPO}/contents/contatos.json"
 
@@ -276,6 +271,7 @@ def carregar_contatos():
             dados[key] = []
 
     return dados
+    
 
 def salvar_contatos(dados):
     url = f"https://api.github.com/repos/{REPO}/contents/contatos.json"
