@@ -10,17 +10,7 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-11T16:55:37.882357"
-    },
-    {
-      "id": "0b686359",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-12T01:58:29.499520"
+    }
     }
   ],
   "ativos": [
@@ -34,50 +24,6 @@
       "data_inicio": "2026-04-11T15:34:09.611768",
       "expira_em": "2026-05-11T15:34:09.611778",
       "data_criacao": "2026-04-11T15:17:00.337804"
-    },
-    {
-      "id": "918e4021",
-      "nome": "Negao veiudo torado",
-      "email": "negaoveiudo@hotnail.com",
-      "tipo_filtro": "area",
-      "valor": "projeto",
-      "status": "ativo",
-      "data_inicio": "2026-04-11T16:00:13.387986",
-      "expira_em": "2026-05-11T16:00:13.387997",
-      "data_criacao": "2026-04-11T15:51:45.776027"
-    },
-    {
-      "id": "00531e88",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "ativo",
-      "data_inicio": "2026-04-11T16:25:09.398639",
-      "expira_em": "2026-05-11T16:25:09.398652",
-      "data_criacao": "2026-04-11T16:18:24.845815"
-    },
-    {
-      "id": "00ae15ad",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "ativo",
-      "data_inicio": "2026-04-11T17:36:16.775482",
-      "expira_em": "2026-05-11T17:36:16.775490",
-      "data_criacao": "2026-04-11T16:29:41.225878"
-    },
-    {
-      "id": "e456d3f4",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "ativo",
-      "data_inicio": "2026-04-12T01:58:50.961764",
-      "expira_em": "2026-05-12T01:58:50.961772",
-      "data_criacao": "2026-04-11T16:42:20.348193"
     }
   ],
   "expirados": [
@@ -91,39 +37,6 @@
       "data_inicio": "2026-04-11T13:40:18.303090",
       "expira_em": "2026-05-11T13:40:18.303097",
       "data_criacao": "2026-04-11T12:52:07.779803"
-    },
-    {
-      "id": "02d2a267",
-      "nome": "Andrey Batista",
-      "email": "ddi_100@hotmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "expirado",
-      "data_inicio": "2026-04-11T14:45:44.269615",
-      "expira_em": "2026-05-11T14:45:44.269624",
-      "data_criacao": "2026-04-11T14:42:54.227539"
-    },
-    {
-      "id": "2ebc4f1e",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "expirado",
-      "data_inicio": "2026-04-11T14:36:15.349490",
-      "expira_em": "2026-05-11T14:36:15.349499",
-      "data_criacao": "2026-04-11T13:42:14.229844"
-    },
-    {
-      "id": "6ed4b37a",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "expirado",
-      "data_inicio": "2026-04-11T14:54:25.394450",
-      "expira_em": "2026-05-11T14:54:25.394460",
-      "data_criacao": "2026-04-11T14:54:06.268979"
     }
   ]
 }
