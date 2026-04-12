@@ -246,30 +246,6 @@ Comentário:
         print("Erro email avaliação:", e)
     
 
-def verificar_expiracao():
-    dados = carregar_pro()
-    agora = datetime.now()
-
-    ativos = []
-    expirados = dados["expirados"]
-
-    for user in dados["ativos"]:
-        if user["expira_em"]:
-            data_exp = datetime.fromisoformat(user["expira_em"])
-
-            if agora > data_exp:
-                user["status"] = "expirado"
-                expirados.append(user)
-                continue
-
-        ativos.append(user)
-
-    dados["ativos"] = ativos
-    dados["expirados"] = expirados
-
-    salvar_pro(dados)
-    
-
 def carregar_contatos():
     url = f"https://api.github.com/repos/{REPO}/contents/contatos.json"
 
@@ -412,6 +388,30 @@ Valor: {valor}
 
     except Exception as e:
         print("Erro email PRO:", e)
+
+
+def verificar_expiracao():
+    dados = carregar_pro()
+    agora = datetime.now()
+
+    ativos = []
+    expirados = dados["expirados"]
+
+    for user in dados["ativos"]:
+        if user["expira_em"]:
+            data_exp = datetime.fromisoformat(user["expira_em"])
+
+            if agora > data_exp:
+                user["status"] = "expirado"
+                expirados.append(user)
+                continue
+
+        ativos.append(user)
+
+    dados["ativos"] = ativos
+    dados["expirados"] = expirados
+
+    salvar_pro(dados)
     
 
 def vagas_ativas():
@@ -474,52 +474,6 @@ def filtrar_vagas(vagas, user):
         resultado.append(v)
 
     return resultado
-    
-
-def salvar_usuario_pro_github(u):
-    try:
-        url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_PRO}"
-
-        headers = {
-            "Authorization": f"Bearer {GITHUB_TOKEN}",
-            "Accept": "application/vnd.github+json"
-        }
-
-        r = requests.get(url, headers=headers)
-
-        usuarios = []
-
-        sha = None
-
-        # se arquivo já existe
-        if r.status_code == 200:
-            data = r.json()
-            sha = data["sha"]
-
-            conteudo = base64.b64decode(data["content"]).decode("utf-8")
-            usuarios = json.loads(conteudo)
-
-        # adiciona usuário novo
-        usuarios.append(u)
-
-        novo_conteudo = base64.b64encode(
-            json.dumps(usuarios, indent=2).encode("utf-8")
-        ).decode("utf-8")
-
-        payload = {
-            "message": f"add user pro {u['email']}",
-            "content": novo_conteudo
-        }
-
-        if sha:
-            payload["sha"] = sha
-
-        resp = requests.put(url, headers=headers, json=payload)
-
-        print("GITHUB PRO UPDATE:", resp.status_code, resp.text)
-
-    except Exception as e:
-        print("ERRO GITHUB PRO:", e)
 
 
 @app.route("/sobre")
@@ -992,6 +946,8 @@ def pro():
 
 @app.route("/")
 def home():
+    verificar_expiracao()  # 🔥 ADICIONA AQUI
+    
     vagas = vagas_ativas()
 
     admin = request.args.get("admin") == ADMIN_TOKEN
@@ -1302,7 +1258,7 @@ def home():
         {% if admin %}
         <p>
         <a href="/admin/pro?admin={{token}}">
-        💰 Gerenciar PRO
+        💰 Gerenciar PRO  ({{ total_pro_pendentes }})
         </a>
         </p>
         {% endif %}
@@ -1310,7 +1266,7 @@ def home():
         {% if admin %}
         <p>
         <a href="/admin/ocultas?admin={{token}}">
-        ⚙️ Ver vagas ocultas
+        ⚙️ Ver vagas ocultas  ({{ total_ocultas }})
         </a>
         </p>
         {% endif %}
@@ -1586,6 +1542,12 @@ def home():
     dados_cont = carregar_contatos()
     total_contatos = len(dados_cont["contatos"])
 
+    dados_pro = carregar_pro()
+    total_pro_pendentes = len(dados_pro["pendentes"])
+
+    ocultas = vagas_ocultas()
+    total_ocultas = len(ocultas)
+
     return render_template_string(
         html,
         vagas=vagas,
@@ -1603,7 +1565,9 @@ def home():
         page_av=page_av,
         total_paginas_av=total_paginas_av,
         total_pendentes_av=total_pendentes_av,
-        total_contatos=total_contatos
+        total_contatos=total_contatos,
+        total_pro_pendentes=total_pro_pendentes,
+        total_ocultas=total_ocultas,
     )
 
 
