@@ -195,6 +195,7 @@ def carregar_avaliacoes():
         dados["excluidas"] = []
 
     return dados
+    
 
 def salvar_avaliacoes(dados):
     url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_AVALIACOES}"
@@ -216,6 +217,33 @@ def salvar_avaliacoes(dados):
     }
 
     requests.put(url, headers=headers, json=payload)
+    
+
+def enviar_email_avaliacao(nome, comentario, estrelas):
+    try:
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {RESEND_API_KEY}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "from": "onboarding@resend.dev",
+                "to": [EMAIL_USER],
+                "subject": "⭐ Nova avaliação recebida",
+                "text": f"""
+Nome: {nome}
+Estrelas: {estrelas}
+Comentário:
+{comentario}
+"""
+            }
+        )
+
+        print("AVALIACAO EMAIL:", response.status_code)
+
+    except Exception as e:
+        print("Erro email avaliação:", e)
     
 
 def verificar_expiracao():
@@ -357,6 +385,33 @@ def salvar_pro(dados):
     }
 
     requests.put(url, headers=headers, json=payload)
+    
+
+def enviar_email_solicitacao_pro(nome, email, tipo, valor):
+    try:
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {RESEND_API_KEY}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "from": "onboarding@resend.dev",
+                "to": [EMAIL_USER],
+                "subject": "💎 Nova solicitação PRO",
+                "text": f"""
+Nome: {nome}
+Email: {email}
+Filtro: {tipo}
+Valor: {valor}
+"""
+            }
+        )
+
+        print("PRO EMAIL:", response.status_code)
+
+    except Exception as e:
+        print("Erro email PRO:", e)
     
 
 def vagas_ativas():
@@ -1675,6 +1730,8 @@ def avaliar():
 
     salvar_avaliacoes(dados)
 
+    enviar_email_avaliacao(nome, comentario, estrelas)
+
     return redirect("/?msg=ok")
 
 
@@ -1962,6 +2019,8 @@ def assinar_pro():
     dados["pendentes"].append(novo)
 
     salvar_pro(dados)
+
+    enviar_email_solicitacao_pro(nome, email, tipo, valor)
 
     return """
     <h2>✅ Solicitação recebida!</h2>
