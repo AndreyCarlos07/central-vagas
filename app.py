@@ -9,12 +9,10 @@ import time
 from flask import Flask, redirect, render_template_string, request
 import smtplib
 from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 import json
 import base64
 import requests
 import uuid
-import threading
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
@@ -427,86 +425,50 @@ def filtrar_vagas(vagas, user):
     return resultado
     
 
-def enviar_vagas_pro():
-
-    verificar_expiracao()
-
-    dados = carregar_pro()
-    vagas = vagas_ativas()
-
-    for user in dados["ativos"]:
-
-        vagas_filtradas = filtrar_vagas(vagas, user)
-
-        if not vagas_filtradas:
-            continue
-
-        lista = "\n".join([
-            f"{v['titulo']} - {v['empresa']}\n{v['link']}"
-            for v in vagas_filtradas[:10]
-        ])
-
-        msg = MIMEText(f"Vagas para você:\n\n{lista}")
-
-        msg["Subject"] = "Novas vagas para você"
-        msg["From"] = EMAIL_USER
-        msg["To"] = user["email"]
-
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
-        server.login(EMAIL_USER, EMAIL_PASS)
-        server.send_message(msg)
-        server.quit()
-        
-
-def enviar_email_boas_vindas(user):
-    print("CHEGUEI NA FUNÇÃO EMAIL")
-    print("EMAIL:", user["email"])
-
-    vagas = vagas_ativas()
-    vagas_filtradas = filtrar_vagas(vagas, user)
-
-    lista = ""
-
-    for v in vagas_filtradas[:10]:
-        lista += (
-            "<li>"
-            "<strong>" + v["titulo"] + "</strong><br>"
-            + v["empresa"] + "<br>"
-            + "<a href='" + v["link"] + "'>Ver vaga</a>"
-            "</li>"
-        )
-
-    html = (
-        "<h2>🚀 Acesso PRO ativado!</h2>"
-        "<p>Olá, " + user["nome"] + " 👋</p>"
-        "<p>Seu acesso foi ativado com sucesso.</p>"
-        "<h3>📌 Vagas para você:</h3>"
-        "<ul>" + lista + "</ul>"
-        "<p>A partir de hoje você receberá diariamente novas oportunidades no seu email.</p>"
-    )
-
-    print("ENVIANDO EMAIL PARA:", user["email"])
-    print("VAGAS ENCONTRADAS:", len(vagas_filtradas))
-
-    msg = MIMEText(html, "html")
-    msg["Subject"] = "🚀 Seu acesso PRO foi ativado!"
-    msg["From"] = EMAIL_USER
-    msg["To"] = user["email"]
-
+def salvar_usuario_pro_github(u):
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
-        server.login(EMAIL_USER, EMAIL_PASS)
-        server.send_message(msg)
-        server.quit()
-    except Exception as e:
-        print("ERRO AO ENVIAR EMAIL:", e)
+        url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_PRO}"
 
+        headers = {
+            "Authorization": f"Bearer {GITHUB_TOKEN}",
+            "Accept": "application/vnd.github+json"
+        }
+
+        r = requests.get(url, headers=headers)
+
+        usuarios = []
+
+        sha = None
+
+        # se arquivo já existe
+        if r.status_code == 200:
+            data = r.json()
+            sha = data["sha"]
+
+            conteudo = base64.b64decode(data["content"]).decode("utf-8")
+            usuarios = json.loads(conteudo)
+
+        # adiciona usuário novo
+        usuarios.append(u)
+
+        novo_conteudo = base64.b64encode(
+            json.dumps(usuarios, indent=2).encode("utf-8")
+        ).decode("utf-8")
+
+        payload = {
+            "message": f"add user pro {u['email']}",
+            "content": novo_conteudo
+        }
+
+        if sha:
+            payload["sha"] = sha
+
+        resp = requests.put(url, headers=headers, json=payload)
+
+        print("GITHUB PRO UPDATE:", resp.status_code, resp.text)
+
+    except Exception as e:
+        print("ERRO GITHUB PRO:", e)
 
 
 @app.route("/sobre")
@@ -2085,10 +2047,8 @@ def ativar_pro(id):
     for u in dados["pendentes"]:
         if str(u["id"]) == str(id):
 
-            print("CHEGUEI NO LOOP")
-            print("USUARIO:", u)
             print("ATIVANDO USUARIO:", u["email"])
-            
+
             dados["pendentes"].remove(u)
 
             u["status"] = "ativo"
@@ -2097,10 +2057,9 @@ def ativar_pro(id):
 
             dados["ativos"].append(u)
 
-            print("ANTES DE ENVIAR EMAIL")
-            # 🔥 NÃO BLOQUEIA O SITE
-            #threading.Thread(target=enviar_email_boas_vindas,args=(u,)).start()
-            #print("DEPOIS DE ENVIAR EMAIL")
+            # 🔥 AQUI É O NOVO FLUXO
+            salvar_usuario_pro_github(u)
+
             break
 
     salvar_pro(dados)
