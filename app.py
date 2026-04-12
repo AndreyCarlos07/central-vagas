@@ -813,6 +813,9 @@ def pro():
         </style>
     </head>
     <body>
+
+    <div class="box">
+        
         <h2>💎 Versão PRO</h2>
 
         <p>
