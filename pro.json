@@ -10,6 +10,17 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-11T16:55:37.882357"
+    },
+    {
+      "id": "e0f44b09",
+      "nome": "Valber Assis",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-12T02:17:51.666423"
     }
   ],
   "ativos": [
