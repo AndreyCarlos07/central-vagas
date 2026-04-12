@@ -809,6 +809,15 @@ def pro():
                 border:none;
                 border-radius:5px;
             }
+
+            .top-buttons a {
+                background: #0066cc;
+                color: white;
+                padding: 10px 15px;
+                border-radius: 6px;
+                text-decoration: none;
+                margin-right: 10px;
+            }
         </style>
     </head>
     <body>
