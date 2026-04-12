@@ -1567,7 +1567,7 @@ def home():
         total_pendentes_av=total_pendentes_av,
         total_contatos=total_contatos,
         total_pro_pendentes=total_pro_pendentes,
-        total_ocultas=total_ocultas,
+        total_ocultas=total_ocultas
     )
 
 
