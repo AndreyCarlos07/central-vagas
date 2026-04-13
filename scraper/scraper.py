@@ -1879,39 +1879,39 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     valor = user.get("valor")
 
     def criar_card(v):
-    logo_url = get_logo_url(v["empresa"])
+        logo_url = get_logo_url(v["empresa"])
 
-    return (
-        '<div style="border:1px solid #e1e1e1;padding:10px;margin-bottom:8px;border-radius:8px;">'
+        return (
+            '<div style="border:1px solid #e1e1e1;padding:10px;margin-bottom:8px;border-radius:8px;">'
 
-        '<div style="display:flex;align-items:center;justify-content:space-between;">'
+            '<div style="display:flex;align-items:center;justify-content:space-between;">'
 
-        # 🔥 BLOCO ESQUERDA (logo + textos)
-        '<div style="display:flex;align-items:center;gap:10px;">'
+            # 🔥 BLOCO ESQUERDA (logo + textos)
+            '<div style="display:flex;align-items:center;gap:10px;">'
 
-        f'<img src="{logo_url}" width="45" height="45" '
-        'onerror="this.style.display=\'none\'" '
-        'style="border-radius:6px;object-fit:contain;">'
+            f'<img src="{logo_url}" width="45" height="45" '
+            'onerror="this.style.display=\'none\'" '
+            'style="border-radius:6px;object-fit:contain;">'
 
-        '<div style="max-width:260px;">'
+            '<div style="max-width:260px;">'
 
-        f'<p style="margin:0;font-weight:bold;color:#0a66c2;font-size:13px;">{v["titulo"]}</p>'
-        f'<p style="margin:2px 0;font-size:12px;">Empresa: <b>{v["empresa"]}</b></p>'
+            f'<p style="margin:0;font-weight:bold;color:#0a66c2;font-size:13px;">{v["titulo"]}</p>'
+            f'<p style="margin:2px 0;font-size:12px;">Empresa: <b>{v["empresa"]}</b></p>'
 
-        '</div>'
-        '</div>'
+            '</div>'
+            '</div>'
 
-        # 🔥 BOTÃO DIREITA
-        f'<a href="{v["link"]}" target="_blank" '
-        'style="padding:8px 12px;'
-        'background:#0a66c2;color:white;text-decoration:none;'
-        'border-radius:5px;font-size:12px;white-space:nowrap;">'
-        'Ver vaga'
-        '</a>'
+            # 🔥 BOTÃO DIREITA
+            f'<a href="{v["link"]}" target="_blank" '
+            'style="padding:8px 12px;'
+            'background:#0a66c2;color:white;text-decoration:none;'
+            'border-radius:5px;font-size:12px;white-space:nowrap;">'
+            'Ver vaga'
+            '</a>'
 
-        '</div>'
-        '</div>'
-    )
+            '</div>'
+            '</div>'
+        )
     
     partes = []
 
