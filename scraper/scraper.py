@@ -1872,20 +1872,24 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
 
     def criar_card(v):
         return (
-            '<div style="border:1px solid #e1e1e1;padding:15px;margin-bottom:10px;border-radius:10px;">'
-            f'<h3 style="margin:0;color:#0a66c2;">{v["titulo"]}</h3>'
-            f'<p style="margin:5px 0;"><b>{v["empresa"]}</b></p>'
+            '<div style="border:1px solid #e1e1e1;padding:10px;margin-bottom:8px;border-radius:8px;">'
+
+            f'<p style="margin:0;font-weight:bold;color:#0a66c2;font-size:14px;">{v["titulo"]}</p>'
+
+            f'<p style="margin:3px 0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
+
             f'<a href="{v["link"]}" target="_blank" '
-            'style="display:inline-block;margin-top:10px;padding:10px 15px;'
-            'background:#0a66c2;color:white;text-decoration:none;border-radius:5px;">'
-            'Ver vaga'
+            'style="display:inline-block;margin-top:6px;font-size:12px;'
+            'color:#0a66c2;text-decoration:none;">'
+            'Ver vaga →'
             '</a>'
+
             '</div>'
         )
 
     partes = []
 
-    # HTML início
+    # HTML início    
     partes.append('<html>')
     partes.append('<body style="font-family:Arial;background:#f4f6f8;padding:20px;">')
     partes.append('<div style="max-width:600px;margin:auto;background:white;padding:20px;border-radius:10px;">')
@@ -1897,15 +1901,39 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
 
     # NOVAS VAGAS
     if vagas_novas:
-        partes.append('<h2>🔥 Novas vagas para você</h2>')
+        partes.append('<h2>🔥 Novas vagas para você:</h2>')
         for v in vagas_novas[:10]:
             partes.append(criar_card(v))
 
+    else:
+        partes.append(
+            '<p style="background:#fff3cd;padding:10px;border-radius:5px;">'
+            '📭 Após busca, não houve vagas novas hoje para o seu perfil.'
+            '</p>'
+        )
+
     # LISTA NORMAL
-    partes.append('<h2>📌 Vagas recomendadas</h2>')
+    tem_mais_vagas = len(vagas_filtradas) > 20
+
+    botao_extra = ""
+
+    if tem_mais_vagas:
+        botao_extra = (
+            f'<p style="text-align:center;margin-top:20px;">'
+            f'<a href="https://central-vagas.onrender.com/?q={valor}&ordem=recentes" '
+            'style="padding:10px 18px;background:#0a66c2;color:white;'
+            'text-decoration:none;border-radius:5px;font-size:13px;">'
+            'Ver todas as vagas do seu perfil'
+            '</a>'
+            '</p>'
+        )
+    
+    partes.append('<h2>📌 Resumo de vagas no seu perfil:</h2>')
     for v in vagas_filtradas[:20]:
         partes.append(criar_card(v))
-
+        
+    partes.append(botao_extra)
+    
     # FINAL
     partes.append('<hr>')
     partes.append(
