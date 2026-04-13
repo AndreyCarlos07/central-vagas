@@ -1884,36 +1884,26 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
         return (
             '<div style="border:1px solid #e1e1e1;padding:10px;margin-bottom:8px;border-radius:8px;">'
 
-            '<div style="display:flex;align-items:flex-start;">'
-
-            # 🔥 COLUNA ESQUERDA (logo + botão)
-            #'<div style="display:flex;flex-direction:column;align-items:center;margin-right:12px;">'
+            '<div style="display:flex;align-items:center;gap:14px;">'
 
             f'<img src="{logo_url}" width="50" height="50" '
-            'onerror="this.style.display=\'none\'" '
-            'style="border-radius:6px;object-fit:contain;margin-bottom:6px;">'
+            'style="border-radius:6px;object-fit:contain;">'
+    
+            '<div style="flex:1;">'
+    
+            f'<p style="margin:0 0 6px 0;font-weight:bold;color:#0a66c2;font-size:14px;line-height:1.2;">{v["titulo"]}</p>'
+            f'<p style="margin:0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
+
+            '</div>'
+            '</div>'
 
             f'<a href="{v["link"]}" target="_blank" '
-            'style="display:inline-block;margin-top:8px;padding:6px 12px;'
+            'style="display:inline-block;margin-top:10px;padding:6px 12px;'
             'background:#0a66c2;color:white;text-decoration:none;'
             'border-radius:4px;font-size:12px;">'
             'Ver vaga'
             '</a>'
-
-        '</div>'
-
-            '</div>'
-
-            # 🔥 COLUNA DIREITA (texto)
-            '<div style="flex:1;">'
-
-            f'<p style="margin:0 0 5px 0;font-weight:bold;color:#0a66c2;font-size:13px;">{v["titulo"]}</p>'
-
-            f'<p style="margin:0;font-size:12px;">Empresa: <b>{v["empresa"]}</b></p>'
-
-            '</div>'
-
-            '</div>'
+    
             '</div>'
         )
     
