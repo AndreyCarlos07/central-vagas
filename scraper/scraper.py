@@ -1860,6 +1860,14 @@ def carregar_ocultas():
 def remover_ocultas(vagas, ocultas):
     return [v for v in vagas if v["id"] not in ocultas]
 
+# ===========================
+# LOGOS EMAIL INDIVIDUAL
+# ===========================
+
+def get_logo_url(empresa):
+    nome = empresa.lower().replace(" ", "").replace("-", "")
+    return f"https://raw.githubusercontent.com/AndreyCarlos07/central-vagas/main/logos/{nome}.png"
+
 
 # ===========================
 # GERAR RELATÓRIO INDIVIDUAL
@@ -1871,22 +1879,35 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     valor = user.get("valor")
 
     def criar_card(v):
+        logo_url = get_logo_url(v["empresa"])
+
         return (
             '<div style="border:1px solid #e1e1e1;padding:10px;margin-bottom:8px;border-radius:8px;">'
 
-            f'<p style="margin:0;font-weight:bold;color:#0a66c2;font-size:14px;">{v["titulo"]}</p>'
+            '<div style="display:flex;align-items:center;gap:10px;">'
 
+            f'<img src="{logo_url}" width="40" height="40" '
+            'onerror="this.style.display=\'none\'" '
+            'style="border-radius:6px;object-fit:contain;">'
+
+            '<div>'
+
+            f'<p style="margin:0;font-weight:bold;color:#0a66c2;font-size:14px;">{v["titulo"]}</p>'
             f'<p style="margin:3px 0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
 
+            '</div>'
+            '</div>'
+
             f'<a href="{v["link"]}" target="_blank" '
-            'style="display:inline-block;margin-top:6px;font-size:12px;'
-            'color:#0a66c2;text-decoration:none;">'
-            'Ver vaga →'
+            'style="display:inline-block;margin-top:8px;padding:6px 12px;'
+            'background:#0a66c2;color:white;text-decoration:none;'
+            'border-radius:4px;font-size:12px;">'
+            'Ver vaga'
             '</a>'
 
             '</div>'
         )
-
+    
     partes = []
 
     # HTML início    
@@ -1900,8 +1921,9 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     partes.append(f'<p>📊 Total de vagas: {len(vagas_filtradas)}</p>')
 
     # NOVAS VAGAS
+    partes.append('<h2>🔥 Novas vagas para você:</h2>')
+    
     if vagas_novas:
-        partes.append('<h2>🔥 Novas vagas para você:</h2>')
         for v in vagas_novas[:10]:
             partes.append(criar_card(v))
 
@@ -1912,23 +1934,24 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             '</p>'
         )
 
-    # LISTA NORMAL
+    # RESUMO VAGAS
     tem_mais_vagas = len(vagas_filtradas) > 20
 
     botao_extra = ""
 
     if tem_mais_vagas:
         botao_extra = (
-            f'<p style="text-align:center;margin-top:20px;">'
+            f'<div style="margin-top:15px;">'
             f'<a href="https://central-vagas.onrender.com/?q={valor}&ordem=recentes" '
-            'style="padding:10px 18px;background:#0a66c2;color:white;'
-            'text-decoration:none;border-radius:5px;font-size:13px;">'
+            'style="padding:8px 14px;background:#0a66c2;color:white;'
+            'text-decoration:none;border-radius:4px;font-size:12px;">'
             'Ver todas as vagas do seu perfil'
             '</a>'
-            '</p>'
+            '</div>'
         )
     
     partes.append('<h2>📌 Resumo de vagas no seu perfil:</h2>')
+    
     for v in vagas_filtradas[:20]:
         partes.append(criar_card(v))
         
@@ -1941,7 +1964,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
         '<a href="https://central-vagas.onrender.com/" '
         'style="padding:12px 20px;background:#28a745;color:white;'
         'text-decoration:none;border-radius:5px;">'
-        'Ver mais vagas no site'
+        'Ver outras vagas no site'
         '</a>'
         '</p>'
     )
