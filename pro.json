@@ -47,17 +47,6 @@
   ],
   "ativos": [
     {
-      "id": "5749e864",
-      "nome": "Andrey Carlos",
-      "email": "ddi_100@hotmail.com",
-      "tipo_filtro": "nivel",
-      "valor": "junior",
-      "status": "ativo",
-      "data_inicio": "2026-04-13T10:40:56.604897",
-      "expira_em": "2026-05-13T10:40:56.604907",
-      "data_criacao": "2026-04-13T10:39:55.621317"
-    },
-    {
       "id": "0c40d6df",
       "nome": "Andrey Batist",
       "email": "andrey.engenhariamecatronica@gmail.com",
@@ -91,6 +80,17 @@
       "data_inicio": "2026-04-11T15:34:09.611768",
       "expira_em": "2026-05-11T15:34:09.611778",
       "data_criacao": "2026-04-11T15:17:00.337804"
+    },
+    {
+      "id": "5749e864",
+      "nome": "Andrey Carlos",
+      "email": "ddi_100@hotmail.com",
+      "tipo_filtro": "nivel",
+      "valor": "junior",
+      "status": "expirado",
+      "data_inicio": "2026-04-13T10:40:56.604897",
+      "expira_em": "2026-05-13T10:40:56.604907",
+      "data_criacao": "2026-04-13T10:39:55.621317"
     }
   ]
 }
