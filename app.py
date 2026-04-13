@@ -440,43 +440,6 @@ def vagas_ativas():
     except FileNotFoundError:
         pass
     return vagas
-    
-
-def filtrar_vagas(vagas, user):
-    resultado = []
-
-    for v in vagas:
-        titulo = v["titulo"].lower()
-
-        # NÍVEL
-        if user.get("tipo_filtro") == "nivel":
-            palavras = MAPA_NIVEL.get(user.get("valor"), [])
-
-            if not any(p in titulo for p in palavras):
-                continue
-
-        # HIERARQUIA
-        elif user.get("tipo_filtro") == "hierarquia":
-            palavras = MAPA_HIERARQUIA.get(user.get("valor"), [])
-
-            if not any(p in titulo for p in palavras):
-                continue
-
-        # EMPRESA
-        elif user.get("tipo_filtro") == "empresa":
-            if v["empresa"] not in user.get("valor", []):
-                continue
-
-        # ÁREA
-        elif user.get("tipo_filtro") == "area":
-            palavras = MAPA_AREA.get(user.get("valor"), [])
-
-            if not any(p in titulo for p in palavras):
-                continue
-
-        resultado.append(v)
-
-    return resultado
 
 
 @app.route("/sobre")
@@ -2081,9 +2044,6 @@ def ativar_pro(id):
             u["expira_em"] = (datetime.now() + timedelta(days=30)).isoformat()
 
             dados["ativos"].append(u)
-
-            # 🔥 AQUI É O NOVO FLUXO
-            salvar_usuario_pro_github(u)
 
             break
 
