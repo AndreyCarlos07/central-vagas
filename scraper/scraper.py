@@ -1884,37 +1884,38 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
         return (
             '<div style="border:1px solid #e1e1e1;padding:10px;margin-bottom:8px;border-radius:8px;">'
 
-            '<div style="display:flex;align-items:center;justify-content:space-between;">'
+            '<div style="display:flex;align-items:flex-start;">'
 
-            # 🔥 BLOCO ESQUERDA (logo + textos)
-            '<div style="display:flex;align-items:center;gap:10px;">'
+            # 🔥 COLUNA ESQUERDA (logo + botão)
+            '<div style="display:flex;flex-direction:column;align-items:center;margin-right:12px;">'
 
-            f'<img src="{logo_url}" width="45" height="45" '
+            f'<img src="{logo_url}" width="50" height="50" '
             'onerror="this.style.display=\'none\'" '
-            'style="border-radius:6px;object-fit:contain;">'
+            'style="border-radius:6px;object-fit:contain;margin-bottom:6px;">'
 
-            '<div style="max-width:260px;">'
-
-            f'<p style="margin:0;font-weight:bold;color:#0a66c2;font-size:13px;">{v["titulo"]}</p>'
-            f'<p style="margin:2px 0;font-size:12px;">Empresa: <b>{v["empresa"]}</b></p>'
-
-            '</div>'
-            '</div>'
-
-            # 🔥 BOTÃO DIREITA
             f'<a href="{v["link"]}" target="_blank" '
-            'style="padding:8px 12px;'
-            'background:#0a66c2;color:white;text-decoration:none;'
-            'border-radius:5px;font-size:12px;white-space:nowrap;">'
+            'style="padding:6px 10px;background:#0a66c2;color:white;'
+            'text-decoration:none;border-radius:5px;font-size:11px;">'
             'Ver vaga'
             '</a>'
+
+            '</div>'
+
+            # 🔥 COLUNA DIREITA (texto)
+            '<div style="flex:1;">'
+
+            f'<p style="margin:0 0 5px 0;font-weight:bold;color:#0a66c2;font-size:13px;">{v["titulo"]}</p>'
+
+            f'<p style="margin:0;font-size:12px;">Empresa: <b>{v["empresa"]}</b></p>'
+
+            '</div>'
 
             '</div>'
             '</div>'
         )
     
     partes = []
-
+ 
     # HTML início    
     partes.append('<html>')
     partes.append('<body style="font-family:Arial;background:#f4f6f8;padding:20px;">')
