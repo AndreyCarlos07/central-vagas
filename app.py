@@ -65,14 +65,6 @@ PALAVRAS_BLOQUEADAS = {
 # MAPAS DE FILTRO PRO
 # ==========================
 
-MAPA_NIVEL = {
-    "jovem_aprendiz": ["jovem aprendiz", "aprendiz"],
-    "estagio": ["estagio", "estagiário", "estagiária"],
-    "junior": ["junior", "jr", "jr.", " i ", " i-", " i/"],
-    "pleno": ["pleno", "pl", "pl.", " ii ", " ii-", " ii/"],
-    "senior": ["senior", "sr", "sr.", " iii", " iv", " v"]
-}
-
 MAPA_HIERARQUIA = {
     "diretor": ["diretor"],
     "gerente": ["gerente", "lider", "líder", "gestor", "head"],
@@ -85,7 +77,9 @@ MAPA_HIERARQUIA = {
     "inspetor": ["inspetor"],
     "operador": ["operador"],
     "auxiliar": ["auxiliar", "conferente", "abastecedor", "alimentador"],
-    "assistente": ["assistente", "conferente", "abastecedor", "alimentador"]
+    "assistente": ["assistente", "conferente", "abastecedor", "alimentador"],
+    "jovem_aprendiz": ["jovem aprendiz", "aprendiz"],
+    "estagio": ["estagio", "estágio", "estagiário", "estagiária"]
 }
 
 MAPA_AREA = {
@@ -794,26 +788,12 @@ def pro():
 
             <select name="tipo_filtro" id="tipo_filtro" onchange="mostrarCampos()" required>
                 <option value="">Selecione</option>
-                <option value="nivel">Por nível</option>
                 <option value="hierarquia">Por hierarquia</option>
                 <option value="empresa">Por empresa</option>
             <option value="area">Por área</option>
             </select>
 
             <br><br>
-
-            <!-- NÍVEL -->
-            <div id="campo_nivel" style="display:none;">
-                <p>📌 Você receberá vagas conforme o nível escolhido</p>
-                <select name="nivel">
-                    <option value="">Selecione</option>
-                    <option value="jovem_aprendiz">Jovem Aprendiz</option>
-                    <option value="estagio">Estágio</option>
-                    <option value="junior">Júnior</option>
-                    <option value="pleno">Pleno</option>
-                    <option value="senior">Sênior</option>
-                </select>
-            </div>
 
             <!-- HIERARQUIA -->
             <div id="campo_hierarquia" style="display:none;">
@@ -832,6 +812,8 @@ def pro():
                     <option value="operador">Operador</option>
                     <option value="auxiliar">Auxiliar</option>
                     <option value="assistente">Assistente</option>
+                    <option value="jovem_aprendiz">Jovem Aprendiz</option>
+                    <option value="estagio">Estágio</option>
                 </select>
             </div>
 
@@ -873,15 +855,11 @@ def pro():
         function mostrarCampos() {
             let tipo = document.getElementById("tipo_filtro").value;
 
-            document.getElementById("campo_nivel").style.display = "none";
             document.getElementById("campo_hierarquia").style.display = "none";
             document.getElementById("campo_empresa").style.display = "none";
             document.getElementById("campo_area").style.display = "none";
 
-            if (tipo === "nivel") {
-                document.getElementById("campo_nivel").style.display = "block";
-            }
-            else if (tipo === "hierarquia") {
+            if (tipo === "hierarquia") {
                 document.getElementById("campo_hierarquia").style.display = "block";
             }
             else if (tipo === "empresa") {
@@ -1920,10 +1898,7 @@ def assinar_pro():
 
     valor = None
 
-    if tipo == "nivel":
-        valor = request.form.get("nivel")
-
-    elif tipo == "hierarquia":
+    if tipo == "hierarquia":
         valor = request.form.get("hierarquia")
 
     elif tipo == "empresa":
