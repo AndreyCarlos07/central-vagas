@@ -26,6 +26,7 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 REPO = "AndreyCarlos07/central-vagas"
 ARQUIVO_BACKUP = "vagas_backup.csv"
 ARQUIVO_PRO = "pro.json"
+ARQUIVO = "vagas_ocultas.json"
 
 # ===========================
 # DEBUG CONFIG
@@ -1822,11 +1823,33 @@ def coletar_inhire(site):
 # ===========================
 # REMOVER OCULTAS EMAIL INDIVIDUAL
 # ===========================
-def remover_ocultas(vagas):
-    ocultas = carregar_ocultas()  # JSON ou lista
-    links_ocultos = {v["link"] for v in ocultas}
+def carregar_ocultas():
 
-    return [v for v in vagas if v["link"] not in links_ocultos]
+    url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO}"
+
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}"
+    }
+
+    try:
+        r = requests.get(url, headers=headers)
+
+        if r.status_code != 200:
+            print("⚠️ erro ao carregar vagas ocultas")
+            return set()
+
+        data = r.json()
+        conteudo = base64.b64decode(data["content"]).decode("utf-8")
+
+        json_data = json.loads(conteudo)
+
+        # 🔥 AGORA PEGANDO DO FORMATO CORRETO
+        return set(json_data.get("ocultas", []))
+
+    except Exception as e:
+        print("❌ erro ao processar vagas ocultas:", e)
+        return set()
+        
 
 # ===========================
 # GERAR RELATÓRIO INDIVIDUAL
@@ -2156,6 +2179,8 @@ def main():
     try:
         usuarios = carregar_usuarios_pro_github()
 
+        ocultas = carregar_ocultas()
+
         print(f"\n👑 Enviando vagas para {len(usuarios)} usuários PRO...")
 
         for user in usuarios:
@@ -2164,8 +2189,8 @@ def main():
 
                 vagas_filtradas = filtrar_vagas_usuario(historico_atualizado, user)
                 vagas_novas_user = filtrar_vagas_usuario(novas_vagas_execucao, user)
-                vagas_filtradas = remover_ocultas(vagas_filtradas)
-                vagas_novas_user = remover_ocultas(vagas_novas_user)
+                vagas_filtradas = remover_ocultas(vagas_filtradas, ocultas)
+                vagas_novas_user = remover_ocultas(vagas_novas_user, ocultas)
 
                 if not vagas_filtradas:
                     print(f"⚠️ Nenhuma vaga para {email}")
