@@ -32,17 +32,6 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-12T23:09:33.363616"
-    },
-    {
-      "id": "5749e864",
-      "nome": "Andrey Carlos",
-      "email": "ddi_100@hotmail.com",
-      "tipo_filtro": "nivel",
-      "valor": "junior",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-13T10:39:55.621317"
     }
   ],
   "ativos": [
@@ -56,6 +45,17 @@
       "data_inicio": "2026-04-13T08:42:43.600883",
       "expira_em": "2026-05-13T08:42:43.600896",
       "data_criacao": "2026-04-13T08:25:59.526023"
+    },
+    {
+      "id": "5749e864",
+      "nome": "Andrey Carlos",
+      "email": "ddi_100@hotmail.com",
+      "tipo_filtro": "nivel",
+      "valor": "junior",
+      "status": "ativo",
+      "data_inicio": "2026-04-13T10:40:56.604897",
+      "expira_em": "2026-05-13T10:40:56.604907",
+      "data_criacao": "2026-04-13T10:39:55.621317"
     }
   ],
   "expirados": [
