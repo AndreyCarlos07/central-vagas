@@ -14,13 +14,14 @@ import base64
 import smtplib
 import re
 import unicodedata
+import json
 from email.mime.text import MIMEText
 from datetime import datetime
+
 
 # ===========================
 # BACKUP CONFIG
 # ===========================
-
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 REPO = "AndreyCarlos07/central-vagas"
 ARQUIVO_BACKUP = "vagas_backup.csv"
@@ -28,11 +29,64 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "WHITE MARTINS"]
 
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
+
+# ===========================
+# CARREGAR USUÁRIOS PRO
+# ===========================
+ARQUIVO_PRO = "pro.json"
+
+def carregar_usuarios_pro():
+    if not os.path.exists(ARQUIVO_PRO):
+        return []
+
+    with open(ARQUIVO_PRO, "r", encoding="utf-8") as f:
+        dados = json.load(f)
+
+    return dados.get("ativos", [])
+
+# ==========================
+# MAPAS DE FILTRO PRO
+# ==========================
+MAPA_NIVEL = {
+    "jovem_aprendiz": ["jovem aprendiz", "aprendiz"],
+    "estagio": ["estagio", "estagiário", "estagiária"],
+    "junior": ["junior", "jr", "jr.", " i ", " i-", " i/"],
+    "pleno": ["pleno", "pl", "pl.", " ii ", " ii-", " ii/"],
+    "senior": ["senior", "sr", "sr.", " iii", " iv", " v"]
+}
+
+MAPA_HIERARQUIA = {
+    "diretor": ["diretor"],
+    "gerente": ["gerente", "lider", "líder", "gestor", "head"],
+    "coordenador": ["coordenador", "lider", "líder", "gestor"],
+    "supervisor": ["supervisor", "lider", "líder", "chefe"],
+    "especialista": ["especialista"],
+    "engenheiro": ["engenheiro"],
+    "analista": ["analista"],
+    "tecnico": ["tecnico", "técnico", "manutenedor", "reparador", "planejador"],
+    "inspetor": ["inspetor"],
+    "operador": ["operador"],
+    "auxiliar": ["auxiliar", "conferente", "abastecedor", "alimentador"],
+    "assistente": ["assistente", "conferente", "abastecedor", "alimentador"]
+}
+
+MAPA_AREA = {
+    "manutencao": ["manutencao", "manutenção", "automacao", "automação", "robô", "robo", "roboticista", "instrumentação", "instrumentacao", "eletrica", "elétrica", "eletricista", "mecanica", "mecânica", "soldador", "solda", "corte", "ferramentaria", "soldagem", "refrigeracao"],
+    "producao": ["producao", "produção"],
+    "produto": ["produto"],
+    "projeto": ["projeto"],
+    "operacao": ["operacao", "operacional"],
+    "administracao": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner"],
+    "marketing": ["marketing"],
+    "qualidade": ["qualidade", "qa", "segurança", "meio ambiente", "químico", "trabalho"],
+    "logistica": ["logística", "logistica", "estoque", "almoxarifado", "estoquista"],
+    "civil": ["civil", "obras", "obra"]
+}
 
 # ===========================
 # CARREGAR HISTÓRICO
@@ -49,6 +103,45 @@ def carregar_historico():
                 links_existentes.add(row["link"])
 
     return vagas, links_existentes
+
+# ===========================
+# SELECIONAR VAGAS
+# ===========================
+def filtrar_vagas_usuario(vagas, user):
+    resultado = []
+
+    for v in vagas:
+        titulo = v["titulo"].lower()
+
+        tipo = user.get("tipo_filtro")
+        valor = user.get("valor")
+
+        # 🔹 HIERARQUIA
+        if tipo == "hierarquia":
+            palavras = MAPA_HIERARQUIA.get(valor, [])
+            if not any(p in titulo for p in palavras):
+                continue
+
+        # 🔹 ÁREA
+        elif tipo == "area":
+            palavras = MAPA_AREA.get(valor, [])
+            if not any(p in titulo for p in palavras):
+                continue
+
+        # 🔹 NÍVEL
+        elif tipo == "nivel":
+            palavras = MAPA_NIVEL.get(valor, [])
+            if not any(p in titulo for p in palavras):
+                continue
+
+        # 🔹 EMPRESA
+        elif tipo == "empresa":
+            if v["empresa"] not in valor:
+                continue
+
+        resultado.append(v)
+
+    return resultado
 
 
 # ===========================
@@ -1720,7 +1813,65 @@ def coletar_inhire(site):
     except Exception as e:
         print("❌ erro geral:", e)
         return vagas
+
+# ===========================
+# GERAR RELATÓRIO INDIVIDUAL
+# ===========================
+def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
+
+    nome = user.get("nome")
+    tipo = user.get("tipo_filtro")
+    valor = user.get("valor")
+
+    topo = ""
+
+    if vagas_novas:
+        topo += "🔥 VAGAS NOVAS (PRIORIDADE)\n\n"
+        for v in vagas_novas[:10]:
+            topo += f"{v['titulo']} - {v['empresa']}\n{v['link']}\n\n"
+
+    resumo = f"""
+Olá, {nome} 👋
+
+🎯 Filtro aplicado: {tipo.upper()} → {valor}
+
+📊 Total de vagas encontradas: {len(vagas_filtradas)}
+
+---------------------------------------
+
+{topo}
+
+📌 OUTRAS VAGAS DO SEU PERFIL:
+
+"""
+
+    for v in vagas_filtradas[:30]:
+        resumo += f"{v['titulo']} - {v['empresa']}\n{v['link']}\n\n"
+
+    resumo += "\n🚀 Central de Vagas PRO"
+
+    return resumo
+
+# ===========================
+# ENVIAR EMAIL INDIVIDUAL
+# ===========================
     
+def enviar_email_usuario(destinatario, mensagem):
+    remetente = os.getenv("EMAIL_USER")
+    senha = os.getenv("EMAIL_PASS")
+
+    msg = MIMEText(mensagem)
+    msg["Subject"] = "📊 Suas vagas personalizadas - Central de Vagas PRO"
+    msg["From"] = remetente
+    msg["To"] = destinatario
+
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login(remetente, senha)
+        server.send_message(msg)
+
+    print(f"📧 Email enviado para {destinatario}")
+
 
 # ===========================
 # GERAR RELATÓRIO GMAIL
@@ -1954,6 +2105,42 @@ def main():
     else:
         print(f"📌 Novas vagas encontradas: {len(novas_vagas_execucao)}")
         print(f"📌 Total no histórico: {len(historico_atualizado)}")
+
+    # ===========================
+    # VAGAS FILTRADAS
+    # ===========================
+
+    try:
+    usuarios = carregar_usuarios_pro()
+
+    print(f"\n👑 Enviando vagas para {len(usuarios)} usuários PRO...")
+
+    for user in usuarios:
+        try:
+            filtro = user.get("filtro")
+            email = user.get("email")
+            nome = user.get("nome")
+
+            vagas_filtradas = filtrar_vagas_usuario(historico_atualizado, user)
+            vagas_novas_user = filtrar_vagas_usuario(novas_vagas_execucao, user)
+
+            if not vagas_filtradas:
+                print(f"⚠️ Nenhuma vaga para {email}")
+                continue
+
+            relatorio = montar_relatorio_usuario(
+                nome,
+                vagas_filtradas,
+                vagas_novas_user
+            )
+
+            enviar_email_usuario(email, relatorio)
+
+        except Exception as e:
+            print(f"❌ erro ao processar usuário {user.get('email')}: {e}")
+
+except Exception as e:
+    print("❌ erro geral no envio PRO:", e)
 
 
 if __name__ == "__main__":
