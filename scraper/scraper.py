@@ -71,14 +71,6 @@ def carregar_usuarios_pro_github():
 # ==========================
 # MAPAS DE FILTRO PRO
 # ==========================
-MAPA_NIVEL = {
-    "jovem_aprendiz": ["jovem aprendiz", "aprendiz"],
-    "estagio": ["estagio", "estagiário", "estagiária"],
-    "junior": ["junior", "jr", "jr.", " i ", " i-", " i/"],
-    "pleno": ["pleno", "pl", "pl.", " ii ", " ii-", " ii/"],
-    "senior": ["senior", "sr", "sr.", " iii", " iv", " v"]
-}
-
 MAPA_HIERARQUIA = {
     "diretor": ["diretor"],
     "gerente": ["gerente", "lider", "líder", "gestor", "head"],
@@ -144,12 +136,6 @@ def filtrar_vagas_usuario(vagas, user):
         # 🔹 ÁREA
         elif tipo == "area":
             palavras = MAPA_AREA.get(valor, [])
-            if not any(p in titulo for p in palavras):
-                continue
-
-        # 🔹 NÍVEL
-        elif tipo == "nivel":
-            palavras = MAPA_NIVEL.get(valor, [])
             if not any(p in titulo for p in palavras):
                 continue
 
@@ -1834,6 +1820,15 @@ def coletar_inhire(site):
         return vagas
 
 # ===========================
+# REMOVER OCULTAS EMAIL INDIVIDUAL
+# ===========================
+def remover_ocultas(vagas):
+    ocultas = carregar_ocultas()  # JSON ou lista
+    links_ocultos = {v["link"] for v in ocultas}
+
+    return [v for v in vagas if v["link"] not in links_ocultos]
+
+# ===========================
 # GERAR RELATÓRIO INDIVIDUAL
 # ===========================
 def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
@@ -1842,35 +1837,60 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     tipo = user.get("tipo_filtro")
     valor = user.get("valor")
 
-    topo = ""
+    def criar_card(v):
+        return (
+            '<div style="border:1px solid #e1e1e1;padding:15px;margin-bottom:10px;border-radius:10px;">'
+            f'<h3 style="margin:0;color:#0a66c2;">{v["titulo"]}</h3>'
+            f'<p style="margin:5px 0;"><b>{v["empresa"]}</b></p>'
+            f'<a href="{v["link"]}" target="_blank" '
+            'style="display:inline-block;margin-top:10px;padding:10px 15px;'
+            'background:#0a66c2;color:white;text-decoration:none;border-radius:5px;">'
+            'Ver vaga'
+            '</a>'
+            '</div>'
+        )
 
+    partes = []
+
+    # HTML início
+    partes.append('<html>')
+    partes.append('<body style="font-family:Arial;background:#f4f6f8;padding:20px;">')
+    partes.append('<div style="max-width:600px;margin:auto;background:white;padding:20px;border-radius:10px;">')
+
+    partes.append('<h2>🚀 Central de Vagas PRO</h2>')
+    partes.append(f'<p>Olá, <b>{nome}</b> 👋</p>')
+    partes.append(f'<p>🎯 Filtro aplicado: {tipo.upper()} → {valor}</p>')
+    partes.append(f'<p>📊 Total de vagas: {len(vagas_filtradas)}</p>')
+
+    # NOVAS VAGAS
     if vagas_novas:
-        topo += "🔥 VAGAS NOVAS (PRIORIDADE)\n\n"
+        partes.append('<h2>🔥 Novas vagas para você</h2>')
         for v in vagas_novas[:10]:
-            topo += f"{v['titulo']} - {v['empresa']}\n{v['link']}\n\n"
+            partes.append(criar_card(v))
 
-    resumo = f"""
-Olá, {nome} 👋
+    # LISTA NORMAL
+    partes.append('<h2>📌 Vagas recomendadas</h2>')
+    for v in vagas_filtradas[:20]:
+        partes.append(criar_card(v))
 
-🎯 Filtro aplicado: {tipo.upper()} → {valor}
+    # FINAL
+    partes.append('<hr>')
+    partes.append(
+        '<p style="text-align:center;">'
+        '<a href="https://central-vagas.onrender.com/" '
+        'style="padding:12px 20px;background:#28a745;color:white;'
+        'text-decoration:none;border-radius:5px;">'
+        'Ver mais vagas no site'
+        '</a>'
+        '</p>'
+    )
 
-📊 Total de vagas encontradas: {len(vagas_filtradas)}
+    partes.append('</div>')
+    partes.append('</body>')
+    partes.append('</html>')
 
----------------------------------------
-
-{topo}
-
-📌 OUTRAS VAGAS DO SEU PERFIL:
-
-"""
-
-    for v in vagas_filtradas[:30]:
-        resumo += f"{v['titulo']} - {v['empresa']}\n{v['link']}\n\n"
-
-    resumo += "\n🚀 Central de Vagas PRO"
-
-    return resumo
-
+    return "".join(partes)
+    
 # ===========================
 # ENVIAR EMAIL INDIVIDUAL
 # ===========================
@@ -1883,7 +1903,7 @@ def enviar_email_usuario(destinatario, mensagem):
         print("🧪 DEBUG ATIVO → redirecionando email para você")
         destinatario = "andrey.engenhariamecatronica@gmail.com"
 
-    msg = MIMEText(mensagem)
+    msg = MIMEText(mensagem, "html")
     msg["Subject"] = "📊 Suas vagas personalizadas - Central de Vagas PRO"
     msg["From"] = remetente
     msg["To"] = destinatario
@@ -2144,6 +2164,8 @@ def main():
 
                 vagas_filtradas = filtrar_vagas_usuario(historico_atualizado, user)
                 vagas_novas_user = filtrar_vagas_usuario(novas_vagas_execucao, user)
+                vagas_filtradas = remover_ocultas(vagas_filtradas)
+                vagas_novas_user = remover_ocultas(vagas_novas_user)
 
                 if not vagas_filtradas:
                     print(f"⚠️ Nenhuma vaga para {email}")
