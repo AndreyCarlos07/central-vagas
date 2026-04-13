@@ -84,7 +84,9 @@ MAPA_HIERARQUIA = {
     "inspetor": ["inspetor"],
     "operador": ["operador"],
     "auxiliar": ["auxiliar", "conferente", "abastecedor", "alimentador"],
-    "assistente": ["assistente", "conferente", "abastecedor", "alimentador"]
+    "assistente": ["assistente", "conferente", "abastecedor", "alimentador"],
+    "jovem_aprendiz": ["jovem aprendiz", "aprendiz"],
+    "estagio": ["estagio", "estágio", "estagiário", "estagiária"]
 }
 
 MAPA_AREA = {
