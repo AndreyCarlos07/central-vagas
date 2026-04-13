@@ -1964,15 +1964,15 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     
     # FINAL
     partes.append('<hr>')
-        partes.append(
-            '<p style="text-align:center;margin-top:30px;">'
-            '<a href="https://central-vagas.onrender.com/" '
-            'style="padding:12px 20px;background:#28a745;color:white;'
-            'text-decoration:none;border-radius:5px;">'
-            'Ver outras vagas no site'
-            '</a>'
-            '</p>'
-        )
+    partes.append(
+        '<p style="text-align:center;margin-top:30px;">'
+        '<a href="https://central-vagas.onrender.com/" '
+        'style="padding:12px 20px;background:#28a745;color:white;'
+        'text-decoration:none;border-radius:5px;">'
+        'Ver outras vagas no site'
+        '</a>'
+        '</p>'
+    )
 
     partes.append('</div>')
     partes.append('</body>')
