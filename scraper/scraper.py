@@ -1879,34 +1879,39 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     valor = user.get("valor")
 
     def criar_card(v):
-        logo_url = get_logo_url(v["empresa"])
+    logo_url = get_logo_url(v["empresa"])
 
-        return (
-            '<div style="border:1px solid #e1e1e1;padding:10px;margin-bottom:8px;border-radius:8px;">'
+    return (
+        '<div style="border:1px solid #e1e1e1;padding:10px;margin-bottom:8px;border-radius:8px;">'
 
-            '<div style="display:flex;align-items:center;gap:10px;">'
+        '<div style="display:flex;align-items:center;justify-content:space-between;">'
 
-            f'<img src="{logo_url}" width="40" height="40" '
-            'onerror="this.style.display=\'none\'" '
-            'style="border-radius:6px;object-fit:contain;">'
+        # 🔥 BLOCO ESQUERDA (logo + textos)
+        '<div style="display:flex;align-items:center;gap:10px;">'
 
-            '<div>'
+        f'<img src="{logo_url}" width="45" height="45" '
+        'onerror="this.style.display=\'none\'" '
+        'style="border-radius:6px;object-fit:contain;">'
 
-            f'<p style="margin:0;font-weight:bold;color:#0a66c2;font-size:14px;">{v["titulo"]}</p>'
-            f'<p style="margin:3px 0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
+        '<div style="max-width:260px;">'
 
-            '</div>'
-            '</div>'
+        f'<p style="margin:0;font-weight:bold;color:#0a66c2;font-size:13px;">{v["titulo"]}</p>'
+        f'<p style="margin:2px 0;font-size:12px;">Empresa: <b>{v["empresa"]}</b></p>'
 
-            f'<a href="{v["link"]}" target="_blank" '
-            'style="display:inline-block;margin-top:8px;padding:6px 12px;'
-            'background:#0a66c2;color:white;text-decoration:none;'
-            'border-radius:4px;font-size:12px;">'
-            'Ver vaga'
-            '</a>'
+        '</div>'
+        '</div>'
 
-            '</div>'
-        )
+        # 🔥 BOTÃO DIREITA
+        f'<a href="{v["link"]}" target="_blank" '
+        'style="padding:8px 12px;'
+        'background:#0a66c2;color:white;text-decoration:none;'
+        'border-radius:5px;font-size:12px;white-space:nowrap;">'
+        'Ver vaga'
+        '</a>'
+
+        '</div>'
+        '</div>'
+    )
     
     partes = []
 
@@ -1915,7 +1920,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     partes.append('<body style="font-family:Arial;background:#f4f6f8;padding:20px;">')
     partes.append('<div style="max-width:600px;margin:auto;background:white;padding:20px;border-radius:10px;">')
 
-    partes.append('<h2>🚀 Central de Vagas PRO</h2>')
+    partes.append('<h2 style="text-align:center;">🚀 Central de Vagas PRO</h2>')
     partes.append(f'<p>Olá, <b>{nome}</b> 👋</p>')
     partes.append(f'<p>🎯 Filtro aplicado: {tipo.upper()} → {valor}</p>')
     partes.append(f'<p>📊 Total de vagas: {len(vagas_filtradas)}</p>')
@@ -1959,8 +1964,8 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     
     # FINAL
     partes.append('<hr>')
-    partes.append(
-        '<p style="text-align:center;">'
+        partes.append(
+        '<p style="text-align:center;margin-top:30px;">'
         '<a href="https://central-vagas.onrender.com/" '
         'style="padding:12px 20px;background:#28a745;color:white;'
         'text-decoration:none;border-radius:5px;">'
@@ -1974,6 +1979,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     partes.append('</html>')
 
     return "".join(partes)
+
     
 # ===========================
 # ENVIAR EMAIL INDIVIDUAL
