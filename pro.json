@@ -32,20 +32,21 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-12T23:09:33.363616"
-    },
+    }
+  ],
+  "ativos": [
     {
       "id": "0c40d6df",
       "nome": "Andrey Batist",
       "email": "andrey.engenhariamecatronica@gmail.com",
       "tipo_filtro": "hierarquia",
       "valor": "engenheiro",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
+      "status": "ativo",
+      "data_inicio": "2026-04-13T08:42:43.600883",
+      "expira_em": "2026-05-13T08:42:43.600896",
       "data_criacao": "2026-04-13T08:25:59.526023"
     }
   ],
-  "ativos": [],
   "expirados": [
     {
       "id": "eeed7a13",
