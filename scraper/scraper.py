@@ -1887,17 +1887,20 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             '<div style="display:flex;align-items:flex-start;">'
 
             # 🔥 COLUNA ESQUERDA (logo + botão)
-            '<div style="display:flex;flex-direction:column;align-items:center;margin-right:12px;">'
+            #'<div style="display:flex;flex-direction:column;align-items:center;margin-right:12px;">'
 
             f'<img src="{logo_url}" width="50" height="50" '
             'onerror="this.style.display=\'none\'" '
             'style="border-radius:6px;object-fit:contain;margin-bottom:6px;">'
 
             f'<a href="{v["link"]}" target="_blank" '
-            'style="padding:6px 10px;background:#0a66c2;color:white;'
-            'text-decoration:none;border-radius:5px;font-size:11px;">'
+            'style="display:inline-block;margin-top:8px;padding:6px 12px;'
+            'background:#0a66c2;color:white;text-decoration:none;'
+            'border-radius:4px;font-size:12px;">'
             'Ver vaga'
             '</a>'
+
+        '</div>'
 
             '</div>'
 
@@ -1923,11 +1926,11 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
 
     partes.append('<h2 style="text-align:center;">🚀 Central de Vagas PRO</h2>')
     partes.append(f'<p>Olá, <b>{nome}</b> 👋</p>')
-    partes.append(f'<p>🎯 Filtro aplicado: {tipo.upper()} → {valor}</p>')
-    partes.append(f'<p>📊 Total de vagas: {len(vagas_filtradas)}</p>')
+    partes.append(f'<p>Filtro escolhido: {tipo.upper()} → {valor}</p>')
+    partes.append(f'<p>Total de vagas: {len(vagas_filtradas)}</p>')
 
     # NOVAS VAGAS
-    partes.append('<h2>🔥 Novas vagas para você:</h2>')
+    partes.append('<h2>Novas vagas para você:</h2>')
     
     if vagas_novas:
         for v in vagas_novas[:10]:
