@@ -2111,36 +2111,34 @@ def main():
     # ===========================
 
     try:
-    usuarios = carregar_usuarios_pro()
+        usuarios = carregar_usuarios_pro()
 
-    print(f"\n👑 Enviando vagas para {len(usuarios)} usuários PRO...")
+        print(f"\n👑 Enviando vagas para {len(usuarios)} usuários PRO...")
 
-    for user in usuarios:
-        try:
-            filtro = user.get("filtro")
-            email = user.get("email")
-            nome = user.get("nome")
+        for user in usuarios:
+            try:
+                email = user.get("email")
 
-            vagas_filtradas = filtrar_vagas_usuario(historico_atualizado, user)
-            vagas_novas_user = filtrar_vagas_usuario(novas_vagas_execucao, user)
+                vagas_filtradas = filtrar_vagas_usuario(historico_atualizado, user)
+                vagas_novas_user = filtrar_vagas_usuario(novas_vagas_execucao, user)
 
-            if not vagas_filtradas:
-                print(f"⚠️ Nenhuma vaga para {email}")
-                continue
+                if not vagas_filtradas:
+                    print(f"⚠️ Nenhuma vaga para {email}")
+                    continue
 
-            relatorio = montar_relatorio_usuario(
-                nome,
-                vagas_filtradas,
-                vagas_novas_user
-            )
+                relatorio = montar_relatorio_usuario(
+                    user,
+                    vagas_filtradas,
+                    vagas_novas_user
+                )
 
-            enviar_email_usuario(email, relatorio)
+                enviar_email_usuario(email, relatorio)
 
-        except Exception as e:
-            print(f"❌ erro ao processar usuário {user.get('email')}: {e}")
+            except Exception as e:
+                print(f"❌ erro ao processar usuário {user.get('email')}: {e}")
 
-except Exception as e:
-    print("❌ erro geral no envio PRO:", e)
+    except Exception as e:
+        print("❌ erro geral no envio PRO:", e)
 
 
 if __name__ == "__main__":
