@@ -1821,7 +1821,7 @@ def coletar_inhire(site):
         return vagas
 
 # ===========================
-# REMOVER OCULTAS EMAIL INDIVIDUAL
+# CARREGAR OCULTAS EMAIL INDIVIDUAL
 # ===========================
 def carregar_ocultas():
 
@@ -1850,6 +1850,14 @@ def carregar_ocultas():
         print("❌ erro ao processar vagas ocultas:", e)
         return set()
         
+
+# ===========================
+# REMOVER OCULTAS EMAIL INDIVIDUAL
+# ===========================
+
+def remover_ocultas(vagas, ocultas):
+    return [v for v in vagas if v["id"] not in ocultas]
+
 
 # ===========================
 # GERAR RELATÓRIO INDIVIDUAL
