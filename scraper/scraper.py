@@ -20,11 +20,12 @@ from datetime import datetime
 
 
 # ===========================
-# BACKUP CONFIG
+# BACKUP E PRO CONFIG 
 # ===========================
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 REPO = "AndreyCarlos07/central-vagas"
 ARQUIVO_BACKUP = "vagas_backup.csv"
+ARQUIVO_PRO = "pro.json"
 
 # ===========================
 # DEBUG CONFIG
@@ -32,22 +33,40 @@ ARQUIVO_BACKUP = "vagas_backup.csv"
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "WHITE MARTINS"]
 
+# ===========================
+# VAGAS CONFIG
+# ===========================
 CSV_HISTORICO = "vagas.csv"
 CSV_NOVAS = "vagas_novas.csv"
 
 # ===========================
 # CARREGAR USUÁRIOS PRO
 # ===========================
-ARQUIVO_PRO = "pro.json"
+def carregar_usuarios_pro_github():
+    try:
+        url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_PRO}"
 
-def carregar_usuarios_pro():
-    if not os.path.exists(ARQUIVO_PRO):
+        headers = {
+            "Authorization": f"Bearer {GITHUB_TOKEN}",
+            "Accept": "application/vnd.github+json"
+        }
+
+        r = requests.get(url, headers=headers)
+
+        if r.status_code != 200:
+            print("❌ erro ao buscar pro.json:", r.status_code, r.text)
+            return []
+
+        data = r.json()
+
+        conteudo = base64.b64decode(data["content"]).decode("utf-8")
+        dados = json.loads(conteudo)
+
+        return dados.get("ativos", [])
+
+    except Exception as e:
+        print("❌ erro ao carregar usuarios PRO do GitHub:", e)
         return []
-
-    with open(ARQUIVO_PRO, "r", encoding="utf-8") as f:
-        dados = json.load(f)
-
-    return dados.get("ativos", [])
 
 # ==========================
 # MAPAS DE FILTRO PRO
@@ -1855,10 +1874,14 @@ Olá, {nome} 👋
 # ===========================
 # ENVIAR EMAIL INDIVIDUAL
 # ===========================
-    
 def enviar_email_usuario(destinatario, mensagem):
     remetente = os.getenv("EMAIL_USER")
     senha = os.getenv("EMAIL_PASS")
+
+    # 🔥 MODO DEBUG → FORÇA ENVIO SÓ PRA VOCÊ
+    if MODO_DEBUG:
+        print("🧪 DEBUG ATIVO → redirecionando email para você")
+        destinatario = "andrey.engenhariamecatronica@gmail.com"
 
     msg = MIMEText(mensagem)
     msg["Subject"] = "📊 Suas vagas personalizadas - Central de Vagas PRO"
@@ -2111,7 +2134,7 @@ def main():
     # ===========================
 
     try:
-        usuarios = carregar_usuarios_pro()
+        usuarios = carregar_usuarios_pro_github()
 
         print(f"\n👑 Enviando vagas para {len(usuarios)} usuários PRO...")
 
