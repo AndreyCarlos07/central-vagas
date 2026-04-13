@@ -32,6 +32,17 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-12T23:09:33.363616"
+    },
+    {
+      "id": "5749e864",
+      "nome": "Andrey Carlos",
+      "email": "ddi_100@hotmail.com",
+      "tipo_filtro": "nivel",
+      "valor": "junior",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-13T10:39:55.621317"
     }
   ],
   "ativos": [
