@@ -31,7 +31,7 @@ ARQUIVO = "vagas_ocultas.json"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "WHITE MARTINS"]
 
 # ===========================
@@ -1878,32 +1878,34 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     tipo = user.get("tipo_filtro")
     valor = user.get("valor")
 
-    def criar_card(v):
+        def criar_card(v):
         logo_url = get_logo_url(v["empresa"])
 
         return (
             '<div style="border:1px solid #e1e1e1;padding:10px;margin-bottom:8px;border-radius:8px;">'
 
-            '<div style="display:flex;align-items:center;gap:14px;">'
+            '<div style="display:flex;align-items:flex-start;gap:14px;">'
 
+            # LOGO
             f'<img src="{logo_url}" width="50" height="50" '
             'style="border-radius:6px;object-fit:contain;">'
-    
-            '<div style="flex:1;">'
-    
-            f'<p style="margin:0 0 6px 0;font-weight:bold;color:#0a66c2;font-size:14px;line-height:1.2;">{v["titulo"]}</p>'
-            f'<p style="margin:0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
 
-            '</div>'
-            '</div>'
+            # BLOCO DIREITA (texto + botão)
+            '<div style="flex:1;">'
+
+            f'<p style="margin:0 0 6px 0;font-weight:bold;color:#0a66c2;font-size:14px;line-height:1.2;">{v["titulo"]}</p>'
+            f'<p style="margin:0 0 8px 0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
 
             f'<a href="{v["link"]}" target="_blank" '
-            'style="display:inline-block;margin-top:10px;padding:6px 12px;'
+            'style="display:inline-block;padding:6px 12px;'
             'background:#0a66c2;color:white;text-decoration:none;'
             'border-radius:4px;font-size:12px;">'
             'Ver vaga'
             '</a>'
-    
+
+            '</div>'
+            '</div>'
+
             '</div>'
         )
     
@@ -1920,7 +1922,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     partes.append(f'<p>Total de vagas: {len(vagas_filtradas)}</p>')
 
     # NOVAS VAGAS
-    partes.append('<h2>Novas vagas para você:</h2>')
+    partes.append('<h2>Novas vagas no seu peril:</h2>')
     
     if vagas_novas:
         for v in vagas_novas[:10]:
