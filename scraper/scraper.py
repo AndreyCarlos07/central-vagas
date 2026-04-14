@@ -1893,15 +1893,11 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             # BLOCO DIREITA (texto + botão)
             '<div style="flex:1;">'
 
-            f'<p style="margin:0 0 6px 0;font-weight:bold;color:#0a66c2;font-size:14px;line-height:1.2;">{v["titulo"]}</p>'
-            f'<p style="margin:0 0 8px 0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
-
             f'<a href="{v["link"]}" target="_blank" '
-            'style="display:inline-block;padding:6px 12px;'
-            'background:#0a66c2;color:white;text-decoration:none;'
-            'border-radius:4px;font-size:12px;">'
-            'Ver vaga'
+            'style="text-decoration:none;color:#0a66c2;">'
+            f'<p style="margin:0 0 6px 0;font-weight:bold;font-size:14px;line-height:1.2;">{v["titulo"]}</p>'
             '</a>'
+            f'<p style="margin:0 0 8px 0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
 
             '</div>'
             '</div>'
@@ -1916,13 +1912,17 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     partes.append('<body style="font-family:Arial;background:#f4f6f8;padding:20px;">')
     partes.append('<div style="max-width:600px;margin:auto;background:white;padding:20px;border-radius:10px;">')
 
-    partes.append('<h2 style="text-align:center;">🚀 Central de Vagas PRO</h2>')
+    partes.append(
+                '<div style="text-align:center;background:#0a66c2;color:white;'
+                'padding:12px;border-radius:8px;margin-bottom:20px;font-weight:bold;">'
+                'Central de Vagas PRO'
+                '</div>'
     partes.append(f'<p>Olá, <b>{nome}</b> 👋</p>')
     partes.append(f'<p>Filtro escolhido: {tipo.upper()} → {valor}</p>')
     partes.append(f'<p>Total de vagas: {len(vagas_filtradas)}</p>')
-
+    
     # NOVAS VAGAS
-    partes.append('<h2>Novas vagas no seu peril:</h2>')
+    partes.append('<h3 style="font-size:16px;margin-bottom:10px;">Novas vagas no seu perfil:</h3>')
     
     if vagas_novas:
         for v in vagas_novas[:10]:
@@ -1951,7 +1951,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             '</div>'
         )
     
-    partes.append('<h2>📌 Resumo de vagas no seu perfil:</h2>')
+    partes.append('<h3 style="font-size:16px;margin-bottom:10px;">Resumo de vagas no seu perfil:</h3>')
     
     for v in vagas_filtradas[:20]:
         partes.append(criar_card(v))
