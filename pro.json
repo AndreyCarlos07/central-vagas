@@ -43,6 +43,17 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-13T14:48:22.019196"
+    },
+    {
+      "id": "fb561640",
+      "nome": "Andrey Rosário",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "tecnico",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-14T12:12:22.519497"
     }
   ],
   "ativos": [
