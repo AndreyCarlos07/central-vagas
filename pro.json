@@ -43,17 +43,6 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-13T14:48:22.019196"
-    },
-    {
-      "id": "fb561640",
-      "nome": "Andrey Rosário",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "tecnico",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-14T12:12:22.519497"
     }
   ],
   "ativos": [
@@ -89,6 +78,17 @@
       "data_inicio": "2026-04-14T01:49:32.855175",
       "expira_em": "2026-05-14T01:49:32.855188",
       "data_criacao": "2026-04-14T01:48:59.060892"
+    },
+    {
+      "id": "fb561640",
+      "nome": "Andrey Rosário",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "tecnico",
+      "status": "ativo",
+      "data_inicio": "2026-04-14T12:12:44.563480",
+      "expira_em": "2026-05-14T12:12:44.563492",
+      "data_criacao": "2026-04-14T12:12:22.519497"
     }
   ],
   "expirados": [
