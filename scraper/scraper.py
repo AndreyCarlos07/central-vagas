@@ -32,7 +32,7 @@ ARQUIVO = "vagas_ocultas.json"
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "WHITE MARTINS", "CSN," "ELEKEIROZ"]
+EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "WHITE MARTINS", "CSN", "ELEKEIROZ"]
 
 # ===========================
 # VAGAS CONFIG
@@ -1629,128 +1629,92 @@ def coletar_vagas(page, site):
 
         cidades = ["Camaçari", "Candeias", "Salvador"]
 
-        filtros_aplicados = 0  # 🔒 CONTROLE DE SEGURANÇA
+        total_geral = 0
 
         for cidade in cidades:
 
-            sucesso = False
+            print(f"\n🌆 Buscando por: {cidade}")
 
-            print(f"\n🌆 Tentando cidade: {cidade}")
-
-            # ===========================
-            # 1️⃣ TENTA CLICK
-            # ===========================
             try:
-                page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
+                # ===========================
+                # INPUT DE BUSCA
+                # ===========================
+                search_input = page.locator("input.jobs-filter__input")
+
+                if search_input.count() == 0:
+                    print("🚨 Campo de busca não encontrado")
+                    continue
+
+                # limpa antes de buscar
+                search_input.fill("")
                 time.sleep(1)
 
-                locator = page.locator(f"text={cidade}")
+                # digita cidade
+                search_input.fill(cidade)
+                search_input.press("Enter")
+                time.sleep(4)
 
-                if locator.count() > 0:
-                    locator.first.click(force=True)
-                    time.sleep(3)
-
-                    # validação real
-                    cards = page.locator("a[href*='/oportunidade/']")
-                    if cards.count() > 0:
-                        print(f"📍 Filtro aplicado (click): {cidade}")
-                        sucesso = True
-                        filtros_aplicados += 1
-            except Exception as e:
-                print(f"⚠️ erro no click ({cidade}):", e)
-
-            # ===========================
-            # 2️⃣ FALLBACK DIGITANDO
-            # ===========================
-            if not sucesso:
+                # ===========================
+                # AGUARDA RESULTADOS
+                # ===========================
                 try:
-                    search_input = page.locator("input.jobs-filter__input")
-
-                    if search_input.count() > 0:
-                        search_input.fill("")
-                        time.sleep(1)
-
-                        search_input.fill(cidade)
-                        search_input.press("Enter")
-                        time.sleep(3)
-
-                        # validação real
-                        cards = page.locator("a[href*='/oportunidade/']")
-                        if cards.count() > 0:
-                            print(f"⌨️ Filtro aplicado (input): {cidade}")
-                            sucesso = True
-                            filtros_aplicados += 1
-                except Exception as e:
-                    print("⚠️ erro digitando:", e)
-
-            # ===========================
-            # DEBUG VISUAL
-            # ===========================
-            try:
-                page.screenshot(path=f"debug_{cidade}.png")
-            except:
-                pass
-
-            if not sucesso:
-                print(f"🚨 Falha total ao aplicar cidade: {cidade}")
-
-        # ===========================
-        # 🔒 TRAVA DE SEGURANÇA
-        # ===========================
-        if filtros_aplicados == 0:
-            print("🚫 Nenhum filtro aplicado, abortando coleta")
-            return []
-
-        # ===========================
-        # AGUARDA VAGAS
-        # ===========================
-        page.wait_for_selector("a[href*='/oportunidade/']", timeout=15000)
-
-        cards = page.locator("a[href*='/oportunidade/']")
-        total = cards.count()
-
-        print(f"\n📦 Total bruto encontrado: {total}")
-
-        # ===========================
-        # LOOP VAGAS
-        # ===========================
-        for i in range(total):
-            try:
-                card = cards.nth(i)
-
-                link = card.get_attribute("href")
-
-                if not link:
+                    page.wait_for_selector("a[href*='/oportunidade/']", timeout=10000)
+                except:
+                    print(f"⚠️ Nenhuma vaga encontrada para {cidade}")
                     continue
 
-                if not link.startswith("http"):
-                    link = "https://trabalheconosco.vagas.com.br" + link
+                cards = page.locator("a[href*='/oportunidade/']")
+                total = cards.count()
 
-                link_limpo = link.split("?")[0]
+                print(f"📦 {cidade}: {total} vagas encontradas")
 
-                titulo = card.inner_text().strip()
+                total_geral += total
 
                 # ===========================
-                # 🔥 DEDUPLICAÇÃO FORTE
+                # LOOP VAGAS
                 # ===========================
-                chave_unica = (titulo.lower(), link_limpo)
+                for i in range(total):
+                    try:
+                        card = cards.nth(i)
 
-                if chave_unica in links_coletados:
-                    continue
+                        link = card.get_attribute("href")
 
-                links_coletados.add(chave_unica)
+                        if not link:
+                            continue
 
-                vagas.append({
-                    "id": str(uuid.uuid4())[:8],
-                    "titulo": titulo,
-                    "empresa": site["empresa"],
-                    "link": link_limpo
-                })
+                        if not link.startswith("http"):
+                            link = "https://trabalheconosco.vagas.com.br" + link
+
+                        link_limpo = link.split("?")[0]
+
+                        titulo = card.inner_text().strip()
+
+                        # ===========================
+                        # 🔥 DEDUPLICAÇÃO FORTE
+                        # ===========================
+                        chave_unica = (titulo.lower(), link_limpo)
+
+                        if chave_unica in links_coletados:
+                            continue
+
+                        links_coletados.add(chave_unica)
+
+                        vagas.append({
+                            "id": str(uuid.uuid4())[:8],
+                            "titulo": titulo,
+                            "empresa": site["empresa"],
+                            "link": link_limpo
+                        })
+
+                    except Exception as e:
+                        print("erro vaga:", e)
 
             except Exception as e:
-                print("erro vaga:", e)
+                print(f"❌ erro na cidade {cidade}:", e)
 
+        print(f"\n📊 Total bruto (somado cidades): {total_geral}")
         print(f"📌 {site['empresa']}: {len(vagas)} vagas únicas coletadas")
+
         return vagas
 
     except Exception as e:
