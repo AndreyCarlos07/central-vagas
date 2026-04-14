@@ -1917,6 +1917,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
         'padding:12px;border-radius:8px;margin-bottom:20px;font-weight:bold;">'
         'Central de Vagas PRO'
         '</div>'
+        )
     partes.append(f'<p>Olá, <b>{nome}</b> 👋</p>')
     partes.append(f'<p>Filtro escolhido: {tipo.upper()} → {valor}</p>')
     partes.append(f'<p>Total de vagas: {len(vagas_filtradas)}</p>')
