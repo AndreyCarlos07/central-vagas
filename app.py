@@ -912,15 +912,19 @@ def home():
     # APLICA FILTROS
     # ==========================
     if busca_nome:
+        palavras_busca = busca_nome.split()
+
         vagas = [
             v for v in vagas
-            if busca_nome in v["titulo"].lower()
+            if any(p in v["titulo"].lower() for p in palavras_busca)
         ]
 
     if filtro_empresa:
+        empresas = filtro_empresa.split(",")
+
         vagas = [
             v for v in vagas
-            if v["empresa"] == filtro_empresa
+            if v["empresa"] in empresas
         ]
 
     # ==========================
