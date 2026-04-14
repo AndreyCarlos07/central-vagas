@@ -1937,7 +1937,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
         )
 
     # RESUMO VAGAS
-    tem_mais_vagas = len(vagas_filtradas) > 20
+    tem_mais_vagas = len(vagas_filtradas) > 10
 
     botao_extra = ""
 
