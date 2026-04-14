@@ -1913,10 +1913,10 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     partes.append('<div style="max-width:600px;margin:auto;background:white;padding:20px;border-radius:10px;">')
 
     partes.append(
-                '<div style="text-align:center;background:#0a66c2;color:white;'
-                'padding:12px;border-radius:8px;margin-bottom:20px;font-weight:bold;">'
-                'Central de Vagas PRO'
-                '</div>'
+        '<div style="text-align:center;background:#0a66c2;color:white;'
+        'padding:12px;border-radius:8px;margin-bottom:20px;font-weight:bold;">'
+        'Central de Vagas PRO'
+        '</div>'
     partes.append(f'<p>Olá, <b>{nome}</b> 👋</p>')
     partes.append(f'<p>Filtro escolhido: {tipo.upper()} → {valor}</p>')
     partes.append(f'<p>Total de vagas: {len(vagas_filtradas)}</p>')
