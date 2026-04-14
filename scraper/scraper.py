@@ -1891,7 +1891,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             'style="border-radius:6px;object-fit:contain;">'
 
             # BLOCO DIREITA (texto + botão)
-            '<div style="flex:1;">'
+            '<div style="flex:1;padding-left:4px;">'
 
             f'<a href="{v["link"]}" target="_blank" '
             'style="text-decoration:none;color:#0a66c2;">'
