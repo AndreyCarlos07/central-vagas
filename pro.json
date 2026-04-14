@@ -43,6 +43,17 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-13T14:48:22.019196"
+    },
+    {
+      "id": "ccc87793",
+      "nome": "Adan Carlos",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "estagio",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-14T01:48:59.060892"
     }
   ],
   "ativos": [
