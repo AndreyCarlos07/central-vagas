@@ -1884,7 +1884,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
         return (
             '<div style="border:1px solid #e1e1e1;padding:10px;margin-bottom:8px;border-radius:8px;">'
 
-            '<div style="display:flex;align-items:flex-start;gap:14px;">'
+            '<div style="display:flex;align-items:flex-start;gap:18px;">'
 
             # LOGO
             f'<img src="{logo_url}" width="50" height="50" '
@@ -1895,7 +1895,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
 
             f'<a href="{v["link"]}" target="_blank" '
             'style="text-decoration:none;color:#0a66c2;">'
-            f'<p style="margin:0 0 6px 0;font-weight:bold;font-size:14px;line-height:1.2;">{v["titulo"]}</p>'
+            f'<p style="margin:0 0 6px 0;font-weight:bold;font-size:14px;line-height:1.2;">{v["titulo"].upper()}</p>'
             '</a>'
             f'<p style="margin:0 0 8px 0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
 
@@ -1954,22 +1954,13 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     
     partes.append('<h3 style="font-size:16px;margin-bottom:10px;">Resumo de vagas no seu perfil:</h3>')
     
-    for v in vagas_filtradas[:20]:
+    for v in vagas_filtradas[:10]:
         partes.append(criar_card(v))
         
     partes.append(botao_extra)
     
     # FINAL
     partes.append('<hr>')
-    partes.append(
-        '<p style="text-align:center;margin-top:30px;">'
-        '<a href="https://central-vagas.onrender.com/" '
-        'style="padding:12px 20px;background:#28a745;color:white;'
-        'text-decoration:none;border-radius:5px;">'
-        'Ver outras vagas no site'
-        '</a>'
-        '</p>'
-    )
 
     partes.append('</div>')
     partes.append('</body>')
