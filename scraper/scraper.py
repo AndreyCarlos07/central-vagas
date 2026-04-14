@@ -1958,7 +1958,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     elif tipo == "empresa":
         # empresa normalmente é lista
         empresas = valor if isinstance(valor, list) else [valor]
-         query = ""  # não usa q
+        query = ""  # não usa q
         empresa_query = "&empresa=" + ",".join(empresas)
 
     else:
