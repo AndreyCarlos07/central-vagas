@@ -1870,29 +1870,6 @@ def get_logo_url(empresa):
 
 
 # ===========================
-# MONTAR QUERY INTELIGENTE
-# ===========================
-
-if tipo == "hierarquia":
-    palavras = MAPA_HIERARQUIA.get(valor, [valor])
-    query = "+".join(palavras)
-
-elif tipo == "area":
-    palavras = MAPA_AREA.get(valor, [valor])
-    query = "+".join(palavras)
-
-elif tipo == "empresa":
-    # empresa normalmente é lista
-    empresas = valor if isinstance(valor, list) else [valor]
-    query = ""  # não usa q
-    empresa_query = "&empresa=" + ",".join(empresas)
-
-else:
-    query = valor
-    empresa_query = ""
-
-
-# ===========================
 # GERAR RELATÓRIO INDIVIDUAL
 # ===========================
 def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
@@ -1964,6 +1941,29 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
 
     botao_extra = ""
 
+    # ===========================
+    # MONTAR QUERY INTELIGENTE
+    # ===========================
+        
+    empresa_query = ""
+
+    if tipo == "hierarquia":
+        palavras = MAPA_HIERARQUIA.get(valor, [valor])
+        query = "+".join(set(palavras))
+
+    elif tipo == "area":
+        palavras = MAPA_AREA.get(valor, [valor])
+        query = "+".join(set(palavras))
+
+    elif tipo == "empresa":
+        # empresa normalmente é lista
+        empresas = valor if isinstance(valor, list) else [valor]
+         query = ""  # não usa q
+        empresa_query = "&empresa=" + ",".join(empresas)
+
+    else:
+        query = valor
+    
     if tem_mais_vagas:
 
         if tipo == "empresa":
@@ -1980,28 +1980,6 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             '</a>'
             '</div>'
         )
-
-        # ===========================
-        # MONTAR QUERY INTELIGENTE
-        # ===========================
-
-        if tipo == "hierarquia":
-            palavras = MAPA_HIERARQUIA.get(valor, [valor])
-            query = "+".join(palavras)
-
-        elif tipo == "area":
-            palavras = MAPA_AREA.get(valor, [valor])
-            query = "+".join(palavras)
-
-        elif tipo == "empresa":
-            # empresa normalmente é lista
-            empresas = valor if isinstance(valor, list) else [valor]
-            query = ""  # não usa q
-            empresa_query = "&empresa=" + ",".join(empresas)
-
-        else:
-            query = valor
-            empresa_query = ""
 
     partes.append('<h3 style="font-size:16px;margin-bottom:10px;">Resumo de vagas no seu perfil:</h3>')
     
