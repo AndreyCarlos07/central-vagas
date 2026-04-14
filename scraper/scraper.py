@@ -1878,7 +1878,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     tipo = user.get("tipo_filtro")
     valor = user.get("valor")
 
-        def criar_card(v):
+    def criar_card(v):
         logo_url = get_logo_url(v["empresa"])
 
         return (
