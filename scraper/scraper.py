@@ -32,7 +32,7 @@ ARQUIVO = "vagas_ocultas.json"
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "WHITE MARTINS"]
+EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "WHITE MARTINS", "CSN," "ELEKEIROZ"]
 
 # ===========================
 # VAGAS CONFIG
@@ -1633,48 +1633,63 @@ def coletar_vagas(page, site):
 
         for cidade in cidades:
 
-            tentativas = 3
             sucesso = False
 
-            for tentativa in range(tentativas):
-                try:
-                    # ===========================
-                    # ABRE DROPDOWN SEMPRE
-                    # ===========================
-                    page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
-                    time.sleep(1)
+            print(f"\n🌆 Tentando cidade: {cidade}")
 
-                    locator = page.locator(f"text={cidade}")
+            # ===========================
+            # 1️⃣ TENTA CLICK
+            # ===========================
+            try:
+                page.locator("h5.jobs-filter__item-title", has_text="Cidade").click()
+                time.sleep(1)
 
-                    # ===========================
-                    # VERIFICA SE EXISTE
-                    # ===========================
-                    if locator.count() == 0:
-                        print(f"⚠️ Cidade não encontrada: {cidade} (tentativa {tentativa+1})")
-                        time.sleep(2)
-                        continue
+                locator = page.locator(f"text={cidade}")
 
-                    # ===========================
-                    # CLICA COM SEGURANÇA
-                    # ===========================
+                if locator.count() > 0:
                     locator.first.click(force=True)
                     time.sleep(3)
 
-                    # ===========================
-                    # 🔥 VALIDAÇÃO REAL (ESSA É A CHAVE)
-                    # ===========================
-                    if cidade.lower() in page.content().lower():
-                        print(f"📍 Filtro aplicado: {cidade}")
+                    # validação real
+                    cards = page.locator("a[href*='/oportunidade/']")
+                    if cards.count() > 0:
+                        print(f"📍 Filtro aplicado (click): {cidade}")
                         sucesso = True
                         filtros_aplicados += 1
-                        break
-                    else:
-                        print(f"⚠️ Clique falhou: {cidade} (tentativa {tentativa+1})")
+            except Exception as e:
+                print(f"⚠️ erro no click ({cidade}):", e)
 
+            # ===========================
+            # 2️⃣ FALLBACK DIGITANDO
+            # ===========================
+            if not sucesso:
+                try:
+                    search_input = page.locator("input.jobs-filter__input")
+
+                    if search_input.count() > 0:
+                        search_input.fill("")
+                        time.sleep(1)
+
+                        search_input.fill(cidade)
+                        search_input.press("Enter")
+                        time.sleep(3)
+
+                        # validação real
+                        cards = page.locator("a[href*='/oportunidade/']")
+                        if cards.count() > 0:
+                            print(f"⌨️ Filtro aplicado (input): {cidade}")
+                            sucesso = True
+                            filtros_aplicados += 1
                 except Exception as e:
-                    print(f"❌ erro ao aplicar {cidade} (tentativa {tentativa+1}):", e)
+                    print("⚠️ erro digitando:", e)
 
-                time.sleep(2)
+            # ===========================
+            # DEBUG VISUAL
+            # ===========================
+            try:
+                page.screenshot(path=f"debug_{cidade}.png")
+            except:
+                pass
 
             if not sucesso:
                 print(f"🚨 Falha total ao aplicar cidade: {cidade}")
@@ -1694,7 +1709,7 @@ def coletar_vagas(page, site):
         cards = page.locator("a[href*='/oportunidade/']")
         total = cards.count()
 
-        print(f"📦 total encontrado: {total}")
+        print(f"\n📦 Total bruto encontrado: {total}")
 
         # ===========================
         # LOOP VAGAS
@@ -1713,12 +1728,17 @@ def coletar_vagas(page, site):
 
                 link_limpo = link.split("?")[0]
 
-                if link_limpo in links_coletados:
+                titulo = card.inner_text().strip()
+
+                # ===========================
+                # 🔥 DEDUPLICAÇÃO FORTE
+                # ===========================
+                chave_unica = (titulo.lower(), link_limpo)
+
+                if chave_unica in links_coletados:
                     continue
 
-                links_coletados.add(link_limpo)
-
-                titulo = card.inner_text().strip()
+                links_coletados.add(chave_unica)
 
                 vagas.append({
                     "id": str(uuid.uuid4())[:8],
@@ -1730,13 +1750,13 @@ def coletar_vagas(page, site):
             except Exception as e:
                 print("erro vaga:", e)
 
-        print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
+        print(f"📌 {site['empresa']}: {len(vagas)} vagas únicas coletadas")
         return vagas
 
     except Exception as e:
         print("❌ erro geral:", e)
         return vagas
-
+        
 
 # ===========================
 # INHIRE
