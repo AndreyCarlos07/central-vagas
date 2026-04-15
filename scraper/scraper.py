@@ -1069,9 +1069,9 @@ def coletar_recrutai(page, site):
     
 
 # ===========================
-# RECRUT.AI (ULTRA ROBUSTO)
+# RECRUT.AI (ULTRA ROBUSTO FINAL)
 # ===========================
-def coletar_recrutai_fix(page, site):
+def coletar_recrutai(page, site):
 
     vagas = []
     links_coletados = set()
@@ -1156,7 +1156,7 @@ def coletar_recrutai_fix(page, site):
                     links_coletados.add(link_completo)
 
                     # ===========================
-                    # 🚀 ABRE VAGA (TÍTULO REAL)
+                    # 🚀 ABRE VAGA (TÍTULO REAL CORRETO)
                     # ===========================
                     page.goto(link_completo, timeout=60000)
                     page.wait_for_load_state("networkidle")
@@ -1164,10 +1164,10 @@ def coletar_recrutai_fix(page, site):
                     titulo = "Vaga"
 
                     try:
-                        titulo = page.locator("h1").first.inner_text(timeout=3000).strip()
+                        titulo = page.locator("h3 b").first.inner_text(timeout=3000).strip()
                     except:
                         try:
-                            titulo = page.locator("h2").first.inner_text(timeout=3000).strip()
+                            titulo = page.locator("h3").first.inner_text(timeout=3000).strip()
                         except:
                             pass
 
