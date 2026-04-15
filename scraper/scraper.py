@@ -382,7 +382,7 @@ SITES = [
     {
         "empresa": "ACELEN RENOVÁVEIS",
         "url": "https://acelen.jobs.recrut.ai/acelenrenewables#openings",
-        "tipo": "recrutaiffix",
+        "tipo": "recrutaifix",
         "cidade": "São Francisco do Conde / BA"
     },
     {
@@ -2209,7 +2209,7 @@ def main():
                 elif site["tipo"] == "recrutai":
                     vagas = coletar_recrutai(page, site)
 
-                elif site["tipo"] == "recrutaiffix":
+                elif site["tipo"] == "recrutaifix":
                     vagas = coletar_recrutai_fix(page, site)
 
                 elif site["tipo"] == "jobconvo":
