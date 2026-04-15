@@ -1107,12 +1107,12 @@ def coletar_recrutai_fix(page, site):
             # AGUARDA RESULTADOS
             # ===========================
             try:
-                page.wait_for_selector("div[data-job-id]", timeout=10000)
+                page.wait_for_selector('a[href*="job/"]', timeout=10000)
             except:
                 print(f"⚠️ Nenhuma vaga encontrada para {cidade}")
                 continue
 
-            cards = page.locator("div[data-job-id]")
+            cards = page.locator('a[href*="job/"]')
             total = cards.count()
 
             print(f"📦 Total de vagas em {cidade}: {total}")
@@ -1124,14 +1124,14 @@ def coletar_recrutai_fix(page, site):
                 try:
                     card = cards.nth(i)
 
-                    # ===========================
-                    # LINK
-                    # ===========================
-                    link = card.locator('a[href*="job/"]').get_attribute("href")
+                    link = card.get_attribute("href")
 
                     if not link:
                         continue
 
+                    # ===========================
+                    # 🔧 LINK CORRETO
+                    # ===========================
                     if link.startswith("http"):
                         link_completo = link
                     else:
@@ -1145,7 +1145,7 @@ def coletar_recrutai_fix(page, site):
                     )
 
                     # ===========================
-                    # DEDUPLICAÇÃO
+                    # 🔁 DEDUPLICAÇÃO
                     # ===========================
                     if link_completo in links_coletados:
                         continue
@@ -1153,15 +1153,16 @@ def coletar_recrutai_fix(page, site):
                     links_coletados.add(link_completo)
 
                     # ===========================
-                    # 🧠 TITULO REAL
+                    # 🧠 TITULO REAL (AQUI É O FIX)
                     # ===========================
                     try:
-                        titulo = card.locator("h3, h2, strong, span").first.inner_text(timeout=2000).strip()
-                    except:
-                        titulo = "Vaga"
+                        container = card.locator("xpath=ancestor::div[contains(@class, 'card')]")
+                        titulo_raw = container.locator("h5").inner_text(timeout=2000).strip()
 
-                    # limpa lixo
-                    if not titulo or "VER OPORTUNIDADE" in titulo.upper():
+                        # remove código tipo "LQHTV0"
+                        titulo = titulo_raw.split("\n")[-1].strip()
+
+                    except:
                         titulo = "Vaga"
 
                     vagas.append({
