@@ -31,8 +31,8 @@ ARQUIVO = "vagas_ocultas.json"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "WHITE MARTINS", "CSN", "ELEKEIROZ"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "ACELEN", "MDC ENERGIA"]
 
 # ===========================
 # VAGAS CONFIG
@@ -370,19 +370,19 @@ SITES = [
     {
         "empresa": "ACELEN",
         "url": "https://acelen.jobs.recrut.ai/#openings",
-        "tipo": "recrutai",
+        "tipo": "recrutaifix",
         "cidade": "São Francisco do Conde / BA"
     },
     {
         "empresa": "MDC ENERGIA",
         "url": "https://mdcnossostalentos.jobs.recrut.ai/#openings",
-        "tipo": "recrutai",
+        "tipo": "recrutaifix",
         "cidade": ["Camaçari / BA", "Salvador / BA"]
     },
     {
         "empresa": "ACELEN RENOVÁVEIS",
         "url": "https://acelen.jobs.recrut.ai/acelenrenewables#openings",
-        "tipo": "recrutai",
+        "tipo": "recrutaiffix",
         "cidade": "São Francisco do Conde / BA"
     },
     {
@@ -1066,6 +1066,100 @@ def coletar_recrutai(page, site):
     print(f"📌 {site['empresa']} (RECRUT.AI): {len(vagas)} vagas coletadas")
 
     return vagas
+    
+
+# ===========================
+# RECRUT.AI (FIX)
+# ===========================
+def coletar_recrutai_fix(page, site):
+
+    vagas = []
+    links_coletados = set()
+
+    page.goto(site["url"], timeout=60000)
+    page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(4000)
+
+    cidades = site.get("cidade")
+
+    if isinstance(cidades, str):
+        cidades = [cidades]
+
+    for cidade in cidades:
+
+        print(f"🔎 {site['empresa']} filtrando cidade: {cidade}")
+
+        try:
+            # ===========================
+            # FILTRO
+            # ===========================
+            page.locator("button.dropdown-toggle").nth(1).click()
+            page.wait_for_timeout(800)
+
+            page.locator(f"text={cidade}").first.click()
+            page.wait_for_timeout(800)
+
+            page.click('button[type="submit"]')
+            page.wait_for_load_state("networkidle")
+            page.wait_for_timeout(3000)
+
+            # ===========================
+            # COLETA
+            # ===========================
+            cards = page.locator('a[href*="job/"]')
+            total = cards.count()
+
+            print(f"📦 Total de vagas em {cidade}: {total}")
+
+            for i in range(total):
+                try:
+                    card = cards.nth(i)
+
+                    link = card.get_attribute("href")
+
+                    if not link:
+                        continue
+
+                    base_url = site["url"].split("#")[0]
+
+                    if not base_url.endswith("/"):
+                        base_url += "/"
+
+                    link_completo = base_url + link
+
+                    # ===========================
+                    # 🔥 DEDUPLICAÇÃO
+                    # ===========================
+                    if link_completo in links_coletados:
+                        continue
+
+                    links_coletados.add(link_completo)
+
+                    # ===========================
+                    # TENTA PEGAR TITULO DIRETO
+                    # ===========================
+                    try:
+                        titulo = card.inner_text().strip()
+                    except:
+                        titulo = "Vaga"
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": site["empresa"],
+                        "link": link_completo
+                    })
+
+                except Exception as e:
+                    print("Erro ao processar card:", e)
+
+        except Exception as e:
+            print("Erro ao filtrar cidade:", e)
+
+    print(f"📌 {site['empresa']} (RECRUT.AI): {len(vagas)} vagas coletadas")
+
+    return vagas
+    
 
 # ===========================
 # JOBCONVO (SOTREQ)
@@ -2114,6 +2208,9 @@ def main():
 
                 elif site["tipo"] == "recrutai":
                     vagas = coletar_recrutai(page, site)
+
+                elif site["tipo"] == "recrutaiffix":
+                    vagas = coletar_recrutai_fix(page, site)
 
                 elif site["tipo"] == "jobconvo":
                     vagas = coletar_jobconvo(page, site)
