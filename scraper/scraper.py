@@ -1071,7 +1071,7 @@ def coletar_recrutai(page, site):
 # ===========================
 # RECRUT.AI (ULTRA ROBUSTO FINAL)
 # ===========================
-def coletar_recrutai(page, site):
+def coletar_recrutai_fix(page, site):
 
     vagas = []
     links_coletados = set()
