@@ -384,7 +384,7 @@ SITES = [
         "empresa": "ACELEN RENOVÁVEIS",
         "url": "https://acelen.jobs.recrut.ai/acelenrenewables#openings",
         "tipo": "recrutai",
-        "cidade": ["Cachoeira e Região / BA", "Feira de Santana / BA", "São Francisco do Conde / BA", "Salvador / BA"]
+        "cidade": ["Cachoeira e Região / BA", "Feira de Santana / BA", "São Francisco do Conde / BA"]
     },
     {
         "empresa": "SOTREQ",
