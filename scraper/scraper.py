@@ -1947,9 +1947,9 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             f'<a href="{v["link"]}" target="_blank" '
             'style="text-decoration:none;color:#0a66c2;">'
             f'<p style="margin:0 0 6px 0;font-weight:bold;font-size:14px;line-height:1.2;'
-            'height:34px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;'
-            '-webkit-box-orient:vertical;">{v["titulo"].upper()}</p>'
+            'max-height:34px;overflow:hidden;">{v["titulo"].upper()}</p>'
             '</a>'
+            
             f'<p style="margin:0 0 8px 0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
 
             '</div>'
