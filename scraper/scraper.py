@@ -1069,7 +1069,7 @@ def coletar_recrutai(page, site):
     
 
 # ===========================
-# RECRUT.AI (FINAL)
+# RECRUT.AI (FINAL CORRIGIDA)
 # ===========================
 def coletar_recrutai_fix(page, site):
 
@@ -1107,12 +1107,12 @@ def coletar_recrutai_fix(page, site):
             # AGUARDA RESULTADOS
             # ===========================
             try:
-                page.wait_for_selector('a[href*="job/"]', timeout=10000)
+                page.wait_for_selector("div[data-job-id]", timeout=10000)
             except:
                 print(f"⚠️ Nenhuma vaga encontrada para {cidade}")
                 continue
 
-            cards = page.locator('a[href*="job/"]')
+            cards = page.locator("div[data-job-id]")
             total = cards.count()
 
             print(f"📦 Total de vagas em {cidade}: {total}")
@@ -1124,28 +1124,28 @@ def coletar_recrutai_fix(page, site):
                 try:
                     card = cards.nth(i)
 
-                    link = card.get_attribute("href")
+                    # ===========================
+                    # LINK
+                    # ===========================
+                    link = card.locator('a[href*="job/"]').get_attribute("href")
 
                     if not link:
                         continue
 
-                    # ===========================
-                    # 🔧 LINK CORRETO
-                    # ===========================
                     if link.startswith("http"):
                         link_completo = link
                     else:
                         base = site["url"].split("#")[0]
                         link_completo = base.rstrip("/") + "/" + link.lstrip("/")
 
-                    # 🔥 FIX ESPECÍFICO ACELEN RENOVÁVEIS
+                    # 🔥 FIX ACELEN RENOVÁVEIS
                     link_completo = link_completo.replace(
                         "/acelenrenewables//acelenrenewables/",
                         "/acelenrenewables/"
                     )
 
                     # ===========================
-                    # 🔁 DEDUPLICAÇÃO
+                    # DEDUPLICAÇÃO
                     # ===========================
                     if link_completo in links_coletados:
                         continue
@@ -1153,20 +1153,14 @@ def coletar_recrutai_fix(page, site):
                     links_coletados.add(link_completo)
 
                     # ===========================
-                    # 🧠 TITULO LIMPO
+                    # 🧠 TITULO REAL
                     # ===========================
                     try:
-                        titulo = card.locator("h3").inner_text(timeout=2000).strip()
+                        titulo = card.locator("h3, h2, strong, span").first.inner_text(timeout=2000).strip()
                     except:
-                        try:
-                            titulo = card.locator("h2").inner_text(timeout=2000).strip()
-                        except:
-                            try:
-                                titulo = card.locator("span").first.inner_text(timeout=2000).strip()
-                            except:
-                                titulo = "Vaga"
+                        titulo = "Vaga"
 
-                    # limpa lixo tipo "VER OPORTUNIDADE"
+                    # limpa lixo
                     if not titulo or "VER OPORTUNIDADE" in titulo.upper():
                         titulo = "Vaga"
 
