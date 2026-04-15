@@ -43,6 +43,28 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-13T14:48:22.019196"
+    },
+    {
+      "id": "17f0f99a",
+      "nome": "Andrey do",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "3CORAÇÕES",
+        "ALVOAR LÁCTEOS",
+        "GRUPO BOTICÁRIO",
+        "GRUPO PETRÓPOLIS",
+        "INDORAMA VENTURES",
+        "JDE PEET'S",
+        "KIMBERLY-CLARK",
+        "M. DIAS BRANCO",
+        "PETRORECONCAVO",
+        "YPÊ"
+      ],
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-15T11:24:04.398652"
     }
   ],
   "ativos": [
