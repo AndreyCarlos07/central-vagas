@@ -43,6 +43,21 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-13T14:48:22.019196"
+    },
+    {
+      "id": "21f37817",
+      "nome": "Andrey do Primeiro",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "JDE PEET'S",
+        "KIMBERLY-CLARK",
+        "M. DIAS BRANCO"
+      ],
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-15T13:57:34.961536"
     }
   ],
   "ativos": [
