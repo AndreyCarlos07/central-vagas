@@ -32,7 +32,7 @@ ARQUIVO = "vagas_ocultas.json"
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "ACELEN", "MDC ENERGIA"]
+EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "ACELEN", "MDC ENERGIA", "INTERMARÍTIMA"]
 
 # ===========================
 # VAGAS CONFIG
@@ -455,6 +455,13 @@ SITES = [
         "tipo": "inhire",
         "tenant": "infotecbrasil",
         "cidades": ["São Francisco do Conde, BA, BR", "Catu, BA, BR", "Salvador, BA, BR"]
+    },
+    {
+        "empresa": "INTERMARÍTIMA",
+        "url": "https://intermaritima.inhire.app/vagas",
+        "tipo": "inhire",
+        "tenant": "infotecbrasil",
+        "cidades": ["Simões Filho, BA, BR", "Salvador, BA, BR"]
     }
 ]
 
@@ -2007,12 +2014,15 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             'style="border-radius:6px;object-fit:contain;">'
 
             # BLOCO DIREITA (texto + botão)
-            '<div style="flex:1;padding-left:4px;">'
+            '<div style="flex:1;padding-left:6px;">'
 
             f'<a href="{v["link"]}" target="_blank" '
             'style="text-decoration:none;color:#0a66c2;">'
             f'<p style="margin:0 0 6px 0;font-weight:bold;font-size:14px;line-height:1.2;">{v["titulo"].upper()}</p>'
             '</a>'
+            f'<p style="margin:0 0 6px 0;font-weight:bold;font-size:14px;line-height:1.2;'
+            'height:34px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;'
+            '-webkit-box-orient:vertical;">{v["titulo"].upper()}</p>'
             f'<p style="margin:0 0 8px 0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
 
             '</div>'
@@ -2051,6 +2061,14 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             '📭 Após busca, não houve vagas novas hoje para o seu perfil.'
             '</p>'
         )
+
+    ids_novas = set(v["id"] for v in vagas_novas)
+    
+    # 🔥 REMOVE DUPLICADAS DO RESUMO (DEPOIS DE USAR AS NOVAS)
+    vagas_filtradas = [
+        v for v in vagas_filtradas
+        if v["id"] not in ids_novas
+    ]
 
     # RESUMO VAGAS
     tem_mais_vagas = len(vagas_filtradas) > 10
