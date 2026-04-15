@@ -1910,9 +1910,14 @@ def remover_ocultas(vagas, ocultas):
 
 def normalizar_nome(nome):
     nome = nome.lower()
-    nome = unicodedata.normalize("NFD", nome)
-    nome = nome.encode("ascii", "ignore").decode("utf-8")
-    nome = nome.replace(" ", "").replace("-", "")
+
+    # remove acentos (ex: corações -> coracoes)
+    nome = unicodedata.normalize("NFKD", nome)
+    nome = nome.encode("ascii", "ignore").decode("ascii")
+
+    # mantém letras, números, hífen e ponto
+    nome = re.sub(r'[^a-z0-9\-.]', '', nome)
+
     return nome
 
 def get_logo_url(empresa):
