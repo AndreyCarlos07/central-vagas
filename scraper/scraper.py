@@ -986,10 +986,10 @@ def coletar_oracle(page, site):
 
     print(f"📌 {site['empresa']} (ORACLE): {len(vagas)} vagas coletadas")
     return vagas
-    
+
 
 # ===========================
-# RECRUT.AI
+# RECRUT.AI (CORRIGIDO DE VERDADE)
 # ===========================
 def coletar_recrutai(page, site):
 
@@ -1038,27 +1038,24 @@ def coletar_recrutai(page, site):
             print(f"📦 Total de vagas em {cidade}: {total}")
 
             # ===========================
-            # LOOP VAGAS
+            # 🔥 1️⃣ COLETA LINKS PRIMEIRO
             # ===========================
+            links = []
+
             for i in range(total):
                 try:
-                    card = cards.nth(i)
-
-                    link = card.get_attribute("href")
+                    link = cards.nth(i).get_attribute("href")
 
                     if not link:
                         continue
 
-                    # ===========================
-                    # 🔧 LINK CORRETO
-                    # ===========================
                     if link.startswith("http"):
                         link_completo = link
                     else:
                         base = site["url"].split("#")[0]
                         link_completo = base.rstrip("/") + "/" + link.lstrip("/")
 
-                    # 🔥 FIX ACELEN RENOVÁVEIS
+                    # fix renováveis
                     link_completo = link_completo.replace(
                         "/acelenrenewables/acelenrenewables/",
                         "/acelenrenewables/"
@@ -1067,18 +1064,19 @@ def coletar_recrutai(page, site):
                         "/acelenrenewables/"
                     )
 
-                    # ===========================
-                    # 🔁 DEDUPLICAÇÃO
-                    # ===========================
-                    if link_completo in links_coletados:
-                        continue
+                    if link_completo not in links_coletados:
+                        links_coletados.add(link_completo)
+                        links.append(link_completo)
 
-                    links_coletados.add(link_completo)
+                except Exception as e:
+                    print("Erro coletando link:", e)
 
-                    # ===========================
-                    # 🚀 ABRE VAGA (TÍTULO REAL CORRETO)
-                    # ===========================
-                    page.goto(link_completo, timeout=60000)
+            # ===========================
+            # 🚀 2️⃣ AGORA PROCESSA LINKS
+            # ===========================
+            for link in links:
+                try:
+                    page.goto(link, timeout=60000)
                     page.wait_for_load_state("networkidle")
 
                     titulo = "Vaga"
@@ -1091,25 +1089,20 @@ def coletar_recrutai(page, site):
                         except:
                             pass
 
-                    # ===========================
-                    # SALVA
-                    # ===========================
                     vagas.append({
                         "id": str(uuid.uuid4())[:8],
                         "titulo": titulo,
                         "empresa": site["empresa"],
-                        "link": link_completo
+                        "link": link
                     })
 
-                    # ===========================
-                    # VOLTA PRA LISTA
-                    # ===========================
-                    page.go_back()
-                    page.wait_for_load_state("networkidle")
-                    page.wait_for_timeout(2000)
-
                 except Exception as e:
-                    print("Erro ao processar vaga:", e)
+                    print("Erro ao abrir vaga:", e)
+
+            # 🔥 volta pro site antes da próxima cidade
+            page.goto(site["url"], timeout=60000)
+            page.wait_for_load_state("networkidle")
+            page.wait_for_timeout(3000)
 
         except Exception as e:
             print("Erro ao filtrar cidade:", e)
