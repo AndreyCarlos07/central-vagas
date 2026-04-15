@@ -32,7 +32,7 @@ ARQUIVO = "vagas_ocultas.json"
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "ACELEN", "MDC ENERGIA", "INTERMARÍTIMA"]
+EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "ACELEN", "MDC ENERGIA", "INTERMARÍTIMA", "MRV&CO", "ELETRODATA ENGENHARIA"]
 
 # ===========================
 # VAGAS CONFIG
@@ -265,6 +265,7 @@ SITES = [
     {"empresa": "ALVOAR LÁCTEOS", "url": "https://alvoarlacteos.gupy.io", "tipo": "gupy"},
     {"empresa": "GRUPO MARATÁ", "url": "https://grupomarata.gupy.io", "tipo": "gupy"},
     {"empresa": "GRUPO FERTIPAR", "url": "https://grupofertipar.gupy.io", "tipo": "gupy"},
+    {"empresa": "MRV&CO", "url": "https://vagas-mrveco.gupy.io", "tipo": "gupy"},
     {
         "empresa": "BRIDGESTONE",
         "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers",
@@ -370,20 +371,20 @@ SITES = [
     {
         "empresa": "ACELEN",
         "url": "https://acelen.jobs.recrut.ai/#openings",
-        "tipo": "recrutaifix",
+        "tipo": "recrutai",
         "cidade": "São Francisco do Conde / BA"
     },
     {
         "empresa": "MDC ENERGIA",
         "url": "https://mdcnossostalentos.jobs.recrut.ai/#openings",
-        "tipo": "recrutaifix",
+        "tipo": "recrutai",
         "cidade": ["Camaçari / BA", "Salvador / BA"]
     },
     {
         "empresa": "ACELEN RENOVÁVEIS",
         "url": "https://acelen.jobs.recrut.ai/acelenrenewables#openings",
-        "tipo": "recrutaifix",
-        "cidade": "São Francisco do Conde / BA"
+        "tipo": "recrutai",
+        "cidade": ["Cachoeira e Região / BA", "Feira de Santana / BA", "São Francisco do Conde / BA"]
     },
     {
         "empresa": "SOTREQ",
@@ -418,6 +419,11 @@ SITES = [
     {
         "empresa": "ZEENTECH",
         "url": "https://zeentech.pandape.infojobs.com.br",
+        "tipo": "pandape"
+    },
+    {
+        "empresa": "ELETRODATA ENGENHARIA",
+        "url": "https://e3engenharialtda.pandape.infojobs.com.br",
         "tipo": "pandape"
     },
     {
@@ -460,7 +466,7 @@ SITES = [
         "empresa": "INTERMARÍTIMA",
         "url": "https://intermaritima.inhire.app/vagas",
         "tipo": "inhire",
-        "tenant": "infotecbrasil",
+        "tenant": "intermaritima",
         "cidades": ["Simões Filho, BA, BR", "Salvador, BA, BR"]
     }
 ]
@@ -986,99 +992,6 @@ def coletar_oracle(page, site):
 # RECRUT.AI
 # ===========================
 def coletar_recrutai(page, site):
-
-    vagas = []
-    links_coletados = set()
-
-    page.goto(site["url"], timeout=60000)
-    page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(4000)
-
-    cidades = site.get("cidade")
-
-    if isinstance(cidades, str):
-        cidades = [cidades]
-
-    for cidade in cidades:
-
-        print(f"🔎 {site['empresa']} filtrando cidade: {cidade}")
-
-        try:
-
-            # abre dropdown
-            page.locator("button.dropdown-toggle").nth(1).click()
-            page.wait_for_timeout(800)
-
-            # seleciona cidade
-            page.locator(f"text={cidade}").first.click()
-            page.wait_for_timeout(800)
-
-            # clicar filtrar
-            page.click('button[type="submit"]')
-            page.wait_for_load_state("networkidle")
-            page.wait_for_timeout(3000)
-
-            # coleta vagas da cidade
-            cards = page.locator('a[href*="job/"]')
-            total = cards.count()
-
-            print(f"Total de vagas em {cidade}: {total}")
-
-            for i in range(total):
-
-                try:
-
-                    link = cards.nth(i).get_attribute("href")
-
-                    if not link:
-                        continue
-
-                    base_url = site["url"].split("#")[0]
-
-                    if not base_url.endswith("/"):
-                        base_url += "/"
-
-                    link_completo = base_url + link
-
-                    if link_completo in links_coletados:
-                        continue
-
-                    links_coletados.add(link_completo)
-
-                    # abre vaga
-                    page.goto(link_completo, timeout=60000)
-                    page.wait_for_load_state("networkidle")
-
-                    titulo = page.locator("h3").first.inner_text().strip()
-
-                    vagas.append({
-                        "id": str(uuid.uuid4())[:8],
-                        "titulo": titulo,
-                        "empresa": site["empresa"],
-                        "link": link_completo
-                    })
-
-                    # volta para lista
-                    page.go_back()
-                    page.wait_for_load_state("networkidle")
-
-                except Exception as e:
-                    print("Erro ao processar vaga:", e)
-                    continue
-
-        except Exception as e:
-            print("Erro ao filtrar cidade:", e)
-            continue
-
-    print(f"📌 {site['empresa']} (RECRUT.AI): {len(vagas)} vagas coletadas")
-
-    return vagas
-    
-
-# ===========================
-# RECRUT.AI (ULTRA ROBUSTO FINAL)
-# ===========================
-def coletar_recrutai_fix(page, site):
 
     vagas = []
     links_coletados = set()
@@ -1650,27 +1563,35 @@ def coletar_pandape(page, site):
         except:
             print("ℹ️ não tinha botão 'Ver mais'")
 
-        # ✅ MARCAR SALVADOR
+        # ✅ MARCAR SALVADOR:
         try:
             page.locator("span:has-text('Salvador - BA')").click()
             print("📍 Salvador selecionado")
         except:
             print("⚠️ Salvador não encontrado")
 
-        # ✅ MARCAR SIMÕES FILHO
+        # ✅ MARCAR SIMÕES FILHO:
         try:
             page.locator("span:has-text('Simões Filho - BA')").click()
             print("📍 Simões Filho selecionado")
         except:
             print("⚠️ Simões Filho não encontrado")
 
-       # ✅ MARCAR CAMAÇARI
+       # ✅ MARCAR CAMAÇARI:
         try:
             #page.wait_for_selector("span:has-text('Camaçari - BA')", timeout=5000)
             page.locator("span:has-text('Camaçari - BA')").click()
             print("📍 Camaçari selecionado")
         except:
             print("⚠️ Camaçari não encontrado")
+
+       # ✅ MARCAR LAURO DE FREITAS:
+        try:
+            #page.wait_for_selector("span:has-text('Camaçari - BA')", timeout=5000)
+            page.locator("span:has-text('Lauro de Freitas - BA')").click()
+            print("📍 Lauro de Freitas selecionado")
+        except:
+            print("⚠️ Lauro de Freitas não encontrado")
 
         # 🔥 espera atualizar lista
         time.sleep(3)
@@ -1987,8 +1908,15 @@ def remover_ocultas(vagas, ocultas):
 # LOGOS EMAIL INDIVIDUAL
 # ===========================
 
+def normalizar_nome(nome):
+    nome = nome.lower()
+    nome = unicodedata.normalize("NFD", nome)
+    nome = nome.encode("ascii", "ignore").decode("utf-8")
+    nome = nome.replace(" ", "").replace("-", "")
+    return nome
+
 def get_logo_url(empresa):
-    nome = empresa.lower().replace(" ", "").replace("-", "")
+    nome = normalizar_nome(empresa)
     return f"https://raw.githubusercontent.com/AndreyCarlos07/central-vagas/main/logos/{nome}.png"
 
 
@@ -2018,11 +1946,10 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
 
             f'<a href="{v["link"]}" target="_blank" '
             'style="text-decoration:none;color:#0a66c2;">'
-            f'<p style="margin:0 0 6px 0;font-weight:bold;font-size:14px;line-height:1.2;">{v["titulo"].upper()}</p>'
-            '</a>'
             f'<p style="margin:0 0 6px 0;font-weight:bold;font-size:14px;line-height:1.2;'
             'height:34px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;'
             '-webkit-box-orient:vertical;">{v["titulo"].upper()}</p>'
+            '</a>'
             f'<p style="margin:0 0 8px 0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
 
             '</div>'
@@ -2265,8 +2192,8 @@ def main():
                 elif site["tipo"] == "recrutai":
                     vagas = coletar_recrutai(page, site)
 
-                elif site["tipo"] == "recrutaifix":
-                    vagas = coletar_recrutai_fix(page, site)
+                elif site["tipo"] == "recrutai":
+                    vagas = coletar_recrutai(page, site)
 
                 elif site["tipo"] == "jobconvo":
                     vagas = coletar_jobconvo(page, site)
