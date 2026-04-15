@@ -1069,7 +1069,7 @@ def coletar_recrutai(page, site):
     
 
 # ===========================
-# RECRUT.AI (FINAL LIMPA)
+# RECRUT.AI (ULTRA ROBUSTO)
 # ===========================
 def coletar_recrutai_fix(page, site):
 
@@ -1156,23 +1156,24 @@ def coletar_recrutai_fix(page, site):
                     links_coletados.add(link_completo)
 
                     # ===========================
-                    # 🧠 TITULO REAL (DIRETO)
+                    # 🚀 ABRE VAGA (TÍTULO REAL)
                     # ===========================
+                    page.goto(link_completo, timeout=60000)
+                    page.wait_for_load_state("networkidle")
+
+                    titulo = "Vaga"
+
                     try:
-                        container = card.locator("xpath=ancestor::div[contains(@class, 'card')]")
-
-                        titulo_raw = container.locator("h5.color-primary").first.inner_text().strip()
-
-                        linhas = [l.strip() for l in titulo_raw.split("\n") if l.strip()]
-
-                        if len(linhas) >= 2:
-                            titulo = linhas[-1]
-                        else:
-                            titulo = linhas[0]
-
+                        titulo = page.locator("h1").first.inner_text(timeout=3000).strip()
                     except:
-                        titulo = "Vaga"
+                        try:
+                            titulo = page.locator("h2").first.inner_text(timeout=3000).strip()
+                        except:
+                            pass
 
+                    # ===========================
+                    # SALVA
+                    # ===========================
                     vagas.append({
                         "id": str(uuid.uuid4())[:8],
                         "titulo": titulo,
@@ -1180,8 +1181,15 @@ def coletar_recrutai_fix(page, site):
                         "link": link_completo
                     })
 
+                    # ===========================
+                    # VOLTA PRA LISTA
+                    # ===========================
+                    page.go_back()
+                    page.wait_for_load_state("networkidle")
+                    page.wait_for_timeout(2000)
+
                 except Exception as e:
-                    print("Erro ao processar card:", e)
+                    print("Erro ao processar vaga:", e)
 
         except Exception as e:
             print("Erro ao filtrar cidade:", e)
