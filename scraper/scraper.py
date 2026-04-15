@@ -32,7 +32,7 @@ ARQUIVO = "vagas_ocultas.json"
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "ACELEN", "MDC ENERGIA", "INTERMARÍTIMA", "MRV&CO", "ELETRODATA ENGENHARIA"]
+EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "ACELEN", "MDC ENERGIA", "MRV&CO"]
 
 # ===========================
 # VAGAS CONFIG
@@ -384,7 +384,7 @@ SITES = [
         "empresa": "ACELEN RENOVÁVEIS",
         "url": "https://acelen.jobs.recrut.ai/acelenrenewables#openings",
         "tipo": "recrutai",
-        "cidade": ["Cachoeira e Região / BA", "Feira de Santana / BA", "São Francisco do Conde / BA", "Salvador / BA"]
+        "cidade": ["Cachoeira e Região / BA", "Feira de Santana / BA", "Salvador / BA", "São Francisco do Conde / BA"]
     },
     {
         "empresa": "SOTREQ",
@@ -1916,7 +1916,7 @@ def normalizar_nome(nome):
     nome = nome.encode("ascii", "ignore").decode("ascii")
 
     # mantém letras, números, hífen e ponto
-    nome = re.sub(r'[^a-z0-9\-.]', '', nome)
+    nome = re.sub(r'[^a-z0-9\-.&]', '', nome)
 
     return nome
 
