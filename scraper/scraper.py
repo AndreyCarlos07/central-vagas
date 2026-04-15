@@ -1069,9 +1069,9 @@ def coletar_recrutai(page, site):
     
 
 # ===========================
-# RECRUT.AI (FINAL DEFINITIVA)
+# RECRUT.AI (FINAL LIMPA)
 # ===========================
-def coletar_recrutai_fix(page, site):
+def coletar_recrutai(page, site):
 
     vagas = []
     links_coletados = set()
@@ -1138,7 +1138,7 @@ def coletar_recrutai_fix(page, site):
                         base = site["url"].split("#")[0]
                         link_completo = base.rstrip("/") + "/" + link.lstrip("/")
 
-                    # 🔥 FIX ACELEN RENOVÁVEIS (COMPLETO)
+                    # 🔥 FIX ACELEN RENOVÁVEIS
                     link_completo = link_completo.replace(
                         "/acelenrenewables/acelenrenewables/",
                         "/acelenrenewables/"
@@ -1156,19 +1156,17 @@ def coletar_recrutai_fix(page, site):
                     links_coletados.add(link_completo)
 
                     # ===========================
-                    # 🧠 TITULO REAL
+                    # 🧠 TITULO REAL (DIRETO)
                     # ===========================
                     try:
                         container = card.locator("xpath=ancestor::div[contains(@class, 'card')]")
-                        h5 = container.locator("h5").first
 
-                        titulo_raw = h5.inner_text(timeout=2000).strip()
+                        titulo_raw = container.locator("h5.color-primary").first.inner_text().strip()
 
-                        # quebra por linhas e remove vazios
                         linhas = [l.strip() for l in titulo_raw.split("\n") if l.strip()]
 
                         if len(linhas) >= 2:
-                            titulo = linhas[-1]  # última linha = título real
+                            titulo = linhas[-1]
                         else:
                             titulo = linhas[0]
 
