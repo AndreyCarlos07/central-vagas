@@ -1069,7 +1069,7 @@ def coletar_recrutai(page, site):
     
 
 # ===========================
-# RECRUT.AI (FINAL CORRIGIDA)
+# RECRUT.AI (FINAL DEFINITIVA)
 # ===========================
 def coletar_recrutai_fix(page, site):
 
@@ -1138,8 +1138,11 @@ def coletar_recrutai_fix(page, site):
                         base = site["url"].split("#")[0]
                         link_completo = base.rstrip("/") + "/" + link.lstrip("/")
 
-                    # 🔥 FIX ACELEN RENOVÁVEIS
+                    # 🔥 FIX ACELEN RENOVÁVEIS (COMPLETO)
                     link_completo = link_completo.replace(
+                        "/acelenrenewables/acelenrenewables/",
+                        "/acelenrenewables/"
+                    ).replace(
                         "/acelenrenewables//acelenrenewables/",
                         "/acelenrenewables/"
                     )
@@ -1153,14 +1156,21 @@ def coletar_recrutai_fix(page, site):
                     links_coletados.add(link_completo)
 
                     # ===========================
-                    # 🧠 TITULO REAL (AQUI É O FIX)
+                    # 🧠 TITULO REAL
                     # ===========================
                     try:
                         container = card.locator("xpath=ancestor::div[contains(@class, 'card')]")
-                        titulo_raw = container.locator("h5").inner_text(timeout=2000).strip()
+                        h5 = container.locator("h5").first
 
-                        # remove código tipo "LQHTV0"
-                        titulo = titulo_raw.split("\n")[-1].strip()
+                        titulo_raw = h5.inner_text(timeout=2000).strip()
+
+                        # quebra por linhas e remove vazios
+                        linhas = [l.strip() for l in titulo_raw.split("\n") if l.strip()]
+
+                        if len(linhas) >= 2:
+                            titulo = linhas[-1]  # última linha = título real
+                        else:
+                            titulo = linhas[0]
 
                     except:
                         titulo = "Vaga"
