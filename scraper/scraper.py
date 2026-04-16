@@ -31,8 +31,8 @@ ARQUIVO = "vagas_ocultas.json"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "ACELEN", "MDC ENERGIA", "MRV&CO"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS", "ACELEN", "MDC ENERGIA"]
 
 # ===========================
 # VAGAS CONFIG
@@ -1945,7 +1945,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             f'<a href="{v["link"]}" target="_blank" '
             f'style="text-decoration:none;color:#0a66c2;" '
             f'title="{v["titulo"]}">'
-            f'<p style="margin:0 0 6px 0;font-weight:bold;font-size:14px;line-height:1.2;'
+            f'<p style="margin:0 0 6px 0;font-weight:bold;font-size:14px;line-height:1.3;'
             f'max-height:34px;overflow:hidden;">{v["titulo"].upper()}</p>'
             '</a>'
             
