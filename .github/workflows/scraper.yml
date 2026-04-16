@@ -2,8 +2,15 @@ name: Atualizar vagas automaticamente
 
 on:
   schedule:
-    - cron: "0 20 * * *" # 17:00 BR (UTC-3)
+    - cron: "0 15 * * *" # 12:00 BR → PRO manhã
+    - cron: "0 20 * * *" # 17:00 BR → PRO tarde
+    - cron: "0 23 * * *" # 20:00 BR → FREE
   workflow_dispatch:
+    inputs:
+      modo:
+        description: "Modo de execução (pro ou free)"
+        required: true
+        default: "pro"
 
 jobs:
   scrape:
@@ -27,30 +34,53 @@ jobs:
           pip install -r scraper/requirements.txt
           playwright install chromium
 
-      - name: Rodar scraper
-        run: python scraper/scraper.py
-
-      - name: Commit e push se houver mudanças
+      # ===========================
+      # EXECUÇÃO PRO (12h e 17h)
+      # ===========================
+      - name: Rodar scraper (PRO)
+        if: |
+          github.event.schedule == '0 15 * * *' ||
+          github.event.schedule == '0 20 * * *' ||
+          github.event.inputs.modo == 'pro'
         run: |
+          echo "🚀 EXECUTANDO MODO PRO"
+
+          python scraper/scraper.py
+
+          cp vagas.csv vagas_pro.csv
+
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
-          git add vagas.csv vagas_novas.csv vagas_debug.csv
+          git add vagas_pro.csv vagas_novas.csv vagas_debug.csv
 
           if git diff --cached --quiet; then
-            echo "✅ Nenhuma mudança para commitar"
+            echo "✅ Nenhuma mudança PRO"
           else
-            git commit -m "auto: atualiza vagas"
+            git commit -m "auto: atualiza vagas PRO"
+            git pull --rebase origin main
+            git push
+          fi
 
-            for i in 1 2 3; do
-              echo "🚀 Tentativa $i de push..."
+      # ===========================
+      # EXECUÇÃO FREE (20h)
+      # ===========================
+      - name: Liberar vagas para FREE
+        if: |
+          github.event.schedule == '0 23 * * *' ||
+          github.event.inputs.modo == 'free'
+        run: |
+          echo "🌐 LIBERANDO PARA FREE"
 
-              if git pull --rebase origin main && git push; then
-                echo "✅ Push realizado com sucesso"
-                break
-              fi
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
 
-              echo "⚠️ Falha na tentativa $i, tentando novamente..."
-              sleep 5
-            done
+          git add vagas.csv
+
+          if git diff --cached --quiet; then
+            echo "✅ Nenhuma mudança FREE"
+          else
+            git commit -m "auto: libera vagas FREE"
+            git pull --rebase origin main
+            git push
           fi
