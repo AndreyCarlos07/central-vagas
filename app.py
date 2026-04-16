@@ -745,10 +745,12 @@ def painel_pro():
     try:
         user_id = request.args.get("id")
 
-        usuarios = carregar_usuarios()
+        dados = carregar_pro()
+        usuarios = dados.get("ativos", [])
+
         user = next((u for u in usuarios if u["id"] == user_id), None)
 
-        if not user or not user.get("ativo"):
+        if not user:
             return "Acesso inválido", 403
 
         vagas = carregar_vagas_pro()
