@@ -314,6 +314,11 @@ def enviar_email_contato(nome, tipo, mensagem):
 
     except Exception as e:
         print("Erro ao enviar email:", e)
+        
+
+def carregar_vagas_pro():
+    with open("vagas_pro.csv", newline="", encoding="utf-8") as f:
+        return list(csv.DictReader(f))
 
 
 def carregar_pro():
