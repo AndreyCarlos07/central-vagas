@@ -733,6 +733,22 @@ def privacidade():
     """
 
     return render_template_string(html)
+
+@app.route("/pro_vagas")
+def painel_pro():
+    user_id = request.args.get("id")
+
+    usuarios = carregar_usuarios()
+    user = next((u for u in usuarios if u["id"] == user_id), None)
+
+    if not user or not user.get("ativo"):
+        return "Acesso inválido", 403
+
+    vagas = carregar_vagas_pro()
+
+    vagas = filtrar_vagas_usuario(vagas, user)
+
+    return render_template_string(html, vagas=vagas)  # usa o mesmo layout da home
     
 
 @app.route("/pro")
