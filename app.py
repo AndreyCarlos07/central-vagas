@@ -788,7 +788,7 @@ def painel_pro():
         vagas = carregar_vagas_pro()
         vagas = filtrar_vagas_usuario(vagas, user)
 
-        html = get_html_home()
+        html = get_html_home_pro()
 
         return render_template_string(
             html,
@@ -971,6 +971,488 @@ def pro():
     empresas = sorted(set(v["empresa"] for v in vagas_ativas()))
 
     return render_template_string(html, empresas=empresas)
+    
+
+def get_html_home_pro():
+    return """
+    <html>
+    <head>
+        <title>Central de Vagas Pro</title>
+
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLTE9JPMLL"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LLTE9JPMLL');
+        </script>
+
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2211390415336582"
+            crossorigin="anonymous"></script>
+
+        <style>
+            body { font-family: Arial; background: #f4f6f8; padding: 30px; }
+            h1 { color: #222; }
+
+            .top-bar {
+                display: flex;
+                gap: 15px;
+                align-items: center;
+                margin-bottom: 20px;
+                flex-wrap: wrap;
+            }
+
+            .linkedin-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                min-width: 180px;
+                background: #0a66c2;
+                color: white;
+                padding: 8px 15px;
+                border-radius: 6px;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+            .linkedin-btn:hover { background: #084a8b; }
+
+            .whatsapp-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                min-width: 180px;
+                background: #25D366;
+                color: white;
+                padding: 8px 15px;
+                border-radius: 6px;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+            .whatsapp-btn:hover { background: #1ebe5d; }
+
+            .avaliar-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                min-width: 180px;
+                background: #28a745;
+                color: white;
+                padding: 8px 15px;
+                border-radius: 6px;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+            .avaliar-btn:hover { background: #218838; }
+
+            .info-box {
+                background: white;
+                padding: 8px 15px;
+                border-radius: 6px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+                font-weight: bold;
+                color: #333;
+            }
+
+            .filtro-box {
+                background: white;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            }
+
+            input, select {
+                padding: 12px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                margin-right: 10px;
+                min-width: 180px;
+            }
+
+            button {
+                padding: 8px 15px;
+                border-radius: 5px;
+                border: none;
+                background: #0066cc;
+                color: white;
+                cursor: pointer;
+            }
+
+            button:hover { background: #004999; }
+
+            .vaga {
+                background: white;
+                padding: 15px;
+                margin-bottom: 12px;
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            }
+
+            .paginacao {
+                margin-top: 20px;
+            }
+
+            .paginacao a {
+                padding: 8px 12px;
+                background: #0066cc;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                margin-right: 5px;
+            }
+
+            .paginacao a:hover {
+                background: #004999;
+            }
+
+            a.vaga-link {
+                text-decoration: none;
+                color: #0066cc;
+                font-size: 18px;
+            }
+
+            .empresa { color: #555; margin-top: 5px; }
+
+            textarea {
+                width: 100%;
+                height: 120px;
+                resize: none; /* impede redimensionar */
+            }
+        </style>
+    </head>
+    <body>
+
+        {% if request.args.get("msg") == "ok" %}
+        <div id="msg-sucesso" style="
+            background:#d4edda;
+            color:#155724;
+            padding:15px;
+            border-radius:6px;
+            margin-bottom:20px;
+            font-weight:bold;
+        ">
+            ✅ Avaliação enviada com sucesso! Aguarde aprovação.
+        </div>
+
+        <script>
+        setTimeout(() => {
+            const msg = document.getElementById("msg-sucesso");
+            if (msg) msg.style.display = "none";
+        }, 4000);
+        </script>
+        {% endif %}
+
+        <div style="margin-bottom:15px;">
+            <a href="/"
+                onmouseover="this.style.background='#0066cc'"
+                onmouseout="this.style.background='#f4f6f8'"
+                style="
+                    background:#f4f6f8;
+                    color:black;
+                    padding:8px 12px;
+                    border-radius:6px;
+                    text-decoration:none;
+                    margin-right:8px;
+                    font-weight:normal;
+                    border:1px solid #ddd;
+                ">Vagas</a>
+
+            <a href="/sobre"
+                onmouseover="this.style.background='#0066cc'"
+                onmouseout="this.style.background='#f4f6f8'"  
+                style="
+                    background:#f4f6f8;
+                    color:black;
+                    padding:8px 12px;
+                    border-radius:6px;
+                    text-decoration:none;
+                    margin-right:8px;
+                    font-weight:normal;                
+                    border:1px solid #ddd;
+                ">Sobre</a>
+
+            <a href="/contato"
+                onmouseover="this.style.background='#0066cc'"
+                onmouseout="this.style.background='#f4f6f8'"  
+                style="
+                    background:#f4f6f8;
+                    color:black;
+                    padding:8px 12px;
+                    border-radius:6px;
+                    text-decoration:none;
+                    margin-right:8px;
+                    font-weight:normal;                
+                    border:1px solid #ddd;
+                ">Contato</a>
+
+            <a href="/privacidade"
+                onmouseover="this.style.background='#0066cc'"
+                onmouseout="this.style.background='#f4f6f8'"  
+                style="
+                    background:#f4f6f8;
+                    color:black;
+                    padding:8px 12px;
+                    border-radius:6px;
+                    text-decoration:none;
+                    margin-right:8px;                    
+                    font-weight:normal;                
+                    border:1px solid #ddd;
+                ">Privacidade</a>
+
+            <a href="/pro"
+                onmouseover="this.style.background='#0066cc'"
+                onmouseout="this.style.background='#f4f6f8'" 
+                style="
+                    background:#fff3e0;
+                    color:#ff9800;
+                    padding:8px 12px;
+                    border-radius:6px;
+                    text-decoration:none;
+                    font-weight:normal;                
+                    border:1px solid #ff9800;
+                ">💎 Versão PRO</a>
+                
+        </div>
+
+        <h1>Central de Vagas PRO - Engenharia / BA</h1>
+
+        {% if admin %}
+        <p>
+        <a href="/admin/pro?admin={{token}}">
+        💰 Gerenciar PRO  ({{ total_pro_pendentes }})
+        </a>
+        </p>
+        {% endif %}
+
+        {% if admin %}
+        <p>
+        <a href="/admin/ocultas?admin={{token}}">
+        ⚙️ Ver vagas ocultas  ({{ total_ocultas }})
+        </a>
+        </p>
+        {% endif %}
+
+        {% if admin %}
+        <p>
+        <a href="/admin/avaliacoes?admin={{token}}">
+        📝 Ver avaliações pendentes ({{ total_pendentes_av }})
+        </a>
+        </p>
+        {% endif %}
+
+        {% if admin %}
+        <p>
+        <a href="/admin/contatos?admin={{token}}">
+        📩 Ver solicitações de contato  ({{ total_contatos }})
+        </a>
+        </p>
+        {% endif %}
+
+        <div class="top-bar">
+
+            <a href="https://www.linkedin.com/in/engandreycarlos/" target="_blank" class="linkedin-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+                    <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.2 8.5h4.5v15h-4.5v-15zm7.5 0h4.3v2.1h.1c.6-1.1 2-2.1 4.2-2.1 4.5 0 5.3 3 5.3 6.9v7h-4.5v-6.2c0-1.5-.03-3.5-2.2-3.5-2.2 0-2.5 1.7-2.5 3.4v6.3h-4.5v-15z"/>
+                </svg>
+                LinkedIn
+            </a>
+
+            <a href="https://chat.whatsapp.com/LedWVo8O6TSES0kG6smJcT?mode=gi_t" target="_blank" class="whatsapp-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+                    <path d="M20.52 3.48A11.86 11.86 0 0012.01 0C5.38 0 .01 5.37.01 12c0 2.12.56 4.19 1.62 6.01L0 24l6.17-1.61A11.96 11.96 0 0012.01 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.2-3.49-8.52zM12 21.8c-1.8 0-3.55-.48-5.08-1.39l-.36-.21-3.66.96.98-3.57-.23-.37A9.8 9.8 0 012.2 12c0-5.4 4.4-9.8 9.8-9.8 2.62 0 5.08 1.02 6.93 2.87A9.74 9.74 0 0121.8 12c0 5.4-4.4 9.8-9.8 9.8zm5.39-7.35c-.3-.15-1.78-.88-2.06-.98-.28-.1-.48-.15-.68.15-.2.3-.78.98-.96 1.18-.18.2-.36.23-.66.08-.3-.15-1.26-.46-2.4-1.46-.89-.79-1.5-1.76-1.68-2.06-.18-.3-.02-.46.13-.6.14-.14.3-.36.46-.54.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.68-1.64-.93-2.24-.24-.58-.49-.5-.68-.51h-.58c-.2 0-.53.08-.8.38-.27.3-1.04 1.02-1.04 2.5s1.07 2.9 1.22 3.1c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.35.2 1.86.12.57-.08 1.78-.73 2.03-1.43.25-.7.25-1.3.18-1.43-.07-.13-.27-.2-.57-.35z"/>
+                </svg>
+                WhatsApp
+            </a>
+
+            <a href="#"
+               onclick="document.getElementById('form-avaliacao').style.display='block'; return false;"
+               class="avaliar-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+                    <path d="M12 .587l3.668 7.431L24 9.748l-6 5.847 1.416 8.255L12 19.771l-7.416 4.079L6 15.595 0 9.748l8.332-1.73z"/>
+                </svg>
+                Avaliar página
+            </a>
+
+            <div class="info-box">
+                📌 {{ total_vagas }} vagas encontradas
+            </div>
+
+            <div class="info-box">
+                🏢 {{ total_empresas }} empresas monitoradas
+            </div>
+
+            <div class="vaga">
+                <h3>💡 Dicas para conseguir emprego mais rápido</h3>
+
+                <p>
+                Muitas empresas utilizam plataformas automatizadas para recrutamento,
+                como sistemas de triagem de currículos. 
+                Para aumentar suas chances de aprovação nos processos seletivos:
+                </p>
+
+                <ul>
+                    <li>Preencha seu currículo de forma completa e atualizada</li>
+                    <li>Utilize palavras-chave relacionadas à vaga desejada</li>
+                    <li>Evite erros de português e revise suas informações</li>
+                    <li>Mantenha seu perfil sempre atualizado nas plataformas</li>
+                    <li>Candidate-se rapidamente após a publicação da vaga</li>
+                </ul>
+
+                <p>
+                Pequenos ajustes podem aumentar significativamente suas chances
+                de ser chamado para entrevistas e avançar nas etapas do processo seletivo.
+                </p>
+                </div>
+
+        </div>   
+               
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+
+        <p>Projeto voluntário desenvolvido por <strong>Andrey Carlos</strong> para ajudar profissionais a se candidatarem.</p>
+
+        <div id="form-avaliacao" style="display:none;background:white;padding:15px;border-radius:8px;margin-bottom:20px;">
+
+        <form method="POST" action="/avaliar">
+
+        <input name="nome" placeholder="Seu nome" required>
+
+        <select name="status" onchange="toggleCampos(this.value)">
+            <option value="recolocacao">Recolocação</option>
+            <option value="empregado">Empregado</option>
+        </select>
+
+        <script>
+        function toggleCampos(status) {
+            const cargo = document.querySelector('input[name="cargo"]');
+            const empresa = document.querySelector('input[name="empresa"]');
+
+            if (status === "recolocacao") {
+                cargo.disabled = true;
+                empresa.disabled = true;
+                cargo.value = "";
+                empresa.value = "";
+            } else {
+                cargo.disabled = false;
+                empresa.disabled = false;
+            }
+        }
+        </script>
+
+        <input name="cargo" placeholder="Cargo" disabled>
+        <input name="empresa" placeholder="Empresa" disabled>
+
+        <select name="estrelas" required>
+            <option value="">Avaliação</option>
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="1">⭐</option>
+        </select>
+
+        <textarea name="comentario" maxlength="300" placeholder="Comentário..." required></textarea>
+
+        <button type="submit">Enviar avaliação</button>
+
+        </form>
+        </div>
+        
+        {% if vagas %}
+            {% for vaga in vagas %}
+                <div class="vaga">
+                    <a href="/vaga/{{ vaga.id }}?redirect=1" target="_blank" class="vaga-link"
+                       onclick="event.preventDefault();
+                                gtag('event', 'click_vaga', {
+                                    'vaga': '{{ vaga.titulo }}',
+                                    'empresa': '{{ vaga.empresa }}',
+                                    'origem': 'home'
+                                });
+                                setTimeout(() => {
+                                    window.open(this.href, '_blank');
+                                }, 150);">
+                        <strong>{{ vaga.titulo }}</strong>
+                    </a>  
+                    <div class="empresa">
+                        Empresa: {{ vaga.empresa }}
+                    </div>
+
+                    {% if admin %}
+                    <a href="/ocultar/{{ vaga.id }}?admin={{token}}&page={{page}}&q={{busca_nome}}&empresa={{filtro_empresa}}&ordem={{ordem}}" style="color:red;font-size:12px;">
+                    ocultar
+                    </a>
+                    {% endif %}
+
+                </div>
+            {% endfor %}
+        {% else %}
+            <p><em>Nenhuma vaga encontrada com esses filtros.</em></p>
+        {% endif %}
+
+        <div class="paginacao">
+            {% if page > 1 %}
+                <a href="?{% if admin %}admin={{token}}&{% endif %}page={{ page-1 }}&q={{ busca_nome }}&empresa={{ filtro_empresa }}&ordem={{ ordem }}">
+                    ← Anterior
+                </a>
+            {% endif %}
+
+            {% if page < total_paginas %}
+                <a href="?{% if admin %}admin={{token}}&{% endif %}page={{ page+1 }}&q={{ busca_nome }}&empresa={{ filtro_empresa }}&ordem={{ ordem }}">
+                    Próxima →
+                </a>
+            {% endif %}
+            
+        </div>
+
+        <!-- banner_home_topo -->
+        <ins class="adsbygoogle"
+            style="display:block; width:300px;height:50px"
+            data-ad-client="ca-pub-2211390415336582"
+            data-ad-slot="8168087096"></ins>
+
+        <h2>⭐ Avaliações</h2>
+
+        {% for a in avaliacoes %}
+        <div class="vaga">
+
+        <strong>{{ a.nome }}</strong>
+
+        <br>
+
+        {{ "⭐" * (a.estrelas | int) }}
+
+        <p>{{ a.comentario }}</p>
+
+        {% if a.status == "empregado" %}
+        <small>{{ a.cargo }} - {{ a.empresa }}</small>
+        {% else %}
+        <small>Em recolocação</small>
+        {% endif %}
+
+        </div>
+        {% endfor %}
+
+        <div class="paginacao">
+        {% if page_av > 1 %}
+        <a href="?page={{page}}&page_av={{ page_av-1 }}">← Anterior</a>
+        {% endif %}
+
+        {% if page_av < total_paginas_av %}
+        <a href="?page={{page}}&page_av={{ page_av+1 }}">Próxima →</a>
+        {% endif %}
+        </div>
+
+    </body>
+    </html>
+    """
     
 
 def get_html_home():
