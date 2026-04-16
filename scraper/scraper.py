@@ -266,7 +266,7 @@ SITES = [
     {"empresa": "GRUPO MARATÁ", "url": "https://grupomarata.gupy.io", "tipo": "gupy"},
     {"empresa": "GRUPO FERTIPAR", "url": "https://grupofertipar.gupy.io", "tipo": "gupy"},
     {"empresa": "MRV&CO", "url": "https://vagas-mrveco.gupy.io", "tipo": "gupy"},
-    {"empresa": "BAUMINAS, "url": "https://grupobauminas.gupy.io", "tipo": "gupy"},
+    {"empresa": "BAUMINAS", "url": "https://grupobauminas.gupy.io", "tipo": "gupy"},
     {
         "empresa": "BRIDGESTONE",
         "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers",
