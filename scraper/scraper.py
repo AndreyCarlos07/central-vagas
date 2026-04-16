@@ -1939,7 +1939,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             f'<img src="{logo_url}" width="50" height="50" '
             'style="border-radius:6px;object-fit:contain;">'
 
-            # BLOCO DIREITA (texto + botão)
+            # TEXTO
             '<div style="flex:1;padding-left:6px;">'
 
             f'<a href="{v["link"]}" target="_blank" '
@@ -1969,18 +1969,20 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
         'padding:12px;border-radius:8px;margin-bottom:20px;font-weight:bold;">'
         'Central de Vagas PRO'
         '</div>'
-        )
+    )
+
     partes.append(f'<p>Olá, <b>{nome}</b> 👋</p>')
     partes.append(f'<p>Filtro escolhido: {tipo.upper()} → {valor}</p>')
     partes.append(f'<p>Total de vagas: {len(vagas_filtradas)}</p>')
     
+    # ===========================
     # NOVAS VAGAS
+    # ===========================
     partes.append('<h3 style="font-size:16px;margin-bottom:10px;">Novas vagas no seu perfil:</h3>')
     
     if vagas_novas:
         for v in vagas_novas[:10]:
             partes.append(criar_card(v))
-
     else:
         partes.append(
             '<p style="background:#fff3cd;padding:10px;border-radius:5px;">'
@@ -1988,52 +1990,26 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             '</p>'
         )
 
+    # REMOVE DUPLICADAS DO RESUMO
     ids_novas = set(v["id"] for v in vagas_novas)
     
-    # 🔥 REMOVE DUPLICADAS DO RESUMO (DEPOIS DE USAR AS NOVAS)
     vagas_filtradas = [
         v for v in vagas_filtradas
         if v["id"] not in ids_novas
     ]
 
-    # RESUMO VAGAS
+    # ===========================
+    # BOTÃO PRO
+    # ===========================
     tem_mais_vagas = len(vagas_filtradas) > 10
-
     botao_extra = ""
 
-    # ===========================
-    # MONTAR QUERY INTELIGENTE
-    # ===========================
-        
-    empresa_query = ""
-
-    if tipo == "hierarquia":
-        palavras = MAPA_HIERARQUIA.get(valor, [valor])
-        query = "+".join(set(palavras))
-
-    elif tipo == "area":
-        palavras = MAPA_AREA.get(valor, [valor])
-        query = "+".join(set(palavras))
-
-    elif tipo == "empresa":
-        # empresa normalmente é lista
-        empresas = valor if isinstance(valor, list) else [valor]
-        query = ""  # não usa q
-        empresa_query = "&empresa=" + ",".join(empresas)
-
-    else:
-        query = valor
-    
     if tem_mais_vagas:
-
-        if tipo == "empresa":
-            url = f"https://central-vagas.onrender.com/?ordem=recentes{empresa_query}"
-        else:
-            url = f"https://central-vagas.onrender.com/?q={query}&ordem=recentes"
+        link_pro = f"https://central-vagas.onrender.com/pro_vagas?id={user['id']}"
 
         botao_extra = (
             f'<div style="margin-top:15px;">'
-            f'<a href="{url}" '
+            f'<a href="{link_pro}" '
             'style="padding:8px 14px;background:#0a66c2;color:white;'
             'text-decoration:none;border-radius:4px;font-size:12px;">'
             'Ver todas as vagas do seu perfil'
@@ -2041,6 +2017,9 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             '</div>'
         )
 
+    # ===========================
+    # RESUMO
+    # ===========================
     partes.append('<h3 style="font-size:16px;margin-bottom:10px;">Resumo de vagas no seu perfil:</h3>')
     
     for v in vagas_filtradas[:10]:
@@ -2050,7 +2029,6 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     
     # FINAL
     partes.append('<hr>')
-
     partes.append('</div>')
     partes.append('</body>')
     partes.append('</html>')
