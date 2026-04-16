@@ -756,7 +756,11 @@ def painel_pro():
         vagas = carregar_vagas_pro()
 
         vagas = filtrar_vagas_usuario(vagas, user)
+
         return render_template_string(html, vagas=vagas)
+
+    except Exception as e:
+        return f"ERRO: {str(e)}"
     
 
 @app.route("/pro")
