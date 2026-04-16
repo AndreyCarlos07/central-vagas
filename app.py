@@ -739,21 +739,28 @@ def privacidade():
 
     return render_template_string(html)
 
+
 @app.route("/pro_vagas")
 def painel_pro():
-    user_id = request.args.get("id")
+    try:
+        user_id = request.args.get("id")
 
-    usuarios = carregar_usuarios()
-    user = next((u for u in usuarios if u["id"] == user_id), None)
+        usuarios = carregar_usuarios()
+        user = next((u for u in usuarios if u["id"] == user_id), None)
 
-    if not user or not user.get("ativo"):
-        return "Acesso inválido", 403
+        if not user or not user.get("ativo"):
+            return "Acesso inválido", 403
 
-    vagas = carregar_vagas_pro()
+        vagas = carregar_vagas_pro()
 
-    vagas = filtrar_vagas_usuario(vagas, user)
+        return f"""
+        OK<br>
+        User: {user}<br>
+        Total vagas: {len(vagas)}
+        """
 
-    return render_template_string(html, vagas=vagas)  # usa o mesmo layout da home
+    except Exception as e:
+        return f"ERRO: {str(e)}"
     
 
 @app.route("/pro")
