@@ -95,6 +95,38 @@ MAPA_AREA = {
     "civil": ["civil", "obras", "obra"]
 }
 
+def filtrar_vagas_usuario(vagas, user):
+    resultado = []
+
+    for v in vagas:
+        titulo = v.get("titulo", "").lower()
+
+        tipo = user.get("tipo_filtro")
+        valor = user.get("valor")
+
+        # 🔹 HIERARQUIA
+        if tipo == "hierarquia":
+            palavras = MAPA_HIERARQUIA.get(valor, [])
+            if not any(p in titulo for p in palavras):
+                continue
+
+        # 🔹 ÁREA
+        elif tipo == "area":
+            palavras = MAPA_AREA.get(valor, [])
+            if not any(p in titulo for p in palavras):
+                continue
+
+        # 🔹 EMPRESA
+        elif tipo == "empresa":
+            empresas = valor if isinstance(valor, list) else [valor]
+            if v.get("empresa") not in empresas:
+                continue
+
+        resultado.append(v)
+
+    return resultado
+    
+
 def carregar_ocultas():
 
     url = f"https://api.github.com/repos/{REPO}/contents/{ARQUIVO_OCULTAS}"
