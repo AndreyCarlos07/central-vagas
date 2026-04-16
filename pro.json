@@ -43,6 +43,37 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-13T14:48:22.019196"
+    },
+    {
+      "id": "7c6e9edb",
+      "nome": "Vinicius Cardoso Lima",
+      "email": "vinicius.c.lima@live.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "ACELEN",
+        "ACELEN RENOVÁVEIS",
+        "AMBEV",
+        "BAUMINAS",
+        "BRACELL",
+        "BRASKEM",
+        "BRIDGESTONE",
+        "BYD",
+        "CETREL",
+        "CONTINENTAL",
+        "GRUPO BOTICÁRIO",
+        "HALLIBURTON",
+        "INDORAMA VENTURES",
+        "KIMBERLY-CLARK",
+        "KORDSA",
+        "PETRORECONCAVO",
+        "TRONOX",
+        "ULTRACARGO",
+        "WHITE MARTINS"
+      ],
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-16T22:59:54.765805"
     }
   ],
   "ativos": [
