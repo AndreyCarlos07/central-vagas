@@ -786,10 +786,31 @@ def painel_pro():
             return "Acesso inválido", 403
 
         vagas = carregar_vagas_pro()
-
         vagas = filtrar_vagas_usuario(vagas, user)
 
-        return render_template_string(html, vagas=vagas)
+        html = get_html_home()
+
+        return render_template_string(
+            html,
+            vagas=vagas,
+            total_vagas=len(vagas),
+            total_empresas=0,
+            empresas_unicas=[],
+            busca_nome="",
+            filtro_empresa="",
+            ordem="recentes",
+            page=1,
+            total_paginas=1,
+            admin=False,
+            token="",
+            avaliacoes=[],
+            page_av=1,
+            total_paginas_av=1,
+            total_pendentes_av=0,
+            total_contatos=0,
+            total_pro_pendentes=0,
+            total_ocultas=0
+        )
 
     except Exception as e:
         return f"ERRO: {str(e)}"
@@ -950,74 +971,10 @@ def pro():
     empresas = sorted(set(v["empresa"] for v in vagas_ativas()))
 
     return render_template_string(html, empresas=empresas)
-
-@app.route("/")
-def home():
-    verificar_expiracao()  # 🔥 ADICIONA AQUI
     
-    vagas = vagas_ativas()
 
-    admin = request.args.get("admin") == ADMIN_TOKEN
-
-
-    # ==========================
-    # CAPTURA FILTROS
-    # ==========================
-    busca_nome = request.args.get("q", "").lower()
-    filtro_empresa = request.args.get("empresa", "")
-    ordem = request.args.get("ordem", "recentes") #padrao
-    page = int(request.args.get("page", 1))  # ✅ ADICIONADO
-
-    # ==========================
-    # APLICA FILTROS
-    # ==========================
-    if busca_nome:
-        palavras_busca = busca_nome.split()
-
-        vagas = [
-            v for v in vagas
-            if any(p in v["titulo"].lower() for p in palavras_busca)
-        ]
-
-    if filtro_empresa:
-        empresas = filtro_empresa.split(",")
-
-        vagas = [
-            v for v in vagas
-            if v["empresa"] in empresas
-        ]
-
-    # ==========================
-    # ORDENAÇÃO
-    # ==========================
-    try:
-        # ✅ ORDEM ALFABÉTICA SOMENTE SE NÃO HOUVER FILTRO NEM ORDEM NA URL
-        if ordem == "padrao":
-            vagas.sort(key=lambda v: v["titulo"].lower())
-        else:
-            vagas.sort(
-                key=lambda v: datetime.fromisoformat(v["data_coleta"]) if v.get("data_coleta") else datetime.min,
-                reverse=(ordem == "recentes")
-            )
-    except:
-        pass
-
-
-    total_vagas = len(vagas)
-
-    # ==========================
-    # PAGINAÇÃO
-    # ==========================
-    inicio = (page - 1) * VAGAS_POR_PAGINA
-    fim = inicio + VAGAS_POR_PAGINA
-    vagas = vagas[inicio:fim]
-
-    total_paginas = (total_vagas + VAGAS_POR_PAGINA - 1) // VAGAS_POR_PAGINA
-
-    empresas_unicas = sorted(set(v["empresa"] for v in vagas_ativas()))
-    total_empresas = len(empresas_unicas)
-
-    html = """
+def get_html_home():
+    return """
     <html>
     <head>
         <title>Central de Vagas</title>
@@ -1529,6 +1486,73 @@ def home():
     </body>
     </html>
     """
+    
+
+@app.route("/")
+def home():
+    verificar_expiracao()  # 🔥 ADICIONA AQUI
+    
+    vagas = vagas_ativas()
+
+    admin = request.args.get("admin") == ADMIN_TOKEN
+
+
+    # ==========================
+    # CAPTURA FILTROS
+    # ==========================
+    busca_nome = request.args.get("q", "").lower()
+    filtro_empresa = request.args.get("empresa", "")
+    ordem = request.args.get("ordem", "recentes") #padrao
+    page = int(request.args.get("page", 1))  # ✅ ADICIONADO
+
+    # ==========================
+    # APLICA FILTROS
+    # ==========================
+    if busca_nome:
+        palavras_busca = busca_nome.split()
+
+        vagas = [
+            v for v in vagas
+            if any(p in v["titulo"].lower() for p in palavras_busca)
+        ]
+
+    if filtro_empresa:
+        empresas = filtro_empresa.split(",")
+
+        vagas = [
+            v for v in vagas
+            if v["empresa"] in empresas
+        ]
+
+    # ==========================
+    # ORDENAÇÃO
+    # ==========================
+    try:
+        # ✅ ORDEM ALFABÉTICA SOMENTE SE NÃO HOUVER FILTRO NEM ORDEM NA URL
+        if ordem == "padrao":
+            vagas.sort(key=lambda v: v["titulo"].lower())
+        else:
+            vagas.sort(
+                key=lambda v: datetime.fromisoformat(v["data_coleta"]) if v.get("data_coleta") else datetime.min,
+                reverse=(ordem == "recentes")
+            )
+    except:
+        pass
+
+
+    total_vagas = len(vagas)
+
+    # ==========================
+    # PAGINAÇÃO
+    # ==========================
+    inicio = (page - 1) * VAGAS_POR_PAGINA
+    fim = inicio + VAGAS_POR_PAGINA
+    vagas = vagas[inicio:fim]
+
+    total_paginas = (total_vagas + VAGAS_POR_PAGINA - 1) // VAGAS_POR_PAGINA
+
+    empresas_unicas = sorted(set(v["empresa"] for v in vagas_ativas()))
+    total_empresas = len(empresas_unicas)
 
     avaliacoes = carregar_avaliacoes()["aprovadas"]
 
@@ -1558,6 +1582,8 @@ def home():
 
     ocultas = vagas_ocultas()
     total_ocultas = len(ocultas)
+
+    html = get_html_home()  # 🔥 AGORA VEM DA FUNÇÃO
 
     return render_template_string(
         html,
