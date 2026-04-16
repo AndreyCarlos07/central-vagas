@@ -755,14 +755,8 @@ def painel_pro():
 
         vagas = carregar_vagas_pro()
 
-        return f"""
-        OK<br>
-        User: {user}<br>
-        Total vagas: {len(vagas)}
-        """
-
-    except Exception as e:
-        return f"ERRO: {str(e)}"
+        vagas = filtrar_vagas_usuario(vagas, user)
+        return render_template_string(html, vagas=vagas)
     
 
 @app.route("/pro")
