@@ -986,34 +986,21 @@ def pro():
                                         if(this.checked){
                                             this.closest('label').style.background='#e6f0ff';
                                             this.closest('label').style.fontWeight='bold';
-                                            this.closest('label').querySelector('.check-icon').style.opacity='1';
                                         } else {
                                             this.closest('label').style.background='transparent';
                                             this.closest('label').style.fontWeight='normal';
-                                            this.closest('label').querySelector('.check-icon').style.opacity='0';
                                         }
                                     "
                                 >
 
                                 <span style="
-                                    white-space: nowrap;
-                                    overflow: hidden;
-                                    text-overflow: ellipsis;
                                     font-size:14px;
+                                    line-height:1.3;
+                                    word-break: break-word;
                                 ">
                                     {{ empresa }}
                                 </span>
                             </div>
-
-                            <!-- check visual -->
-                            <span class="check-icon" style="
-                                font-size:12px;
-                                color:#0a66c2;
-                                opacity:0;
-                                transition:0.2s;
-                            ">
-                                ✔
-                            </span>
 
                         </label>
                     {% endfor %}
