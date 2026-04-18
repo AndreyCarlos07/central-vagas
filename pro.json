@@ -1,17 +1,6 @@
 {
   "pendentes": [
     {
-      "id": "777b6017",
-      "nome": "Adan Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-12T23:09:33.363616"
-    },
-    {
       "id": "4559012a",
       "nome": "Andrey Carlos",
       "email": "andrey.engenhariamecatronica@gmail.com",
