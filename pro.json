@@ -93,21 +93,6 @@
       "data_inicio": "2026-04-18T14:13:48.937429",
       "expira_em": "2026-05-18T14:13:48.937440",
       "data_criacao": "2026-04-18T14:13:19.212123"
-    },
-    {
-      "id": "93fbe1d5",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "empresa",
-      "valor": [
-        "3CORAÇÕES",
-        "ACELEN RENOVÁVEIS",
-        "ALVOAR LÁCTEOS"
-      ],
-      "status": "ativo",
-      "data_inicio": "2026-04-18T21:09:21.848549",
-      "expira_em": "2026-05-18T21:09:21.848561",
-      "data_criacao": "2026-04-18T19:20:53.278504"
     }
   ],
   "expirados": [
