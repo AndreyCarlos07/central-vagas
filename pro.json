@@ -85,17 +85,6 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-18T13:51:47.541943"
-    },
-    {
-      "id": "cf128db0",
-      "nome": "Andrey Central",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-18T13:53:42.145683"
     }
   ],
   "ativos": [
@@ -190,6 +179,17 @@
       "data_inicio": "2026-04-18T13:25:30.449821",
       "expira_em": "2026-05-18T13:25:30.449834",
       "data_criacao": "2026-04-18T12:59:06.824685"
+    },
+    {
+      "id": "cf128db0",
+      "nome": "Andrey Central",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "ativo",
+      "data_inicio": "2026-04-18T13:56:58.259478",
+      "expira_em": "2026-05-18T13:56:58.259488",
+      "data_criacao": "2026-04-18T13:53:42.145683"
     }
   ],
   "expirados": [
