@@ -2336,6 +2336,19 @@ def main():
     except Exception as e:
         print("❌ erro geral no envio PRO:", e)
 
+# ===========================
+# ⏰ VERIFICA EXPIRAÇÃO E AVISOS
+# ===========================
+
+try:
+    print("\n⏰ Verificando expiração e avisos PRO...")
+
+    verificar_aviso_expiracao()  # 🔥 envia emails 3 dias / hoje
+    verificar_expiracao()        # 🔥 move para expirados
+
+except Exception as e:
+    print("❌ erro na verificação de expiração:", e)
+    
 
 if __name__ == "__main__":
     main()    
