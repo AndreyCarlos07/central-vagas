@@ -104,17 +104,6 @@
   ],
   "expirados": [
     {
-      "id": "824381ba",
-      "nome": "Andrey Central",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "expirado",
-      "data_inicio": "2026-04-18T13:29:31.351600",
-      "expira_em": "2026-05-18T13:29:31.351611",
-      "data_criacao": "2026-04-18T13:28:42.208589"
-    },
-    {
       "id": "132cb838",
       "nome": "Andrey Central",
       "email": "ddi_100@hotmail.com",
