@@ -2585,6 +2585,7 @@ def admin_pro():
         {{ u.nome }} - {{ u.email }}
         <br>
         <a href="/ativar_pro/{{u.id}}?admin={{token}}">✅ Ativar</a>
+        <a href="/excluir_pro/{{u.id}}?admin={{token}}" style="color:red;">🗑️ Excluir</a>
         </p>
         <hr>
     {% endfor %}
@@ -2594,9 +2595,8 @@ def admin_pro():
         <p>
         {{ u.nome }} - expira em {{ u.expira_em }}
         <br>
-        <a href="/expirar_pro/{{u.id}}?admin={{token}}" style="color:red;">
-        Expirar
-        </a>
+        <a href="/expirar_pro/{{u.id}}?admin={{token}}" style="color:red;">Expirar</a>
+        <a href="/excluir_pro/{{u.id}}?admin={{token}}" style="color:red;">🗑️ Excluir</a>
         </p>
         <hr>
     {% endfor %}
@@ -2606,9 +2606,8 @@ def admin_pro():
         <p>
         {{ u.nome }}
         <br>
-        <a href="/reativar_pro/{{u.id}}?admin={{token}}" style="color:green;">
-        Reativar
-        </a>
+        <a href="/reativar_pro/{{u.id}}?admin={{token}}" style="color:green;">Reativar</a>
+        <a href="/excluir_pro/{{u.id}}?admin={{token}}" style="color:red;">🗑️ Excluir</a>
         </p>
         <hr>
     {% endfor %}
@@ -2703,6 +2702,26 @@ def reativar_pro(id):
     salvar_pro(dados)
 
     return redirect("/admin/pro?admin=" + ADMIN_TOKEN)
+    
+
+@app.route("/excluir_pro/<id>")
+def excluir_pro(id):
+
+    if request.args.get("admin") != ADMIN_TOKEN:
+        return "Acesso negado"
+
+    dados = carregar_pro()
+
+    # 🔥 percorre todas as listas
+    for chave in ["pendentes", "ativos", "expirados"]:
+        for u in dados[chave]:
+            if str(u["id"]) == str(id):
+                print(f"🗑️ Excluindo usuário {u['email']} de {chave}")
+                dados[chave].remove(u)
+                salvar_pro(dados)
+                return redirect("/admin/pro?admin=" + ADMIN_TOKEN)
+
+    return "Usuário não encontrado"
 
 
 @app.route("/ads.txt")
