@@ -90,17 +90,5 @@
       "data_criacao": "2026-04-18T14:13:19.212123"
     }
   ],
-  "expirados": [
-    {
-      "id": "cf128db0",
-      "nome": "Andrey Central",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "expirado",
-      "data_inicio": "2026-04-18T13:56:58.259478",
-      "expira_em": "2026-05-18T13:56:58.259488",
-      "data_criacao": "2026-04-18T13:53:42.145683"
-    }
-  ]
+  "expirados": []
 }
