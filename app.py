@@ -972,27 +972,36 @@ def pro():
                         onmouseover="this.style.background='#f0f4ff'"
                         onmouseout="this.style.background=this.querySelector('input').checked ? '#e6f0ff' : 'transparent'">
 
-                            <input 
-                                type="checkbox" 
-                                name="empresa" 
-                                value="{{ empresa }}"
-                                onchange="
-                                    if(this.checked){
-                                        this.closest('label').style.background='#e6f0ff';
-                                        this.closest('label').style.fontWeight='bold';
-                                    } else {
-                                        this.closest('label').style.background='transparent';
-                                        this.closest('label').style.fontWeight='normal';
-                                    }
-                                "
-                            >
-
-                            <span style="
-                                font-size:14px;
-                                white-space: nowrap;
+                            <div style="
+                                display:flex;
+                                align-items:center;
+                                gap:10px;
                             ">
-                                {{ empresa }}
-                            </span>
+
+                                <input 
+                                    type="checkbox" 
+                                    name="empresa" 
+                                    value="{{ empresa }}"
+                                    onchange="
+                                        if(this.checked){
+                                            this.closest('label').style.background='#e6f0ff';
+                                            this.closest('label').style.fontWeight='bold';
+                                            this.closest('label').querySelector('.check-icon').style.opacity='1';
+                                        } else {
+                                            this.closest('label').style.background='transparent';
+                                            this.closest('label').style.fontWeight='normal';
+                                            this.closest('label').querySelector('.check-icon').style.opacity='0';
+                                        }
+                                    "
+                                >
+
+                                <span style="
+                                    font-size:14px;
+                                    white-space: nowrap;
+                                ">
+                                    {{ empresa }}
+                                </span>
+                             </div>
 
                             <!-- check visual -->
                             <span class="check-icon" style="
