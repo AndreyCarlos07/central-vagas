@@ -809,8 +809,8 @@ def contato():
 
                     <select name="tipo">
                         <option value="sugestao">Sugestão</option>
-                        <option value="problema">Problemas no Site/Vagas</option>
-                        <option value="problema__proi">Problemas na Assinatura PRO/Vagas</option>
+                        <option value="problema">Problemas no Site</option>
+                        <option value="problema_pro">Problemas na Assinatura PRO</option>
                     </select>
 
                     <textarea name="mensagem" placeholder="Escreva sua mensagem..." required></textarea>
