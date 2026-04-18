@@ -74,6 +74,17 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-16T22:59:54.765805"
+    },
+    {
+      "id": "824381ba",
+      "nome": "Andrey Central",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-18T13:28:42.208589"
     }
   ],
   "ativos": [
