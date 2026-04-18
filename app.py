@@ -2584,7 +2584,7 @@ def admin_pro():
         <p>
         {{ u.nome }} - {{ u.email }}
         <br>
-        <a href="/ativar_pro/{{u.id}}?admin={{token}}">✅ Ativar</a>
+        <a href="/ativar_pro/{{u.id}}?admin={{token}}">✅ Ativar</a><br>
         <a href="/excluir_pro/{{u.id}}?admin={{token}} "onclick="return confirm('Tem certeza que deseja excluir este usuário?')" style="color:red;">🗑️ Excluir</a>
         </p>
         <hr>
@@ -2595,7 +2595,7 @@ def admin_pro():
         <p>
         {{ u.nome }} - expira em {{ u.expira_em }}
         <br>
-        <a href="/expirar_pro/{{u.id}}?admin={{token}}" style="color:red;">Expirar</a>
+        <a href="/expirar_pro/{{u.id}}?admin={{token}}" style="color:red;">Expirar</a><br>
         <a href="/excluir_pro/{{u.id}}?admin={{token}}" onclick="return confirm('Tem certeza que deseja excluir este usuário?')" style="color:red;">🗑️ Excluir</a>
         </p>
         <hr>
@@ -2606,7 +2606,7 @@ def admin_pro():
         <p>
         {{ u.nome }}
         <br>
-        <a href="/reativar_pro/{{u.id}}?admin={{token}}" style="color:green;">Reativar</a>
+        <a href="/reativar_pro/{{u.id}}?admin={{token}}" style="color:green;">Reativar</a><br>
         <a href="/excluir_pro/{{u.id}}?admin={{token}}" onclick="return confirm('Tem certeza que deseja excluir este usuário?')" style="color:red;">🗑️ Excluir</a>
         </p>
         <hr>
