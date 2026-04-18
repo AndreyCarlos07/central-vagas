@@ -254,7 +254,7 @@ def enviar_email_avaliacao(nome, comentario, estrelas):
                 "Content-Type": "application/json"
             },
             json={
-                "from": "onboarding@resend.dev",
+                "from": "Central de Vagas onboarding@resend.dev",
                 "to": [EMAIL_USER],
                 "subject": "⭐ Nova avaliação recebida",
                 "text": f"""
@@ -334,7 +334,7 @@ def enviar_email_contato(nome, tipo, mensagem):
                 "Content-Type": "application/json"
             },
             json={
-                "from": "onboarding@resend.dev",  # depois pode trocar
+                "from": "Central de Vagas onboarding@resend.dev",  # depois pode trocar
                 "to": [EMAIL_USER],
                 "subject": "Novo contato recebido - Central de Vagas",
                 "text": f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}"
@@ -403,9 +403,9 @@ def enviar_email_solicitacao_pro(nome, email, tipo, valor):
                 "Content-Type": "application/json"
             },
             json={
-                "from": "onboarding@resend.dev",
+                "from": "Central de Vagas onboarding@resend.dev",
                 "to": [EMAIL_USER],
-                "subject": "💎 Nova compra realizada PRO",
+                "subject": "💸 Nova compra realizada PRO",
                 "text": f"""
 Nome: {nome}
 Email: {email}
@@ -452,10 +452,7 @@ def enviar_email_confirmacao_pro(destinatario, nome):
         # 🔥 remetente estilo NO-REPLY
         "from": "Central de Vagas <noreply@resend.dev>",
 
-        "to": [destinatario],
-
-        # 🔥 cópia pra você
-        "cc": ["andrey.engenhariamecatronica@gmail.com"],
+        "to": [destinatario, EMAIL_USER],
 
         "subject": "💎 Pagamento confirmado - Acesso PRO liberado",
         "html": html,
