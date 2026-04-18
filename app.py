@@ -405,7 +405,7 @@ def enviar_email_solicitacao_pro(nome, email, tipo, valor):
             json={
                 "from": "Central de Vagas onboarding@resend.dev",
                 "to": [EMAIL_USER],
-                "subject": "💸 Nova compra realizada PRO",
+                "subject": "Nova compra realizada PRO",
                 "text": f"""
 Nome: {nome}
 Email: {email}
