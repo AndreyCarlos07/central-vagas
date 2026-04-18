@@ -946,14 +946,55 @@ def pro():
 
             <!-- EMPRESA -->
             <div id="campo_empresa" style="display:none;">
-                <p>📌 Você receberá vagas das empresas selecionadas</p>
+                <p style="margin-bottom:10px;">
+                    📌 Você receberá vagas das empresas selecionadas
+                </p>
 
-                <div style="max-height:150px; overflow-y:auto; border:1px solid #ccc; padding:10px; border-radius:8px;">
+                <div style="
+                    max-height:200px;
+                    overflow-y:auto;
+                    border:1px solid #ddd;
+                    border-radius:10px;
+                    background:#fafafa;
+                ">
 
                     {% for empresa in empresas %}
-                        <label style="display:block; margin-bottom:6px; cursor:pointer;">
-                            <input type="checkbox" name="empresa" value="{{ empresa }}">
-                            {{ empresa }}
+                        <label style="
+                            display:flex;
+                            align-items:center;
+                            justify-content:space-between;
+                            padding:10px 12px;
+                            border-bottom:1px solid #eee;
+                            cursor:pointer;
+                            transition:background 0.2s;
+                        "
+                        onmouseover="this.style.background='#f0f4ff'"
+                        onmouseout="this.style.background='transparent'">
+
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <input 
+                                    type="checkbox" 
+                                    name="empresa" 
+                                    value="{{ empresa }}"
+                                    onchange="
+                                        if(this.checked){
+                                            this.closest('label').style.background='#e6f0ff';
+                                            this.closest('label').style.fontWeight='bold';
+                                        } else {
+                                            this.closest('label').style.background='transparent';
+                                            this.closest('label').style.fontWeight='normal';
+                                        }
+                                    "
+                                >
+
+                                <span>{{ empresa }}</span>
+                            </div>
+
+                            <!-- check visual -->
+                            <span style="font-size:12px; color:#0a66c2;">
+                                ✔
+                            </span>
+
                         </label>
                     {% endfor %}
 
