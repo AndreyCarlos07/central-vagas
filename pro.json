@@ -1,17 +1,6 @@
 {
   "pendentes": [
     {
-      "id": "4559012a",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-13T14:48:22.019196"
-    },
-    {
       "id": "7c6e9edb",
       "nome": "Vinicius Cardoso Lima",
       "email": "vinicius.c.lima@live.com",
