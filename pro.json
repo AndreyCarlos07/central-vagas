@@ -14,17 +14,6 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-18T19:20:07.405153"
-    },
-    {
-      "id": "3f486832",
-      "nome": "Pronildo Version Central",
-      "email": "ddi_100@hotmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-18T22:48:16.643238"
     }
   ],
   "ativos": [
@@ -148,6 +137,17 @@
       "data_inicio": "2026-04-18T22:28:14.969022",
       "expira_em": "2026-05-18T22:28:14.969034",
       "data_criacao": "2026-04-18T22:27:39.321789"
+    },
+    {
+      "id": "3f486832",
+      "nome": "Pronildo Version Central",
+      "email": "ddi_100@hotmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "ativo",
+      "data_inicio": "2026-04-18T22:48:48.202674",
+      "expira_em": "2026-05-18T22:48:48.202705",
+      "data_criacao": "2026-04-18T22:48:16.643238"
     }
   ],
   "expirados": [
