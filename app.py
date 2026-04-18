@@ -950,6 +950,19 @@ def pro():
                     📌 Você receberá vagas das empresas selecionadas
                 </p>
 
+                <button type="button" onclick="toggleEmpresas()" style="
+                    margin-bottom:10px;
+                    padding:6px 10px;
+                    border:none;
+                    background:#0a66c2;
+                    color:white;
+                    border-radius:6px;
+                    cursor:pointer;
+                    font-size:12px;
+                ">
+                    Selecionar todas
+                </button>
+
                 <div style="
                     max-height:200px;
                     overflow-y:auto;
@@ -1060,6 +1073,33 @@ def pro():
             else if (tipo === "area") {
                 document.getElementById("campo_area").style.display = "block";
             }
+        }
+        </script>
+
+        <script id="btz3lp">
+        function toggleEmpresas() {
+            const checkboxes = document.querySelectorAll('input[name="empresa"]');
+            const botao = event.target;
+
+            const todasSelecionadas = Array.from(checkboxes).every(cb => cb.checked);
+
+            checkboxes.forEach(cb => {
+                cb.checked = !todasSelecionadas;
+
+                const label = cb.closest('label');
+
+                if (!todasSelecionadas) {
+                    label.style.background = '#e6f0ff';
+                    label.style.fontWeight = 'bold';
+                    label.querySelector('.check-icon').style.opacity = '1';
+                } else {
+                    label.style.background = 'transparent';
+                    label.style.fontWeight = 'normal';
+                    label.querySelector('.check-icon').style.opacity = '0';
+                }
+            });
+
+            botao.innerText = todasSelecionadas ? "Selecionar todas" : "Desmarcar todas";
         }
         </script>
 
