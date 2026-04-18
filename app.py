@@ -495,6 +495,114 @@ def verificar_expiracao():
         dados["ativos"] = ativos
         dados["expirados"] = expirados
         salvar_pro(dados)
+
+
+def verificar_aviso_expiracao():
+    dados = carregar_pro()
+    agora = datetime.now()
+
+    mudou = False
+
+    for user in dados["ativos"]:
+        try:
+            expira = datetime.fromisoformat(user["expira_em"])
+            dias_restantes = (expira - agora).days
+
+            # 🔔 3 dias antes
+            if dias_restantes == 3 and not user.get("aviso_3d"):
+                enviar_email_aviso(user, "3dias")
+                user["aviso_3d"] = True
+                mudou = True
+
+            # ⚠️ no dia
+            if dias_restantes == 0 and not user.get("aviso_hoje"):
+                enviar_email_aviso(user, "hoje")
+                user["aviso_hoje"] = True
+                mudou = True
+
+        except Exception as e:
+            print("Erro aviso:", e)
+
+    if mudou:
+        salvar_pro(dados)
+
+def enviar_email_aviso(user, tipo):
+
+    RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+
+    nome = user.get("nome", "")
+    email = user.get("email")
+
+    if tipo == "3dias":
+        assunto = "⏳ Sua assinatura PRO expira em 3 dias"
+        mensagem = f"""
+        <p>Olá, <b>{nome}</b> 👋</p>
+
+        <p>Sua assinatura PRO irá expirar em <b>3 dias</b>.</p>
+
+        <p>Para continuar recebendo vagas exclusivas, recomendamos renovar agora.</p>
+        """
+
+    else:
+        assunto = "⚠️ Sua assinatura PRO expira hoje"
+        mensagem = f"""
+        <p>Olá, <b>{nome}</b> 👋</p>
+
+        <p>Seu acesso PRO expira <b>hoje</b>.</p>
+
+        <p>Renove agora para não perder suas vagas personalizadas.</p>
+        """
+
+    html = f"""
+    <div style="font-family:Arial;padding:20px;background:#f4f6f8;">
+        <div style="max-width:600px;margin:auto;background:white;padding:20px;border-radius:10px;">
+
+            <h2 style="color:#0a66c2;">Central de Vagas PRO</h2>
+
+            {mensagem}
+
+            <div style="margin-top:20px;text-align:center;">
+                <a href="https://central-vagas.onrender.com/pro"
+                   style="
+                       background:#0a66c2;
+                       color:white;
+                       padding:12px 18px;
+                       text-decoration:none;
+                       border-radius:6px;
+                       font-size:14px;
+                       display:inline-block;
+                       font-weight:bold;
+                   ">
+                   💳 Renovar assinatura PRO
+                </a>
+            </div>
+
+            <hr>
+
+            <p style="font-size:12px;color:#777;">
+                📩 Este é um email automático (no-reply).<br>
+                Para suporte, utilize a plataforma.
+            </p>
+
+        </div>
+    </div>
+    """
+
+    response = requests.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "from": "Central de Vagas <noreply@resend.dev>",
+            "to": [email, "andrey.engenhariamecatronica@gmail.com"],
+            "subject": assunto,
+            "html": html
+        }
+    )
+
+    print("📧 aviso expiracao:", response.status_code, response.text)
     
 
 def vagas_ativas():
