@@ -405,7 +405,7 @@ def enviar_email_solicitacao_pro(nome, email, tipo, valor):
             json={
                 "from": "onboarding@resend.dev",
                 "to": [EMAIL_USER],
-                "subject": "💎 Nova solicitação PRO",
+                "subject": "💎 Nova compra realizada PRO",
                 "text": f"""
 Nome: {nome}
 Email: {email}
@@ -461,7 +461,7 @@ def enviar_email_confirmacao_pro(destinatario, nome):
         "html": html,
 
         # 🔥 opcional (reforça no-reply)
-        #"reply_to": "andrey.engenhariamecatronica@gmail.com"
+        "reply_to": "andrey.engenhariamecatronica@gmail.com"
     }
 
     response = requests.post(
