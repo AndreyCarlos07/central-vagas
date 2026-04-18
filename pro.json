@@ -14,17 +14,6 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-18T19:20:07.405153"
-    },
-    {
-      "id": "1421d98b",
-      "nome": "Adan Carlos",
-      "email": "adancarlosbr@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "auxiliar",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-18T21:33:10.378723"
     }
   ],
   "ativos": [
@@ -93,6 +82,17 @@
       "data_inicio": "2026-04-18T13:25:30.449821",
       "expira_em": "2026-05-18T13:25:30.449834",
       "data_criacao": "2026-04-18T12:59:06.824685"
+    },
+    {
+      "id": "1421d98b",
+      "nome": "Adan Carlos",
+      "email": "adancarlosbr@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "auxiliar",
+      "status": "ativo",
+      "data_inicio": "2026-04-18T21:33:52.353288",
+      "expira_em": "2026-05-18T21:33:52.353299",
+      "data_criacao": "2026-04-18T21:33:10.378723"
     }
   ],
   "expirados": [
