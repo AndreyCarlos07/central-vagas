@@ -168,17 +168,6 @@
       "data_inicio": "2026-04-18T13:25:30.449821",
       "expira_em": "2026-05-18T13:25:30.449834",
       "data_criacao": "2026-04-18T12:59:06.824685"
-    },
-    {
-      "id": "132cb838",
-      "nome": "Andrey Central",
-      "email": "ddi_100@hotmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "ativo",
-      "data_inicio": "2026-04-18T13:36:25.255974",
-      "expira_em": "2026-05-18T13:36:25.255986",
-      "data_criacao": "2026-04-18T13:35:20.181175"
     }
   ],
   "expirados": [
@@ -214,6 +203,17 @@
       "data_inicio": "2026-04-18T13:29:31.351600",
       "expira_em": "2026-05-18T13:29:31.351611",
       "data_criacao": "2026-04-18T13:28:42.208589"
+    },
+    {
+      "id": "132cb838",
+      "nome": "Andrey Central",
+      "email": "ddi_100@hotmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "expirado",
+      "data_inicio": "2026-04-18T13:36:25.255974",
+      "expira_em": "2026-05-18T13:36:25.255986",
+      "data_criacao": "2026-04-18T13:35:20.181175"
     }
   ]
 }
