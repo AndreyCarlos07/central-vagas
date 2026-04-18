@@ -254,7 +254,7 @@ def enviar_email_avaliacao(nome, comentario, estrelas):
                 "Content-Type": "application/json"
             },
             json={
-                "from": "Central de Vagas onboarding@resend.dev",
+                "from": "Central de Vagas <onboarding@resend.dev>",
                 "to": [EMAIL_USER],
                 "subject": "⭐ Nova avaliação recebida",
                 "text": f"""
@@ -334,7 +334,7 @@ def enviar_email_contato(nome, tipo, mensagem):
                 "Content-Type": "application/json"
             },
             json={
-                "from": "Central de Vagas onboarding@resend.dev",  # depois pode trocar
+                "from": "Central de Vagas <onboarding@resend.dev>",  # depois pode trocar
                 "to": [EMAIL_USER],
                 "subject": "Novo contato recebido - Central de Vagas",
                 "text": f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}"
@@ -403,7 +403,7 @@ def enviar_email_solicitacao_pro(nome, email, tipo, valor):
                 "Content-Type": "application/json"
             },
             json={
-                "from": "Central de Vagas onboarding@resend.dev",
+                "from": "Central de Vagas <onboarding@resend.dev>",
                 "to": [EMAIL_USER],
                 "subject": "💸 Nova compra realizada PRO",
                 "text": f"""
