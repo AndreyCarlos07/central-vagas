@@ -108,17 +108,6 @@
       "data_inicio": "2026-04-18T21:09:21.848549",
       "expira_em": "2026-05-18T21:09:21.848561",
       "data_criacao": "2026-04-18T19:20:53.278504"
-    },
-    {
-      "id": "c8268bdd",
-      "nome": "Adan Carlos",
-      "email": "adancarlosbr@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "auxiliar",
-      "status": "ativo",
-      "data_inicio": "2026-04-18T21:28:34.038891",
-      "expira_em": "2026-05-18T21:28:34.038902",
-      "data_criacao": "2026-04-18T15:43:23.702852"
     }
   ],
   "expirados": [
@@ -132,6 +121,17 @@
       "data_inicio": "2026-04-13T16:02:55.806827",
       "expira_em": "2026-04-18T16:02:55.806838",
       "data_criacao": "2026-04-13T08:25:59.526023"
+    },
+    {
+      "id": "c8268bdd",
+      "nome": "Adan Carlos",
+      "email": "adancarlosbr@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "auxiliar",
+      "status": "expirado",
+      "data_inicio": "2026-04-18T21:28:34.038891",
+      "expira_em": "2026-05-18T21:28:34.038902",
+      "data_criacao": "2026-04-18T15:43:23.702852"
     }
   ]
 }
