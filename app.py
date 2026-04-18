@@ -66,18 +66,15 @@ PALAVRAS_BLOQUEADAS = {
 # ==========================
 
 MAPA_HIERARQUIA = {
-    "diretor": ["diretor"],
+    "diretor": ["diretor", "head"],
     "gerente": ["gerente", "lider", "líder", "gestor", "head"],
     "coordenador": ["coordenador", "lider", "líder", "gestor"],
     "supervisor": ["supervisor", "lider", "líder", "chefe"],
     "especialista": ["especialista"],
     "engenheiro": ["engenheiro"],
     "analista": ["analista"],
-    "tecnico": ["tecnico", "técnico", "manutenedor", "reparador", "planejador"],
-    "inspetor": ["inspetor"],
-    "operador": ["operador"],
-    "auxiliar": ["auxiliar", "conferente", "abastecedor", "alimentador"],
-    "assistente": ["assistente", "conferente", "abastecedor", "alimentador"],
+    "tecnico": ["tecnico", "técnico", "manutenedor", "reparador", "planejador", "inspetor", "operador"],
+    "auxiliar": ["auxiliar", "conferente", "abastecedor", "alimentador", "assistente"],
     "jovem_aprendiz": ["jovem aprendiz", "aprendiz"],
     "estagio": ["estagio", "estágio", "estagiário", "estagiária"]
 }
@@ -940,11 +937,8 @@ def pro():
                     <option value="especialista">Especialista</option>
                     <option value="engenheiro">Engenheiro</option>
                     <option value="analista">Analista</option>
-                    <option value="tecnico">Técnico</option>
-                    <option value="inspetor">Inspetor</option>
-                    <option value="operador">Operador</option>
-                    <option value="auxiliar">Auxiliar</option>
-                    <option value="assistente">Assistente</option>
+                    <option value="tecnico/inspetor/operador">Técnico/Inspetor/Operador</option>
+                    <option value="auxiliar">Auxiliar/Assistente</option>
                     <option value="jovem_aprendiz">Jovem Aprendiz</option>
                     <option value="estagio">Estágio</option>
                 </select>
@@ -953,11 +947,23 @@ def pro():
             <!-- EMPRESA -->
             <div id="campo_empresa" style="display:none;">
                 <p>📌 Você receberá vagas das empresas selecionadas</p>
-                <select name="empresa" multiple size="5">
+    
+                <div style="display:flex; flex-wrap:wrap; gap:8px; max-height:150px; overflow-y:auto;">
+
                     {% for empresa in empresas %}
-                        <option value="{{ empresa }}">{{ empresa }}</option>
+                        <label style="
+                            border:1px solid #ccc;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            cursor:pointer;
+                            font-size:13px;
+                    ">
+                            <input type="checkbox" name="empresa" value="{{ empresa }}" style="display:none;">
+                            {{ empresa }}
+                        </label>
                     {% endfor %}
-                </select>
+
+                </div>
             </div>
 
             <!-- ÁREA -->
