@@ -975,7 +975,6 @@ def pro():
                                 type="checkbox" 
                                 name="empresa" 
                                 value="{{ empresa }}"
-                                style="flex-shrink:0;"
                                 onchange="
                                     if(this.checked){
                                         this.closest('label').style.background='#e6f0ff';
@@ -989,10 +988,19 @@ def pro():
 
                             <span style="
                                 font-size:14px;
-                                line-height:1.2;
                                 white-space: nowrap;
                             ">
                                 {{ empresa }}
+                            </span>
+
+                            <!-- check visual -->
+                            <span class="check-icon" style="
+                                font-size:12px;
+                                color:#0a66c2;
+                                opacity:0;
+                                transition:0.2s;
+                            ">
+                                ✔
                             </span>
 
                         </label>
