@@ -168,17 +168,6 @@
       "data_inicio": "2026-04-18T13:25:30.449821",
       "expira_em": "2026-05-18T13:25:30.449834",
       "data_criacao": "2026-04-18T12:59:06.824685"
-    },
-    {
-      "id": "824381ba",
-      "nome": "Andrey Central",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "ativo",
-      "data_inicio": "2026-04-18T13:29:31.351600",
-      "expira_em": "2026-05-18T13:29:31.351611",
-      "data_criacao": "2026-04-18T13:28:42.208589"
     }
   ],
   "expirados": [
@@ -203,6 +192,17 @@
       "data_inicio": "2026-04-11T15:34:09.611768",
       "expira_em": "2026-05-11T15:34:09.611778",
       "data_criacao": "2026-04-11T15:17:00.337804"
+    },
+    {
+      "id": "824381ba",
+      "nome": "Andrey Central",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "expirado",
+      "data_inicio": "2026-04-18T13:29:31.351600",
+      "expira_em": "2026-05-18T13:29:31.351611",
+      "data_criacao": "2026-04-18T13:28:42.208589"
     }
   ]
 }
