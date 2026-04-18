@@ -947,18 +947,12 @@ def pro():
             <!-- EMPRESA -->
             <div id="campo_empresa" style="display:none;">
                 <p>📌 Você receberá vagas das empresas selecionadas</p>
-    
-                <div style="display:flex; flex-wrap:wrap; gap:8px; max-height:150px; overflow-y:auto;">
+
+                <div style="max-height:150px; overflow-y:auto; border:1px solid #ccc; padding:10px; border-radius:8px;">
 
                     {% for empresa in empresas %}
-                        <label style="
-                            border:1px solid #ccc;
-                            padding:6px 10px;
-                            border-radius:20px;
-                            cursor:pointer;
-                            font-size:13px;
-                    ">
-                            <input type="checkbox" name="empresa" value="{{ empresa }}" style="display:none;">
+                        <label style="display:block; margin-bottom:6px; cursor:pointer;">
+                            <input type="checkbox" name="empresa" value="{{ empresa }}">
                             {{ empresa }}
                         </label>
                     {% endfor %}
