@@ -82,17 +82,6 @@
       "data_inicio": "2026-04-18T13:25:30.449821",
       "expira_em": "2026-05-18T13:25:30.449834",
       "data_criacao": "2026-04-18T12:59:06.824685"
-    },
-    {
-      "id": "92b3eb71",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "ativo",
-      "data_inicio": "2026-04-18T14:13:48.937429",
-      "expira_em": "2026-05-18T14:13:48.937440",
-      "data_criacao": "2026-04-18T14:13:19.212123"
     }
   ],
   "expirados": [
