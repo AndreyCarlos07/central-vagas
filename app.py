@@ -971,28 +971,27 @@ def pro():
                         onmouseover="this.style.background='#f0f4ff'"
                         onmouseout="this.style.background=this.querySelector('input').checked ? '#e6f0ff' : 'transparent'">
 
-                                <input 
-                                    type="checkbox" 
-                                    name="empresa" 
-                                    value="{{ empresa }}"
-                                    onchange="
-                                        if(this.checked){
-                                            this.closest('label').style.background='#e6f0ff';
-                                            this.closest('label').style.fontWeight='bold';
-                                        } else {
-                                            this.closest('label').style.background='transparent';
-                                            this.closest('label').style.fontWeight='normal';
-                                        }
-                                    "
-                                >
+                            <input 
+                                type="checkbox" 
+                                name="empresa" 
+                                value="{{ empresa }}"
+                                onchange="
+                                    if(this.checked){
+                                        this.closest('label').style.background='#e6f0ff';
+                                        this.closest('label').style.fontWeight='bold';
+                                    } else {
+                                        this.closest('label').style.background='transparent';
+                                        this.closest('label').style.fontWeight='normal';
+                                    }
+                                "
+                            >
 
-                                <span style="
-                                    white-space: nowrap;
-                                    font-size:14px;
-                                ">
-                                    {{ empresa }}
-                                </span>
-                            </div>
+                            <span style="
+                                white-space: nowrap;
+                                font-size:14px;
+                            ">
+                                {{ empresa }}
+                            </span>
 
                         </label>
                     {% endfor %}
