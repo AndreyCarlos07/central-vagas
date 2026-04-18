@@ -74,6 +74,17 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-16T22:59:54.765805"
+    },
+    {
+      "id": "132cb838",
+      "nome": "Andrey Central",
+      "email": "ddi_100@hotmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-18T13:35:20.181175"
     }
   ],
   "ativos": [
