@@ -969,9 +969,15 @@ def pro():
                             transition:background 0.2s;
                         "
                         onmouseover="this.style.background='#f0f4ff'"
-                        onmouseout="this.style.background='transparent'">
+                        onmouseout="this.style.background=this.querySelector('input').checked ? '#e6f0ff' : 'transparent'">
 
-                            <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="
+                                display:flex;
+                                align-items:center;
+                                gap:10px;
+                                flex:1;
+                                min-width:0;
+                            ">
                                 <input 
                                     type="checkbox" 
                                     name="empresa" 
@@ -980,18 +986,32 @@ def pro():
                                         if(this.checked){
                                             this.closest('label').style.background='#e6f0ff';
                                             this.closest('label').style.fontWeight='bold';
+                                            this.closest('label').querySelector('.check-icon').style.opacity='1';
                                         } else {
                                             this.closest('label').style.background='transparent';
                                             this.closest('label').style.fontWeight='normal';
+                                            this.closest('label').querySelector('.check-icon').style.opacity='0';
                                         }
                                     "
                                 >
 
-                                <span>{{ empresa }}</span>
+                                <span style="
+                                    white-space: nowrap;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                    font-size:14px;
+                                ">
+                                    {{ empresa }}
+                                </span>
                             </div>
 
                             <!-- check visual -->
-                            <span style="font-size:12px; color:#0a66c2;">
+                            <span class="check-icon" style="
+                                font-size:12px;
+                                color:#0a66c2;
+                                opacity:0;
+                                transition:0.2s;
+                            ">
                                 ✔
                             </span>
 
