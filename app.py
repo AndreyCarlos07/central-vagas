@@ -499,13 +499,13 @@ def verificar_expiracao():
 
 def verificar_aviso_expiracao():
     dados = carregar_pro()
-    agora = datetime.now()
+    agora = datetime.now().date()
 
     mudou = False
 
     for user in dados["ativos"]:
         try:
-            expira = datetime.fromisoformat(user["expira_em"])
+            expira = datetime.fromisoformat(user["expira_em"]).date()
             dias_restantes = (expira - agora).days
 
             # 🔔 3 dias antes
@@ -525,6 +525,7 @@ def verificar_aviso_expiracao():
 
     if mudou:
         salvar_pro(dados)
+        
 
 def enviar_email_aviso(user, tipo):
 
