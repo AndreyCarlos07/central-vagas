@@ -961,7 +961,7 @@ def pro():
                     {% for empresa in empresas %}
                         <label style="
                             display:flex;
-                            align-items:left;
+                            align-items:center;
                             padding:10px 12px;
                             border-bottom:1px solid #eee;
                             cursor:pointer;
@@ -975,6 +975,7 @@ def pro():
                                 type="checkbox" 
                                 name="empresa" 
                                 value="{{ empresa }}"
+                                style="flex-shrink:0;"
                                 onchange="
                                     if(this.checked){
                                         this.closest('label').style.background='#e6f0ff';
@@ -987,8 +988,9 @@ def pro():
                             >
 
                             <span style="
-                                white-space: nowrap;
                                 font-size:14px;
+                                line-height:1.2;
+                                white-space: nowrap;
                             ">
                                 {{ empresa }}
                             </span>
