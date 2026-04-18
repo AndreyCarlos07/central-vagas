@@ -14,6 +14,17 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-18T19:20:07.405153"
+    },
+    {
+      "id": "7dc165c2",
+      "nome": "Pronildo Version",
+      "email": "rep.andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-18T22:27:39.321789"
     }
   ],
   "ativos": [
