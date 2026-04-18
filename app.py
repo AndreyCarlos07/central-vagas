@@ -2651,8 +2651,7 @@ def ativar_pro(id):
             try:
                 enviar_email_confirmacao_pro(
                     u["email"],
-                    u.get("nome", ""),
-                    u.["id"]
+                    u.get("nome", "")
                 )
             except Exception as e:
                 print("Erro ao enviar confirmação:", e)
