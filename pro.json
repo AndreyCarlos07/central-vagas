@@ -104,17 +104,6 @@
   ],
   "expirados": [
     {
-      "id": "9e5b64b1",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "expirado",
-      "data_inicio": "2026-04-11T15:34:09.611768",
-      "expira_em": "2026-05-11T15:34:09.611778",
-      "data_criacao": "2026-04-11T15:17:00.337804"
-    },
-    {
       "id": "824381ba",
       "nome": "Andrey Central",
       "email": "andrey.engenhariamecatronica@gmail.com",
