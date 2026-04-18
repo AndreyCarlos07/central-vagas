@@ -805,10 +805,12 @@ def contato():
                 <form method="POST" action="/enviar_contato">
 
                     <input name="nome" placeholder="Seu nome" required>
+                    <input type="email" name="email" placeholder="Seu e-mail" required>
 
                     <select name="tipo">
                         <option value="sugestao">Sugestão</option>
                         <option value="problema">Problemas no Site/Vagas</option>
+                        <option value="problema__proi">Problemas na Assinatura PRO/Vagas</option>
                     </select>
 
                     <textarea name="mensagem" placeholder="Escreva sua mensagem..." required></textarea>
