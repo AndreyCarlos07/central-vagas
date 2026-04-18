@@ -421,6 +421,61 @@ Valor: {valor}
         print("Erro email PRO:", e)
 
 
+def enviar_email_confirmacao_pro(destinatario, nome):
+
+    RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+
+    html = f"""
+    <div style="font-family:Arial;background:#f4f6f8;padding:20px;">
+        <div style="max-width:600px;margin:auto;background:white;padding:20px;border-radius:10px;">
+
+            <h2 style="color:#0a66c2;">💎 Pagamento confirmado!</h2>
+
+            <p>Olá, <b>{nome}</b> 👋</p>
+
+            <p>Seu pagamento foi confirmado e seu acesso à <b>Central de Vagas PRO</b> já está ativo.</p>
+
+            <p>Você passará a receber vagas personalizadas diretamente no seu email.</p>
+
+            <hr>
+
+            <p style="font-size:12px;color:#777;">
+                📩 Este é um email automático. Não respondemos por este canal.<br>
+                Para suporte, utilize a página de contato da plataforma.
+            </p>
+
+        </div>
+    </div>
+    """
+
+    data = {
+        # 🔥 remetente estilo NO-REPLY
+        "from": "Central de Vagas <noreply@resend.dev>",
+
+        "to": [destinatario],
+
+        # 🔥 cópia pra você
+        "cc": ["andrey.engenhariamecatronica@gmail.com"],
+
+        "subject": "💎 Pagamento confirmado - Acesso PRO liberado",
+        "html": html,
+
+        # 🔥 opcional (reforça no-reply)
+        #"reply_to": "andrey.engenhariamecatronica@gmail.com"
+    }
+
+    response = requests.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        },
+        json=data
+    )
+
+    print("📧 confirmação PRO:", response.status_code, response.text)
+
+
 def verificar_expiracao():
     dados = carregar_pro()
     agora = datetime.now()
@@ -2591,6 +2646,16 @@ def ativar_pro(id):
             u["expira_em"] = (datetime.now() + timedelta(days=30)).isoformat()
 
             dados["ativos"].append(u)
+
+            # 🔥 ENVIA EMAIL AQUI
+            try:
+                enviar_email_confirmacao_pro(
+                    u["email"],
+                    u.get("nome", ""),
+                    u.["id"]
+                )
+            except Exception as e:
+                print("Erro ao enviar confirmação:", e)
 
             break
 
