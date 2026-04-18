@@ -961,7 +961,7 @@ def pro():
                     {% for empresa in empresas %}
                         <label style="
                             display:flex;
-                            align-items:center;
+                            align-items:left;
                             padding:10px 12px;
                             border-bottom:1px solid #eee;
                             cursor:pointer;
