@@ -962,6 +962,7 @@ def pro():
                         <label style="
                             display:flex;
                             align-items:center;
+                            justify-content:space-between;
                             padding:10px 12px;
                             border-bottom:1px solid #eee;
                             cursor:pointer;
