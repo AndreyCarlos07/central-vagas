@@ -961,22 +961,16 @@ def pro():
                     {% for empresa in empresas %}
                         <label style="
                             display:flex;
-                            align-items:flex-start; /* 👈 muda isso */
+                            align-items:center;
                             padding:10px 12px;
                             border-bottom:1px solid #eee;
                             cursor:pointer;
                             transition:background 0.2s;
+                            gap:10px;
                         "
                         onmouseover="this.style.background='#f0f4ff'"
                         onmouseout="this.style.background=this.querySelector('input').checked ? '#e6f0ff' : 'transparent'">
 
-                            <div style="
-                                display:flex;
-                                align-items:center;
-                                gap:10px;
-                                flex:1;
-                                min-width:0;
-                            ">
                                 <input 
                                     type="checkbox" 
                                     name="empresa" 
@@ -993,9 +987,8 @@ def pro():
                                 >
 
                                 <span style="
+                                    white-space: nowrap;
                                     font-size:14px;
-                                    line-height:1.3;
-                                    word-break: break-word;
                                 ">
                                     {{ empresa }}
                                 </span>
