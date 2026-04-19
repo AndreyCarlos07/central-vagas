@@ -2041,18 +2041,20 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
 # ENVIAR EMAIL INDIVIDUAL
 # ===========================
 def enviar_email_usuario(destinatario, mensagem):
-    remetente = os.getenv("EMAIL_USER")
-    senha = os.getenv("EMAIL_PASS")
+    remetente = os.getenv("EMAIL_USER_CENTRAL")
+    senha = os.getenv("EMAIL_PASS_CENTRAL")
 
     # 🔥 MODO DEBUG → FORÇA ENVIO SÓ PRA VOCÊ
     if MODO_DEBUG:
         print("🧪 DEBUG ATIVO → redirecionando email para você")
-        destinatario = "andrey.engenhariamecatronica@gmail.com"
+        destinatario = "suporte.central.vagas@gmail.com"
 
     msg = MIMEText(mensagem, "html")
     msg["Subject"] = "📊 Suas vagas personalizadas - Central de Vagas PRO"
     msg["From"] = remetente
-    msg["To"] = destinatario
+    msg["To"] = f"{destinatario}, suporte.central.vagas@gmail.com"
+
+    destinatarios = [destinatario, "suporte.central.vagas@gmail.com"]
 
     with smtplib.SMTP("smtp.gmail.com", 587) as server:
         server.starttls()
@@ -2100,9 +2102,9 @@ def gerar_relatorio(total, sucesso, erro, zero, empresas_erro, empresas_zero, to
 # ENVIAR ALERTA
 # ===========================
 def enviar_email_alerta(mensagem):
-    remetente = os.getenv("EMAIL_USER")
-    senha = os.getenv("EMAIL_PASS")
-    destinatario = "andrey.engenhariamecatronica@gmail.com"
+    remetente = os.getenv("EMAIL_USER_CENTRAL")
+    senha = os.getenv("EMAIL_PASS_CENTRAL")
+    destinatario = "suporte.central.vagas@gmail.com"
 
     msg = MIMEText(mensagem)
     msg["Subject"] = "Relatório Diário - Scraper"
