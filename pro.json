@@ -1,5 +1,17 @@
 {
-  "pendentes": [],
+  "pendentes": [
+    {
+      "id": "7a34c857",
+      "nome": "Adan Carlos",
+      "email": "adancarlosbr@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "auxiliar",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-19T14:39:54.147318"
+    }
+  ],
   "ativos": [
     {
       "id": "5749e864",
