@@ -21,6 +21,17 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-19T16:28:00.178258"
+    },
+    {
+      "id": "82c374ce",
+      "nome": "Adan Carlos",
+      "email": "adancarlosbr@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "auxiliar",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-19T16:28:29.772878"
     }
   ],
   "ativos": [],
