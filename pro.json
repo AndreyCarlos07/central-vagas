@@ -1,17 +1,5 @@
 {
-  "pendentes": [
-    {
-      "id": "6755e9b4",
-      "nome": "Andrey Carlos",
-      "email": "rep.andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "auxiliar",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-19T13:19:40.590363"
-    }
-  ],
+  "pendentes": [],
   "ativos": [
     {
       "id": "5749e864",
@@ -122,6 +110,17 @@
       "data_inicio": "2026-04-19T13:41:02.362476",
       "expira_em": "2026-05-19T13:41:02.362484",
       "data_criacao": "2026-04-19T13:38:01.042139"
+    },
+    {
+      "id": "6755e9b4",
+      "nome": "Andrey Carlos",
+      "email": "rep.andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "auxiliar",
+      "status": "ativo",
+      "data_inicio": "2026-04-19T13:49:47.477983",
+      "expira_em": "2026-05-19T13:49:47.477995",
+      "data_criacao": "2026-04-19T13:19:40.590363"
     }
   ],
   "expirados": [
