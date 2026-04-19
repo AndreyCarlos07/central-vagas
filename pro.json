@@ -14,17 +14,6 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-18T19:20:07.405153"
-    },
-    {
-      "id": "fc2f9b30",
-      "nome": "Andrey Carlos",
-      "email": "ddi_100@hotmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-19T12:59:47.616824"
     }
   ],
   "ativos": [
@@ -170,6 +159,17 @@
       "data_inicio": "2026-04-18T22:53:07.583921",
       "expira_em": "2026-05-18T22:53:07.583931",
       "data_criacao": "2026-04-18T22:50:19.477611"
+    },
+    {
+      "id": "fc2f9b30",
+      "nome": "Andrey Carlos",
+      "email": "ddi_100@hotmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "ativo",
+      "data_inicio": "2026-04-19T13:00:22.011416",
+      "expira_em": "2026-05-19T13:00:22.011428",
+      "data_criacao": "2026-04-19T12:59:47.616824"
     }
   ],
   "expirados": [
