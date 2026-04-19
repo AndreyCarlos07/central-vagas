@@ -10,6 +10,17 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-19T13:04:22.980068"
+    },
+    {
+      "id": "030c9f34",
+      "nome": "Andrey Carlos",
+      "email": "rep.andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "estagio",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-19T13:08:31.898838"
     }
   ],
   "ativos": [
