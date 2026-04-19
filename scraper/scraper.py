@@ -31,7 +31,7 @@ ARQUIVO = "vagas_ocultas.json"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS"]
 
 # ===========================
