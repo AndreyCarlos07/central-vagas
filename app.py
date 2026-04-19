@@ -28,7 +28,13 @@ EMAIL_USER = os.environ.get("EMAIL_USER")
 
 EMAIL_PASS = os.environ.get("EMAIL_PASS")
 
+EMAIL_USER_CENTRAL = os.environ.get("EMAIL_USER_CENTRAL")
+
+EMAIL_PASS_CENTRAL = os.environ.get("EMAIL_PASS_CENTRAL")
+
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
+
+RESEND_API_KEY_CENTRAL = os.environ.get("RESEND_API_KEY_CENTRAL")
 
 REPO = "AndreyCarlos07/central-vagas"
 ARQUIVO_OCULTAS = "vagas_ocultas.json"
@@ -247,12 +253,12 @@ def enviar_email_avaliacao(nome, comentario, estrelas):
         response = requests.post(
             "https://api.resend.com/emails",
             headers={
-                "Authorization": f"Bearer {RESEND_API_KEY}",
+                "Authorization": f"Bearer {RESEND_API_KEY_CENTRAL}",
                 "Content-Type": "application/json"
             },
             json={
                 "from": "Central de Vagas <onboarding@resend.dev>",
-                "to": [EMAIL_USER],
+                "to": [EMAIL_USER_CENTRAL],
                 "subject": "⭐ Nova avaliação recebida",
                 "text": f"""
 Nome: {nome}
@@ -327,12 +333,12 @@ def enviar_email_contato(nome, tipo, mensagem):
         response = requests.post(
             "https://api.resend.com/emails",
             headers={
-                "Authorization": f"Bearer {RESEND_API_KEY}",
+                "Authorization": f"Bearer {RESEND_API_KEY_CENTRAL}",
                 "Content-Type": "application/json"
             },
             json={
                 "from": "Central de Vagas <onboarding@resend.dev>",  # depois pode trocar
-                "to": [EMAIL_USER],
+                "to": [EMAIL_USER_CENTRAL],
                 "subject": "Novo contato recebido - Central de Vagas",
                 "text": f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}"
             }
@@ -396,12 +402,12 @@ def enviar_email_solicitacao_pro(nome, email, tipo, valor):
         response = requests.post(
             "https://api.resend.com/emails",
             headers={
-                "Authorization": f"Bearer {RESEND_API_KEY}",
+                "Authorization": f"Bearer {RESEND_API_KEY_CENTRAL}",
                 "Content-Type": "application/json"
             },
             json={
                 "from": "Central de Vagas <onboarding@resend.dev>",
-                "to": [EMAIL_USER],
+                "to": [EMAIL_USER_CENTRAL],
                 "subject": "💸 Nova compra realizada PRO",
                 "text": f"""
 Nome: {nome}
@@ -420,25 +426,28 @@ Valor: {valor}
 
 def enviar_email_confirmacao_pro(destinatario, nome):
 
-    EMAIL = os.getenv("EMAIL_USER")
-    SENHA = os.getenv("EMAIL_PASS")
+    EMAIL = os.getenv("EMAIL_USER_CENTRAL")
+    SENHA = os.getenv("EMAIL_PASS_CENTRAL")
 
     html = f"""
     <h2>💎 Pagamento confirmado!</h2>
     <p>Olá, <b>{nome}</b></p>
     <p>Seu acesso PRO está ativo 🚀</p>
+
+    <hr>
+
+    <p style="font-size:12px;color:#777;">
+    📩 Este é um email automático, por favor não responda.<br>
+    Para suporte, utilize a página de contato da plataforma.
+    </p>
     """
 
     msg = MIMEText(html, "html")
     msg["Subject"] = "💎 Pagamento confirmado - Acesso PRO liberado"
-    msg["From"] = f"Central de Vagas - <{EMAIL}>"
-    msg["To"] = destinatario
-    msg["CC"] = "andrey.engenhariamecatronica@gmail.com"
+    msg["From"] = f"Central de Vagas <{EMAIL}>"
+    msg["To"] = f"{destinatario}, suporte.central.vagas@gmail.com"
 
-    destinatarios = [
-        destinatario,
-        "andrey.engenhariamecatronica@gmail.com"
-    ]
+    destinatarios = [destinatario, "suporte.central.vagas@gmail.com"]
 
     with smtplib.SMTP("smtp.gmail.com", 587) as server:
         server.starttls()
@@ -507,7 +516,8 @@ def verificar_aviso_expiracao():
 
 def enviar_email_aviso(user, tipo):
 
-    RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+    EMAIL = os.getenv("EMAIL_USER_CENTRAL")
+    SENHA = os.getenv("EMAIL_PASS_CENTRAL")
 
     nome = user.get("nome", "")
     email = user.get("email")
@@ -516,19 +526,14 @@ def enviar_email_aviso(user, tipo):
         assunto = "⏳ Sua assinatura PRO expira em 3 dias"
         mensagem = f"""
         <p>Olá, <b>{nome}</b> 👋</p>
-
         <p>Sua assinatura PRO irá expirar em <b>3 dias</b>.</p>
-
         <p>Para continuar recebendo vagas exclusivas, recomendamos renovar agora.</p>
         """
-
     else:
         assunto = "⚠️ Sua assinatura PRO expira hoje"
         mensagem = f"""
         <p>Olá, <b>{nome}</b> 👋</p>
-
         <p>Seu acesso PRO expira <b>hoje</b>.</p>
-
         <p>Renove agora para não perder suas vagas personalizadas.</p>
         """
 
@@ -559,7 +564,7 @@ def enviar_email_aviso(user, tipo):
             <hr>
 
             <p style="font-size:12px;color:#777;">
-                📩 Este é um email automático (no-reply).<br>
+                📩 Este é um email automático, por favor não responda.<br>
                 Para suporte, utilize a plataforma.
             </p>
 
@@ -567,21 +572,23 @@ def enviar_email_aviso(user, tipo):
     </div>
     """
 
-    response = requests.post(
-        "https://api.resend.com/emails",
-        headers={
-            "Authorization": f"Bearer {RESEND_API_KEY}",
-            "Content-Type": "application/json"
-        },
-        json={
-            "from": "Central de Vagas <noreply@resend.dev>",
-            "to": [email, "andrey.engenhariamecatronica@gmail.com"],
-            "subject": assunto,
-            "html": html
-        }
-    )
+    msg = MIMEText(html, "html")
+    msg["Subject"] = assunto
+    msg["From"] = f"Central de Vagas <{EMAIL}>"
+    msg["To"] = f"{email}, suporte.central.vagas@gmail.com"
 
-    print("📧 aviso expiracao:", response.status_code, response.text)
+    destinatarios = [email, "suporte.central.vagas@gmail.com"]
+
+    try:
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
+            server.login(EMAIL, SENHA)
+            server.sendmail(EMAIL, destinatarios, msg.as_string())
+
+        print("📧 aviso expiracao enviado via Gmail")
+
+    except Exception as e:
+        print("❌ erro envio aviso:", e)
     
 
 def vagas_ativas():
@@ -1028,8 +1035,8 @@ def pro():
                     <option value="analista">Analista</option>
                     <option value="tecnico/inspetor/operador">Técnico/Inspetor/Operador</option>
                     <option value="auxiliar">Auxiliar/Assistente</option>
-                    <option value="jovem_aprendiz">Jovem Aprendiz</option>
                     <option value="estagio">Estágio</option>
+                    <option value="jovem_aprendiz">Jovem Aprendiz</option>                    
                 </select>
             </div>
 
@@ -2211,9 +2218,7 @@ def get_html_home():
     
 
 @app.route("/")
-def home():
-    verificar_expiracao()  # 🔥 ADICIONA AQUI
-    
+def home():    
     vagas = vagas_ativas()
 
     admin = request.args.get("admin") == ADMIN_TOKEN
