@@ -29,17 +29,6 @@
       "data_criacao": "2026-04-13T10:39:55.621317"
     },
     {
-      "id": "ccc87793",
-      "nome": "Adan Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "estagio",
-      "status": "ativo",
-      "data_inicio": "2026-04-14T01:49:32.855175",
-      "expira_em": "2026-05-14T01:49:32.855188",
-      "data_criacao": "2026-04-14T01:48:59.060892"
-    },
-    {
       "id": "fb561640",
       "nome": "Andrey Rosário",
       "email": "andrey.engenhariamecatronica@gmail.com",
