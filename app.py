@@ -455,7 +455,7 @@ def enviar_email_confirmacao_pro(destinatario, nome):
         "html": html,
 
         # 🔥 opcional (reforça no-reply)
-        #"reply_to": "andrey.engenhariamecatronica@gmail.com"
+        "reply_to": "andrey.engenhariamecatronica@gmail.com"
     }
 
     response = requests.post(
