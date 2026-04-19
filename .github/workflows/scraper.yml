@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     
     env:                       
-      EMAIL_USER: ${{ secrets.EMAIL_USER }}
-      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+      EMAIL_USER_CENTRAL: ${{ secrets.EMAIL_USER_CENTRAL }}
+      EMAIL_PASS_CENTRAL: ${{ secrets.EMAIL_PASS_CENTRAL }}
       GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
     
     steps:
