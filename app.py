@@ -449,7 +449,7 @@ def enviar_email_confirmacao_pro(destinatario, nome):
         # 🔥 remetente estilo NO-REPLY
         "from": "Central de Vagas <noreply@resend.dev>",
 
-        "to": [destinatario],
+        "to": [destinatario, "rep.andrey.engenhariamecatronica@gmail.com"],
 
         "subject": "💎 Pagamento confirmado - Acesso PRO liberado",
         "html": html,
