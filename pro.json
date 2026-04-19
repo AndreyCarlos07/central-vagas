@@ -115,17 +115,6 @@
       "data_inicio": "2026-04-18T21:54:56.605224",
       "expira_em": "2026-05-18T21:54:56.605235",
       "data_criacao": "2026-04-18T21:53:04.523988"
-    },
-    {
-      "id": "2255fbfc",
-      "nome": "Andrey Carlos",
-      "email": "ddi_100@hotmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "ativo",
-      "data_inicio": "2026-04-18T22:13:56.454193",
-      "expira_em": "2026-05-18T22:13:56.454203",
-      "data_criacao": "2026-04-18T22:12:23.675109"
     }
   ],
   "expirados": [
