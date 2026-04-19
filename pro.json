@@ -32,6 +32,17 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-19T16:28:29.772878"
+    },
+    {
+      "id": "175674c3",
+      "nome": "Silas Moura",
+      "email": "silas.mourag@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-19T16:29:10.068869"
     }
   ],
   "ativos": [],
