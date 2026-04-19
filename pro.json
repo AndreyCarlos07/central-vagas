@@ -1,17 +1,5 @@
 {
-  "pendentes": [
-    {
-      "id": "1e14d1d1",
-      "nome": "Andrey Carlos",
-      "email": "ddi_100@hotmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-19T14:26:13.514093"
-    }
-  ],
+  "pendentes": [],
   "ativos": [
     {
       "id": "5749e864",
@@ -89,6 +77,17 @@
       "data_inicio": "2026-04-19T13:21:03.332624",
       "expira_em": "2026-05-19T13:21:03.332634",
       "data_criacao": "2026-04-19T13:17:02.379134"
+    },
+    {
+      "id": "1e14d1d1",
+      "nome": "Andrey Carlos",
+      "email": "ddi_100@hotmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "ativo",
+      "data_inicio": "2026-04-19T14:28:10.931278",
+      "expira_em": "2026-05-19T14:28:10.931289",
+      "data_criacao": "2026-04-19T14:26:13.514093"
     }
   ],
   "expirados": [
