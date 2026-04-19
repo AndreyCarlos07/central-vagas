@@ -418,13 +418,6 @@ Valor: {valor}
         print("Erro email PRO:", e)
 
 
-import smtplib
-from email.mime.text import MIMEText
-
-
-import smtplib
-from email.mime.text import MIMEText
-
 def enviar_email_confirmacao_pro(destinatario, nome):
 
     EMAIL = os.getenv("EMAIL_USER")
@@ -437,8 +430,8 @@ def enviar_email_confirmacao_pro(destinatario, nome):
     """
 
     msg = MIMEText(html, "html")
-    msg["Subject"] = "💎 Acesso PRO liberado"
-    msg["From"] = EMAIL
+    msg["Subject"] = "💎 Pagamento confirmado - Acesso PRO liberado"
+    msg["From"] = f"Central de Vagas - <{EMAIL}>"
     msg["To"] = destinatario
     msg["CC"] = "andrey.engenhariamecatronica@gmail.com"
 
