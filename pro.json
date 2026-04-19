@@ -71,17 +71,6 @@
       "data_inicio": "2026-04-15T11:24:28.002265",
       "expira_em": "2026-05-15T11:24:28.002277",
       "data_criacao": "2026-04-15T11:24:04.398652"
-    },
-    {
-      "id": "d0eb677c",
-      "nome": "Valber Assis",
-      "email": "valbercassis@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "ativo",
-      "data_inicio": "2026-04-18T13:25:30.449821",
-      "expira_em": "2026-05-18T13:25:30.449834",
-      "data_criacao": "2026-04-18T12:59:06.824685"
     }
   ],
   "expirados": [
