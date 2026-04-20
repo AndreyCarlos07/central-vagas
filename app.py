@@ -1619,14 +1619,14 @@ def get_html_home_pro():
                     <a href="/vaga/{{ vaga.id }}?redirect=1" target="_blank" class="vaga-link"
                        onclick="event.preventDefault();
                                 gtag('event', 'click_vaga', {
-                                    'vaga': '{{ vaga.titulo }}',
+                                    'vaga': '{{ vaga.titulo.upper() }}',
                                     'empresa': '{{ vaga.empresa }}',
                                     'origem': 'home'
                                 });
                                 setTimeout(() => {
                                     window.open(this.href, '_blank');
                                 }, 150);">
-                        <strong>{{ vaga.titulo }}</strong>
+                        <strong>{{ vaga.titulo.upper() }}</strong>
                     </a>  
                     <div class="empresa">
                         Empresa: {{ vaga.empresa }}
@@ -2134,14 +2134,14 @@ def get_html_home():
                     <a href="/vaga/{{ vaga.id }}?redirect=1" target="_blank" class="vaga-link"
                        onclick="event.preventDefault();
                                 gtag('event', 'click_vaga', {
-                                    'vaga': '{{ vaga.titulo }}',
+                                    'vaga': '{{ vaga.titulo.upper() }}',
                                     'empresa': '{{ vaga.empresa }}',
                                     'origem': 'home'
                                 });
                                 setTimeout(() => {
                                     window.open(this.href, '_blank');
                                 }, 150);">
-                        <strong>{{ vaga.titulo }}</strong>
+                        <strong>{{ vaga.titulo.upper() }}</strong>
                     </a>  
                     <div class="empresa">
                         Empresa: {{ vaga.empresa }}
@@ -2399,7 +2399,7 @@ def admin_ocultas():
 
         <p>
 
-        <strong>{{ vaga.titulo }}</strong><br>
+        <strong>{{ vaga.titulo.upper() }}</strong><br>
         Empresa: {{ vaga.empresa }}<br>
 
         <a href="/restaurar/{{vaga.id}}?admin={{token}}" style="color:green;">
@@ -2943,7 +2943,7 @@ def vaga(id):
                     html = """
                     <html>
                     <head>
-                        <title>{{ vaga.titulo }}</title>
+                        <title>{{ vaga.titulo.upper() }}</title>
                         <!-- Google tag (gtag.js) -->
                         <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLTE9JPMLL"></script>
                         <script>
@@ -2952,7 +2952,7 @@ def vaga(id):
                           gtag('js', new Date());
                           gtag('config', 'G-LLTE9JPMLL');
                         </script>
-                        <meta property="og:title" content="{{ vaga.titulo }}">
+                        <meta property="og:title" content="{{ vaga.titulo.upper() }}">
                         <meta property="og:description" content="Veja essa vaga na Central de Vagas">
                         <meta property="og:type" content="website">
                     </head>
@@ -2960,7 +2960,7 @@ def vaga(id):
 
                         <div style="background:white;padding:20px;border-radius:8px;max-width:600px;margin:auto;">
                             
-                            <h2>{{ vaga.titulo }}</h2>
+                            <h2>{{ vaga.titulo.upper() }}</h2>
 
                             <p><strong>Empresa:</strong> {{ vaga.empresa }}</p>
 
@@ -2987,7 +2987,7 @@ def vaga(id):
                             <a href="{{ vaga.link }}" target="_blank"
                                onclick="event.preventDefault();
                                         gtag('event', 'click_vaga', {
-                                            'vaga': '{{ vaga.titulo }}',
+                                            'vaga': '{{ vaga.titulo.upper() }}',
                                             'empresa': '{{ vaga.empresa }}',
                                             'origem': 'pagina_vaga'
                                         });
