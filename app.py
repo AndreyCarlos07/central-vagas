@@ -1282,22 +1282,6 @@ def get_html_home_pro():
 
             .whatsapp-btn:hover { background: #1ebe5d; }
 
-            .avaliar-btn {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                min-width: 180px;
-                background: #28a745;
-                color: white;
-                padding: 8px 15px;
-                border-radius: 6px;
-                text-decoration: none;
-                font-weight: bold;
-            }
-
-            .avaliar-btn:hover { background: #218838; }
-
             .info-box {
                 background: white;
                 padding: 8px 15px;
@@ -1375,26 +1359,6 @@ def get_html_home_pro():
         </style>
     </head>
     <body>
-
-        {% if request.args.get("msg") == "ok" %}
-        <div id="msg-sucesso" style="
-            background:#d4edda;
-            color:#155724;
-            padding:15px;
-            border-radius:6px;
-            margin-bottom:20px;
-            font-weight:bold;
-        ">
-            ✅ Avaliação enviada com sucesso! Aguarde aprovação.
-        </div>
-
-        <script>
-        setTimeout(() => {
-            const msg = document.getElementById("msg-sucesso");
-            if (msg) msg.style.display = "none";
-        }, 4000);
-        </script>
-        {% endif %}
 
         <div style="margin-bottom:15px;">
             <a href="/"
@@ -1518,21 +1482,8 @@ def get_html_home_pro():
                 WhatsApp
             </a>
 
-            <a href="#"
-               onclick="document.getElementById('form-avaliacao').style.display='block'; return false;"
-               class="avaliar-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
-                    <path d="M12 .587l3.668 7.431L24 9.748l-6 5.847 1.416 8.255L12 19.771l-7.416 4.079L6 15.595 0 9.748l8.332-1.73z"/>
-                </svg>
-                Avaliar página
-            </a>
-
             <div class="info-box">
                 📌 {{ total_vagas }} vagas encontradas
-            </div>
-
-            <div class="info-box">
-                🏢 {{ total_empresas }} empresas monitoradas
             </div>
 
             <div class="vaga">
@@ -1565,53 +1516,6 @@ def get_html_home_pro():
         </script>
 
         <p>Projeto voluntário desenvolvido por <strong>Andrey Carlos</strong> para ajudar profissionais a se candidatarem.</p>
-
-        <div id="form-avaliacao" style="display:none;background:white;padding:15px;border-radius:8px;margin-bottom:20px;">
-
-        <form method="POST" action="/avaliar">
-
-        <input name="nome" placeholder="Seu nome" required>
-
-        <select name="status" onchange="toggleCampos(this.value)">
-            <option value="recolocacao">Recolocação</option>
-            <option value="empregado">Empregado</option>
-        </select>
-
-        <script>
-        function toggleCampos(status) {
-            const cargo = document.querySelector('input[name="cargo"]');
-            const empresa = document.querySelector('input[name="empresa"]');
-
-            if (status === "recolocacao") {
-                cargo.disabled = true;
-                empresa.disabled = true;
-                cargo.value = "";
-                empresa.value = "";
-            } else {
-                cargo.disabled = false;
-                empresa.disabled = false;
-            }
-        }
-        </script>
-
-        <input name="cargo" placeholder="Cargo" disabled>
-        <input name="empresa" placeholder="Empresa" disabled>
-
-        <select name="estrelas" required>
-            <option value="">Avaliação</option>
-            <option value="5">⭐⭐⭐⭐⭐</option>
-            <option value="4">⭐⭐⭐⭐</option>
-            <option value="3">⭐⭐⭐</option>
-            <option value="2">⭐⭐</option>
-            <option value="1">⭐</option>
-        </select>
-
-        <textarea name="comentario" maxlength="300" placeholder="Comentário..." required></textarea>
-
-        <button type="submit">Enviar avaliação</button>
-
-        </form>
-        </div>
         
         {% if vagas %}
             {% for vaga in vagas %}
@@ -1664,28 +1568,6 @@ def get_html_home_pro():
             style="display:block; width:300px;height:50px"
             data-ad-client="ca-pub-2211390415336582"
             data-ad-slot="8168087096"></ins>
-
-        <h2>⭐ Avaliações</h2>
-
-        {% for a in avaliacoes %}
-        <div class="vaga">
-
-        <strong>{{ a.nome }}</strong>
-
-        <br>
-
-        {{ "⭐" * (a.estrelas | int) }}
-
-        <p>{{ a.comentario }}</p>
-
-        {% if a.status == "empregado" %}
-        <small>{{ a.cargo }} - {{ a.empresa }}</small>
-        {% else %}
-        <small>Em recolocação</small>
-        {% endif %}
-
-        </div>
-        {% endfor %}
 
         <div class="paginacao">
         {% if page_av > 1 %}
