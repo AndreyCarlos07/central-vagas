@@ -106,6 +106,7 @@ def normalizar(texto):
         return ""
 
     texto = texto.lower()
+    texto = re.sub(r'\((a|o|as|os)\)', '', texto)
     texto = unicodedata.normalize('NFD', texto)
     texto = texto.encode('ascii', 'ignore').decode('utf-8')
     texto = re.sub(r'[^a-z0-9\s]', '', texto)
