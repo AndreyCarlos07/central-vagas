@@ -74,33 +74,30 @@ def carregar_usuarios_pro_github():
 # MAPAS DE FILTRO PRO
 # ==========================
 MAPA_HIERARQUIA = {
-    "diretor": ["diretor"],
-    "gerente": ["gerente", "lider", "gestor", "head"],
-    "coordenador": ["coordenador", "lider", "gestor"],
-    "supervisor": ["supervisor", "lider", "chefe"],
+    "diretor": ["diretor", "head"],
+    "gerente": ["gerente", "lider", "líder", "gestor", "head"],
+    "coordenador": ["coordenador", "lider", "líder", "gestor"],
+    "supervisor": ["supervisor", "lider", "líder", "chefe"],
     "especialista": ["especialista"],
     "engenheiro": ["engenheiro"],
     "analista": ["analista"],
-    "tecnico": ["tecnico", "manutenedor", "reparador", "planejador"],
-    "inspetor": ["inspetor"],
-    "operador": ["operador"],
-    "auxiliar": ["auxiliar", "conferente", "abastecedor", "alimentador"],
-    "assistente": ["assistente", "conferente", "abastecedor", "alimentador"],
+    "tecnico": ["tecnico", "técnico", "manutenedor", "reparador", "planejador", "inspetor", "operador"],
+    "auxiliar": ["auxiliar", "conferente", "abastecedor", "alimentador", "assistente"],
     "jovem_aprendiz": ["jovem aprendiz", "aprendiz"],
-    "estagio": ["estagio", "estagiario", "estagiaria"]
+    "estagio": ["estagio", "estágio", "estagiário", "estagiária"]
 }
 
 MAPA_AREA = {
-    "manutencao": ["manutencao", "automacao", "robo", "roboticista", "instrumentacao", "eletrica", "eletricista", "mecanica", "soldador", "solda", "corte", "ferramentaria", "soldagem", "refrigeracao"],
-    "producao": ["producao"],
+    "manutencao": ["manutencao", "manutenção", "automacao", "automação", "robô", "robo", "roboticista", "instrumentação", "instrumentacao", "eletrica", "elétrica", "eletricista", "mecanica", "mecânica", "soldador", "solda", "corte", "ferramentaria", "soldagem", "refrigeracao"],
+    "producao": ["producao", "produção"],
     "produto": ["produto"],
-    "projeto": ["projeto", "planejamento"],
+    "projeto": ["projeto"],
     "operacao": ["operacao", "operacional"],
-    "administracao": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner", "recrutamento"],
+    "administracao": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner"],
     "marketing": ["marketing"],
-    "qualidade": ["qualidade", "qa", "seguranca", "meio ambiente", "quimico", "trabalho"],
-    "logistica": ["logistica", "estoque", "almoxarifado", "estoquista"],
-    "civil": ["civil", "obra", "obras"]
+    "qualidade": ["qualidade", "qa", "segurança", "meio ambiente", "químico", "trabalho"],
+    "logistica": ["logística", "logistica", "estoque", "almoxarifado", "estoquista"],
+    "civil": ["civil", "obras", "obra"]
 }
 
 
