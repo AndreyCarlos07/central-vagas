@@ -31,8 +31,8 @@ ARQUIVO = "vagas_ocultas.json"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["ACELEN RENOVÁVEIS"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["BYD", "LM MOBILIDADE", "MRV&CO"]
 
 # ===========================
 # VAGAS CONFIG
@@ -93,9 +93,9 @@ MAPA_AREA = {
     "manutencao": ["manutencao", "manutenção", "automacao", "automação", "robô", "robo", "roboticista", "instrumentação", "instrumentacao", "eletrica", "elétrica", "eletricista", "mecanica", "mecânica", "soldador", "solda", "corte", "ferramentaria", "soldagem", "refrigeracao"],
     "producao": ["producao", "produção"],
     "produto": ["produto"],
-    "projeto": ["projeto"],
+    "projeto": ["projeto", "planejamento"],
     "operacao": ["operacao", "operacional"],
-    "administracao": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner"],
+    "administracao": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner", "recrutamento"],
     "marketing": ["marketing"],
     "qualidade": ["qualidade", "qa", "segurança", "meio ambiente", "químico", "trabalho"],
     "logistica": ["logística", "logistica", "estoque", "almoxarifado", "estoquista"],
