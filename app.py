@@ -93,7 +93,8 @@ def contem_palavra(texto, palavras):
 def contem_bloqueada(titulo):
     titulo = normalizar(titulo)
     for p in PALAVRAS_BLOQUEADAS:
-        if p in titulo:
+        p = normalizar(p)
+        if re.search(rf"\b{re.escape(p)}\b", titulo):
             return True
     return False
     
@@ -641,7 +642,7 @@ def vagas_ativas():
                 titulo_lower = vaga["titulo"].lower()
 
                 # 🔎 verifica se contém palavra bloqueada
-                if any(p in titulo_lower for p in PALAVRAS_BLOQUEADAS):
+                if contem_bloqueada(vaga["titulo"]):
                     continue  # ignora essa vaga
 
                 vagas.append(vaga)
