@@ -13,6 +13,8 @@ import json
 import base64
 import requests
 import uuid
+import re
+import unicodedata
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
@@ -66,6 +68,24 @@ PALAVRAS_BLOQUEADAS = {
     "sudeste",
     "loja"
 }
+
+
+def normalizar(texto):
+    if not texto:
+        return ""
+    texto = texto.lower()
+    texto = unicodedata.normalize('NFD', texto)
+    texto = texto.encode('ascii', 'ignore').decode('utf-8')
+    return texto
+    
+
+def contem_bloqueada(titulo):
+    titulo = normalizar(titulo)
+    for p in PALAVRAS_BLOQUEADAS:
+        if p in titulo:
+            return True
+    return False
+    
 
 # ==========================
 # MAPAS DE FILTRO PRO
@@ -931,6 +951,13 @@ def painel_pro():
             return "Acesso inválido", 403
 
         vagas = carregar_vagas_pro()
+
+        # 🔥 FILTRO GLOBAL (igual scraper)
+        vagas = [
+            v for v in vagas
+            if not contem_bloqueada(v["titulo"])
+        ]
+
         vagas = filtrar_vagas_usuario(vagas, user)
 
         html = get_html_home_pro()
