@@ -73,10 +73,21 @@ PALAVRAS_BLOQUEADAS = {
 def normalizar(texto):
     if not texto:
         return ""
+
     texto = texto.lower()
+    texto = re.sub(r'\((a|o|as|os)\)', '', texto)
     texto = unicodedata.normalize('NFD', texto)
     texto = texto.encode('ascii', 'ignore').decode('utf-8')
+    texto = re.sub(r'[^a-z0-9\s]', '', texto)
+
     return texto
+
+
+def contem_palavra(texto, palavras):
+    for p in palavras:
+        if re.search(rf"\b{re.escape(p)}\b", texto):
+            return True
+    return False
     
 
 def contem_bloqueada(titulo):
@@ -118,31 +129,35 @@ MAPA_AREA = {
     "civil": ["civil", "obras", "obra"]
 }
 
+
 def filtrar_vagas_usuario(vagas, user):
     resultado = []
 
-    for v in vagas:
-        titulo = v.get("titulo", "").lower()
+    tipo = user.get("tipo_filtro")
+    valor = user.get("valor")
 
-        tipo = user.get("tipo_filtro")
-        valor = user.get("valor")
+    for v in vagas:
+        titulo = normalizar(v["titulo"])
 
         # 🔹 HIERARQUIA
         if tipo == "hierarquia":
             palavras = MAPA_HIERARQUIA.get(valor, [])
-            if not any(p in titulo for p in palavras):
+            palavras = [normalizar(p) for p in palavras]
+
+            if not contem_palavra(titulo, palavras):
                 continue
 
         # 🔹 ÁREA
         elif tipo == "area":
             palavras = MAPA_AREA.get(valor, [])
-            if not any(p in titulo for p in palavras):
+            palavras = [normalizar(p) for p in palavras]
+
+            if not contem_palavra(titulo, palavras):
                 continue
 
         # 🔹 EMPRESA
         elif tipo == "empresa":
-            empresas = valor if isinstance(valor, list) else [valor]
-            if v.get("empresa") not in empresas:
+            if v["empresa"] not in valor:
                 continue
 
         resultado.append(v)
