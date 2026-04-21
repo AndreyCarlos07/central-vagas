@@ -2026,7 +2026,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     # ===========================
     partes.append('<h3 style="font-size:16px;margin-bottom:10px;">Resumo de vagas no seu perfil:</h3>')
     
-    for v in vagas_restantes[:20]:
+    for v in vagas_restantes[:13]:
         partes.append(criar_card(v))
         
     partes.append(botao_extra)
