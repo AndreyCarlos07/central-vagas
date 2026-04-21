@@ -352,7 +352,7 @@ def enviar_email_contato(nome, tipo, mensagem):
         
 
 def carregar_vagas_pro():
-    with open("vagas_pro.csv", newline="", encoding="utf-8") as f:
+    with open("vagas.csv", newline="", encoding="utf-8") as f:
         return list(csv.DictReader(f))
 
 
