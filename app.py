@@ -2723,6 +2723,8 @@ def assinar_pro():
 
     <p>Após o pagamento, você começará a receber as vagas filtradas.</p>
 
+    <p>Enviamos atualizações diárias de vagas, normalmente por volta de <b>12h</b> e <b>17h</b>, conforme novas oportunidades são encontradas.</p>
+
     <a href="/">← Voltar</a>
 
     <script>
