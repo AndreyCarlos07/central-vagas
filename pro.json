@@ -14,18 +14,6 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-20T01:26:05.373211"
-    },
-    {
-      "id": "dfeac77a",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "plano": "mensal",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-22T01:59:33.942689"
     }
   ],
   "ativos": [
@@ -94,6 +82,18 @@
       "data_inicio": "2026-04-21T17:28:26.485589",
       "expira_em": "2026-05-21T17:28:26.485600",
       "data_criacao": "2026-04-21T17:27:41.448822"
+    },
+    {
+      "id": "dfeac77a",
+      "nome": "Andrey Carlos",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "plano": "mensal",
+      "status": "ativo",
+      "data_inicio": "2026-04-22T02:00:28.896329",
+      "expira_em": "2026-05-22T02:00:28.896342",
+      "data_criacao": "2026-04-22T01:59:33.942689"
     }
   ],
   "expirados": []
