@@ -1993,7 +1993,6 @@ def get_html_home():
                 Pequenos ajustes podem aumentar significativamente suas chances
                 de ser chamado para entrevistas e avançar nas etapas do processo seletivo.
                 </p>
-                </div>
 
                 <br>
 
