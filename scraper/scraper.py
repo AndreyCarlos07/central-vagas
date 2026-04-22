@@ -31,7 +31,7 @@ ARQUIVO = "vagas_ocultas.json"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["BYD", "LM MOBILIDADE", "MRV&CO"]
 
 # ===========================
@@ -2081,7 +2081,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     # ===========================
     partes.append('<h3 style="font-size:16px;margin-bottom:10px;">Resumo de vagas no seu perfil:</h3>')
     
-    for v in vagas_restantes[:14]:
+    for v in vagas_restantes[:10]:
         partes.append(criar_card(v))
         
     partes.append(botao_extra)
