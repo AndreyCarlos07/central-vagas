@@ -1579,6 +1579,44 @@ def get_html_home_pro():
                 Pequenos ajustes podem aumentar significativamente suas chances
                 de ser chamado para entrevistas e avançar nas etapas do processo seletivo.
                 </p>
+
+                <br>
+
+                <div style="
+                    background:#fff3e0;
+                    border:1px solid #ff9800;
+                    padding:15px;
+                    border-radius:8px;
+                    margin-top:15px;
+                ">
+
+                    <p style="margin:0 0 8px 0;font-weight:bold;color:#ff9800;">
+                    💎 Economize tempo e foque apenas nas vagas certas
+                    </p>
+
+                    <p style="margin:0 0 10px 0;font-size:13px;color:#555;">
+                    Com a <b>Versão PRO</b>, você recebe vagas filtradas de acordo com seu perfil diretamente no seu email,
+                    economizando tempo e evitando buscas manuais.
+                    </p>
+
+                    <p style="margin:0 0 12px 0;font-size:13px;color:#555;">
+                    🚀 Acesse vagas mais alinhadas com seu objetivo profissional e não perca oportunidades.
+                    </p>
+
+                    <a href="/pro"
+                       style="
+                            background:#ff9800;
+                            color:white;
+                            padding:10px 16px;
+                            text-decoration:none;
+                            border-radius:6px;
+                            font-size:13px;
+                            display:inline-block;
+                            font-weight:bold;
+                       ">
+                        Ver versão PRO
+                    </a>
+
                 </div>
 
         </div>   
@@ -2715,7 +2753,7 @@ def assinar_pro():
 
     <p>
         <strong>PIX:</strong> 
-        <span id="pix">seuemail@gmail.com</span>
+        <span id="pix">suporte.central.vagas@gmail.com</span>
         <button onclick="copiarPix()" style="margin-left:10px;">📋 Copiar</button>
     </p>
 
@@ -3010,9 +3048,19 @@ def vaga(id):
 
                             <br><br>
 
+                            <a href="/pro" target="_blank"
+                               onmouseover="this.style.background='#ff9800'; this.style.color='white'"
+                               onmouseout="this.style.background='#fff3e0'; this.style.color='#ff9800'"
+                               style="background:#fff3e0;olor:#ff9800;padding:12px 20px;
+                                    text-decoration:none;border-radius:6px;display:inline-flex;align-items:center;gap:8px;min-width:180px;border:1px solid #ff9800;">
+                            💎 Versão PRO
+                            </a>
+
+                            <br><br>
+
                             <p>Projeto voluntário desenvolvido por <strong>Andrey Carlos</strong></p>
 
-                            <a href="/">← Voltar para central</a>
+                            <a href="/">← Ver mais vagas</a>
 
                         </div>
 
