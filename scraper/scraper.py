@@ -116,7 +116,7 @@ MAPA_AREA = {
     "manutencao": ["manutencao", "manutenção", "automacao", "automação", "robô", "robo", "roboticista", "instrumentação", "instrumentacao", "eletrica", "elétrica", "eletricista", "mecanica", "mecânica", "soldador", "solda", "corte", "ferramentaria", "soldagem", "refrigeracao"],
     "producao": ["producao", "produção", "operacao", "operacional"],
     "produto": ["projeto", "produto"],
-    "administracao": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner", "custos", "financeiro"],
+    "administracao": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner", "custos", "financeiro", "trabalhistas"],
     "qualidade": ["qualidade", "qa", "segurança", "meio ambiente", "químico", "trabalho"],
     "logistica": ["logística", "logistica", "estoque", "almoxarifado", "estoquista", "repositor", "comércio"],
     "civil": ["civil", "obras", "obra"]
