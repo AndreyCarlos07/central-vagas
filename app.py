@@ -450,6 +450,7 @@ Nome: {nome}
 Email: {email}
 Filtro: {tipo}
 Valor: {valor}
+Plano: {plano_nome}
 """
             }
         )
@@ -1579,46 +1580,8 @@ def get_html_home_pro():
                 Pequenos ajustes podem aumentar significativamente suas chances
                 de ser chamado para entrevistas e avançar nas etapas do processo seletivo.
                 </p>
-
-                <br>
-
-                <div style="
-                    background:#fff3e0;
-                    border:1px solid #ff9800;
-                    padding:15px;
-                    border-radius:8px;
-                    margin-top:15px;
-                ">
-
-                    <p style="margin:0 0 8px 0;font-weight:bold;color:#ff9800;">
-                    💎 Economize tempo e foque apenas nas vagas certas
-                    </p>
-
-                    <p style="margin:0 0 10px 0;font-size:13px;color:#555;">
-                    Com a <b>Versão PRO</b>, você recebe vagas filtradas de acordo com seu perfil diretamente no seu email,
-                    economizando tempo e evitando buscas manuais.
-                    </p>
-
-                    <p style="margin:0 0 12px 0;font-size:13px;color:#555;">
-                    🚀 Acesse vagas mais alinhadas com seu objetivo profissional e não perca oportunidades.
-                    </p>
-
-                    <a href="/pro"
-                       style="
-                            background:#ff9800;
-                            color:white;
-                            padding:10px 16px;
-                            text-decoration:none;
-                            border-radius:6px;
-                            font-size:13px;
-                            display:inline-block;
-                            font-weight:bold;
-                       ">
-                        Ver versão PRO
-                    </a>
-
                 </div>
-
+                
         </div>   
                
         <script>
@@ -2030,6 +1993,45 @@ def get_html_home():
                 Pequenos ajustes podem aumentar significativamente suas chances
                 de ser chamado para entrevistas e avançar nas etapas do processo seletivo.
                 </p>
+                </div>
+
+                <br>
+
+                <div style="
+                    background:#fff3e0;
+                    border:1px solid #ff9800;
+                    padding:15px;
+                    border-radius:8px;
+                    margin-top:15px;
+                ">
+
+                    <p style="margin:0 0 8px 0;font-weight:bold;color:#ff9800;">
+                    💎 Economize tempo e foque apenas nas vagas certas
+                    </p>
+
+                    <p style="margin:0 0 10px 0;font-size:13px;color:#555;">
+                    Com a <b>Versão PRO</b>, você recebe vagas filtradas de acordo com seu perfil diretamente no seu email,
+                    economizando tempo e evitando buscas manuais.
+                    </p>
+
+                    <p style="margin:0 0 12px 0;font-size:13px;color:#555;">
+                    🚀 Acesse vagas mais alinhadas com seu objetivo profissional e não perca oportunidades.
+                    </p>
+
+                    <a href="/pro"
+                       style="
+                            background:#ff9800;
+                            color:white;
+                            padding:10px 16px;
+                            text-decoration:none;
+                            border-radius:6px;
+                            font-size:13px;
+                            display:inline-block;
+                            font-weight:bold;
+                       ">
+                        Ver versão PRO
+                    </a>
+
                 </div>
 
         </div>   
@@ -3055,6 +3057,13 @@ def vaga(id):
                                     text-decoration:none;border-radius:6px;display:inline-flex;align-items:center;gap:8px;min-width:180px;border:1px solid #ff9800;">
                             💎 Versão PRO
                             </a>
+
+                            <br><br>
+
+                            <p style="font-size:12px;color:#555;max-width:400px;">
+                            A Central de Vagas é um projeto independente. O plano PRO ajuda a manter a plataforma ativa,
+                            cobrindo custos de infraestrutura e melhorias contínuas do serviço.
+                            </p>
 
                             <br><br>
 
