@@ -467,6 +467,8 @@ def enviar_email_confirmacao_pro(destinatario, nome, plano, expira_em):
 
     plano_nome = "Mensal" if plano == "mensal" else "Trimestral"
 
+    data_formatada = datetime.fromisoformat(expira_em).strftime("%d/%m/%Y")
+
     html = f"""
     <h2>💎 Pagamento confirmado!</h2>
 
@@ -475,7 +477,7 @@ def enviar_email_confirmacao_pro(destinatario, nome, plano, expira_em):
     <p>Seu acesso PRO está ativo 🚀</p>
 
     <p><strong>Plano:</strong> {plano_nome}</p>
-    <p><strong>Válido até:</strong> {expira_em}</p>
+    <p><strong>Válido até:</strong> {data_formatada}</p>
 
     <hr>
 
@@ -1060,9 +1062,10 @@ def pro():
             <input name="nome" placeholder="Seu nome" required>
             <input type="email" name="email" placeholder="Seu email" required>
 
-            <h3>💎 Escolha seu plano:</h3>
+            <h3>✅ Escolha o plano que mais lhe agrada:</h3>
 
             <select name="plano" required>
+                <option value="">Selecione</option>            
                 <option value="mensal">Mensal (R$ 19,90)</option>
                 <option value="trimestral">Trimestral (R$ 49,90)</option>
             </select>
@@ -1259,7 +1262,17 @@ def pro():
         </script>
 
         <p style="margin-top:15px;font-size:12px;color:#555;">
-        ⚠️ Pode haver dias sem envio de vagas, caso não existam novas oportunidades no perfil selecionado.
+        ⚠️ Pode haver dias sem envio de vagas novas, caso não existam oportunidades compatíveis com o perfil selecionado.
+        Ainda assim, você continuará recebendo um resumo atualizado das vagas disponíveis.
+        </p>
+
+        <p style="margin-top:15px;font-size:12px;color:#555;">
+        Por se tratar de um serviço digital com acesso imediato, não realizamos reembolsos.
+        </p>
+
+        <p style="margin-top:15px;font-size:12px;color:#555;">
+        A Central de Vagas é um projeto independente. O plano PRO ajuda a manter a plataforma ativa,
+        cobrindo custos de infraestrutura e melhorias contínuas do serviço.
         </p>
 
         <p style="font-size:12px;color:#555;">
