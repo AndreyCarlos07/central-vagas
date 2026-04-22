@@ -1972,67 +1972,66 @@ def get_html_home():
                 🏢 {{ total_empresas }} empresas monitoradas
             </div>
 
-            <div class="vaga">
-                <h3>💡 Dicas para conseguir emprego mais rápido</h3>
+        <div class="vaga">
+            <h3>💡 Dicas para conseguir emprego mais rápido</h3>
 
-                <p>
-                Muitas empresas utilizam plataformas automatizadas para recrutamento,
-                como sistemas de triagem de currículos. 
-                Para aumentar suas chances de aprovação nos processos seletivos:
-                </p>
+            <p>
+            Muitas empresas utilizam plataformas automatizadas para recrutamento,
+            como sistemas de triagem de currículos. 
+            Para aumentar suas chances de aprovação nos processos seletivos:
+            </p>
 
-                <ul>
-                    <li>Preencha seu currículo de forma completa e atualizada</li>
-                    <li>Utilize palavras-chave relacionadas à vaga desejada</li>
-                    <li>Evite erros de português e revise suas informações</li>
-                    <li>Mantenha seu perfil sempre atualizado nas plataformas</li>
-                    <li>Candidate-se rapidamente após a publicação da vaga</li>
-                </ul>
+            <ul>
+                <li>Preencha seu currículo de forma completa e atualizada</li>
+                <li>Utilize palavras-chave relacionadas à vaga desejada</li>
+                <li>Evite erros de português e revise suas informações</li>
+                <li>Mantenha seu perfil sempre atualizado nas plataformas</li>
+                <li>Candidate-se rapidamente após a publicação da vaga</li>
+            </ul>
 
-                <p>
-                Pequenos ajustes podem aumentar significativamente suas chances
-                de ser chamado para entrevistas e avançar nas etapas do processo seletivo.
-                </p>
-                </div>
+            <p>
+            Pequenos ajustes podem aumentar significativamente suas chances
+            de ser chamado para entrevistas e avançar nas etapas do processo seletivo.
+            </p>
 
-                <br>
+            <br>
 
-                <div style="
-                    background:#fff3e0;
-                    border:1px solid #ff9800;
-                    padding:15px;
-                    border-radius:8px;
-                    margin-top:15px;
+            <div style="
+                background:#fff3e0;
+                border:1px solid #ff9800;
+                padding:15px;
+                border-radius:8px;
+                margin-top:15px;
                 ">
 
-                    <p style="margin:0 0 8px 0;font-weight:bold;color:#ff9800;">
-                    💎 Economize tempo e foque apenas nas vagas certas
-                    </p>
+                <p style="margin:0 0 8px 0;font-weight:bold;color:#ff9800;">
+                💎 Economize tempo e foque apenas nas vagas certas
+                </p>
 
-                    <p style="margin:0 0 10px 0;font-size:13px;color:#555;">
-                    Com a <b>Versão PRO</b>, você recebe vagas filtradas de acordo com seu perfil diretamente no seu email,
-                    economizando tempo e evitando buscas manuais.
-                    </p>
+                <p style="margin:0 0 10px 0;font-size:13px;color:#555;">
+                Com a <b>Versão PRO</b>, você recebe vagas filtradas de acordo com seu perfil diretamente no seu email,
+                economizando tempo e evitando buscas manuais.
+                </p>
 
-                    <p style="margin:0 0 12px 0;font-size:13px;color:#555;">
-                    🚀 Acesse vagas mais alinhadas com seu objetivo profissional e não perca oportunidades.
-                    </p>
+                <p style="margin:0 0 12px 0;font-size:13px;color:#555;">
+                🚀 Acesse vagas mais alinhadas com seu objetivo profissional e não perca oportunidades.
+                </p>
 
-                    <a href="/pro"
-                       style="
-                            background:#ff9800;
-                            color:white;
-                            padding:10px 16px;
-                            text-decoration:none;
-                            border-radius:6px;
-                            font-size:13px;
-                            display:inline-block;
-                            font-weight:bold;
-                       ">
-                        Ver versão PRO
-                    </a>
+                <a href="/pro"
+                    style="
+                        background:#ff9800;
+                        color:white;
+                        padding:10px 16px;
+                        text-decoration:none;
+                        border-radius:6px;
+                        font-size:13px;
+                        display:inline-block;
+                        font-weight:bold;
+                    ">
+                    Ver versão PRO
+                </a>
 
-                </div>
+            </div>
 
         </div>   
                
