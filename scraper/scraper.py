@@ -121,6 +121,15 @@ def contem_palavra(texto, palavras):
     return False
     
 
+def contem_bloqueada(titulo):
+    titulo = normalizar(titulo)
+    for p in PALAVRAS_BLOQUEADAS:
+        p = normalizar(p)
+        if re.search(rf"\b{re.escape(p)}\b", titulo):
+            return True
+    return False
+    
+
 # ===========================
 # CARREGAR HISTÓRICO
 # ===========================
@@ -2026,7 +2035,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
     # ===========================
     # BOTÃO PRO
     # ===========================
-    tem_mais_vagas = len(vagas_filtradas) > 14
+    tem_mais_vagas = len(vagas_filtradas) > 10
     botao_extra = ""
 
     if tem_mais_vagas:
@@ -2343,6 +2352,16 @@ def main():
                 vagas_novas_user = filtrar_vagas_usuario(novas_vagas_execucao, user)
                 vagas_filtradas = remover_ocultas(vagas_filtradas, ocultas)
                 vagas_novas_user = remover_ocultas(vagas_novas_user, ocultas)
+
+                vagas_filtradas = [
+                    v for v in vagas_filtradas
+                    if not contem_bloqueada(v["titulo"])
+                    ]
+
+                vagas_novas_user = [
+                    v for v in vagas_novas_user
+                    if not contem_bloqueada(v["titulo"])
+                    ]                
 
                 if not vagas_filtradas:
                     print(f"⚠️ Nenhuma vaga para {email}")
