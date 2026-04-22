@@ -460,15 +460,22 @@ Valor: {valor}
         print("Erro email PRO:", e)
 
 
-def enviar_email_confirmacao_pro(destinatario, nome):
+def enviar_email_confirmacao_pro(destinatario, nome, plano, expira_em):
 
     EMAIL = os.getenv("EMAIL_USER_CENTRAL")
     SENHA = os.getenv("EMAIL_PASS_CENTRAL")
 
+    plano_nome = "Mensal" if plano == "mensal" else "Trimestral"
+
     html = f"""
     <h2>💎 Pagamento confirmado!</h2>
-    <p>Olá, <b>{nome}</b></p>
+
+    <p>Olá, <b>{nome}</b> 👋</p>
+
     <p>Seu acesso PRO está ativo 🚀</p>
+
+    <p><strong>Plano:</strong> {plano_nome}</p>
+    <p><strong>Válido até:</strong> {expira_em}</p>
 
     <hr>
 
@@ -1052,6 +1059,15 @@ def pro():
 
             <input name="nome" placeholder="Seu nome" required>
             <input type="email" name="email" placeholder="Seu email" required>
+
+            <h3>💎 Escolha seu plano:</h3>
+
+            <select name="plano" required>
+                <option value="mensal">Mensal (R$ 19,90)</option>
+                <option value="trimestral">Trimestral (R$ 49,90)</option>
+            </select>
+
+            <br><br>
 
             <h3>🎯 Escolha como deseja receber suas vagas:</h3>
 
@@ -2637,6 +2653,12 @@ def assinar_pro():
     nome = request.form.get("nome")
     email = request.form.get("email")
     tipo = request.form.get("tipo_filtro")
+    plano = request.form.get("plano")
+
+    if plano == "mensal":
+        valor_plano = "R$ 19,90"
+    elif plano == "trimestral":
+        valor_plano = "R$ 49,90"
 
     valor = None
 
@@ -2659,6 +2681,7 @@ def assinar_pro():
         "email": email,
         "tipo_filtro": tipo,
         "valor": valor,
+        "plano": plano,
         "status": "pendente",
         "data_inicio": None,
         "expira_em": None,
@@ -2672,17 +2695,30 @@ def assinar_pro():
 
     enviar_email_solicitacao_pro(nome, email, tipo, valor)
 
-    return """
+    return f"""
     <h2>✅ Solicitação recebida!</h2>
 
     <p>Para ativar seu acesso PRO:</p>
 
-    <p><strong>PIX:</strong> seuemail@gmail.com FASE DE TESTE</p>
-    <p><strong>Valor:</strong> R$ 9,90</p>
+    <p>
+        <strong>PIX:</strong> 
+        <span id="pix">seuemail@gmail.com</span>
+        <button onclick="copiarPix()" style="margin-left:10px;">📋 Copiar</button>
+    </p>
+
+    <p><strong>Valor:</strong> {valor_plano}</p>
 
     <p>Após o pagamento, você começará a receber as vagas filtradas.</p>
 
     <a href="/">← Voltar</a>
+
+    <script>
+    function copiarPix() {{
+        var texto = document.getElementById("pix").innerText;
+        navigator.clipboard.writeText(texto);
+        alert("Chave PIX copiada!");
+     }}
+    </script>
     """
 
 
@@ -2700,7 +2736,7 @@ def admin_pro():
     <h2>💰 Pendentes</h2>
     {% for u in pendentes %}
         <p>
-        {{ u.nome }} - {{ u.email }}
+        {{ u.nome }} - {{ u.email }} - {{ u.plano or "mensal" }}
         <br>
         <a href="/ativar_pro/{{u.id}}?admin={{token}}">✅ Ativar</a><br>
         <a href="/excluir_pro/{{u.id}}?admin={{token}} "onclick="return confirm('Tem certeza que deseja excluir este usuário?')" style="color:red;">🗑️ Excluir</a>
@@ -2711,7 +2747,7 @@ def admin_pro():
     <h2>🚀 Ativos</h2>
     {% for u in ativos %}
         <p>
-        {{ u.nome }} - expira em {{ u.expira_em }}
+        {{ u.nome }} - expira em {{ u.expira_em }} - {{ u.plano or "mensal" }}
         <br>
         <a href="/expirar_pro/{{u.id}}?admin={{token}}" style="color:red;">Expirar</a><br>
         <a href="/excluir_pro/{{u.id}}?admin={{token}}" onclick="return confirm('Tem certeza que deseja excluir este usuário?')" style="color:red;">🗑️ Excluir</a>
@@ -2722,7 +2758,7 @@ def admin_pro():
     <h2>⛔ Expirados</h2>
     {% for u in expirados %}
         <p>
-        {{ u.nome }}
+        {{ u.nome }} - {{ u.email }} - {{ u.plano or "mensal" }}
         <br>
         <a href="/reativar_pro/{{u.id}}?admin={{token}}" style="color:green;">Reativar</a><br>
         <a href="/excluir_pro/{{u.id}}?admin={{token}}" onclick="return confirm('Tem certeza que deseja excluir este usuário?')" style="color:red;">🗑️ Excluir</a>
@@ -2757,15 +2793,24 @@ def ativar_pro(id):
 
             u["status"] = "ativo"
             u["data_inicio"] = datetime.now().isoformat()
-            u["expira_em"] = (datetime.now() + timedelta(days=30)).isoformat()
+
+            # 🔥 NOVA LÓGICA DO PLANO
+            if u.get("plano") == "trimestral":
+                dias = 90
+            else:
+                dias = 30
+
+            u["expira_em"] = (datetime.now() + timedelta(days=dias)).isoformat()
 
             dados["ativos"].append(u)
 
-            # 🔥 ENVIA EMAIL AQUI
+            # 🔥 ENVIA EMAIL
             try:
                 enviar_email_confirmacao_pro(
                     u["email"],
-                    u.get("nome", "")
+                    u.get("nome", ""),
+                    u.get("plano", "mensal"),
+                    u.get("expira_em")
                 )
             except Exception as e:
                 print("Erro ao enviar confirmação:", e)
