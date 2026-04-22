@@ -68,6 +68,31 @@ def carregar_usuarios_pro_github():
     except Exception as e:
         print("❌ erro ao carregar usuarios PRO do GitHub:", e)
         return []
+        
+
+# ==========================
+# PALAVRAS BLOQUEADAS
+# ==========================
+PALAVRAS_BLOQUEADAS = {
+    "enfermagem",
+    "enfermeiro",
+    "vendedor",
+    "vendas",
+    "advogado",
+    "jurídico",
+    "cozinha",
+    "serviços gerais",
+    "cozinheiro",
+    "representante",
+    "eusébio",
+    "motorista",
+    "jaboatão",
+    "mg",
+    "ufrj",
+    "beleza",
+    "sudeste",
+    "loja"
+}
     
 
 # ==========================
