@@ -3056,11 +3056,7 @@ def vaga(id):
                                onmouseout="this.style.background='#fff3e0'; this.style.color='#ff9800'"
                                style="background:#fff3e0;olor:#ff9800;padding:12px 20px;
                                     text-decoration:none;border-radius:6px;display:inline-flex;align-items:center;gap:8px;min-width:180px;border:1px solid #ff9800;">
-                                
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#ff9800" viewBox="0 0 24 24">
-                                    <path d="M12 2L4 10l8 12 8-12-8-8zm0 3.2L16.8 10H7.2L12 5.2z"/>
-                                </svg>
-                            Versão PRO
+                            💎 Versão PRO
                             </a>
 
                             <br><br>
@@ -3068,8 +3064,6 @@ def vaga(id):
                             <p>A Central de Vagas é um projeto independente. O plano PRO ajuda a manter a plataforma ativa,
                             cobrindo custos de infraestrutura e melhorias contínuas do serviço.
                             </p>
-
-                            <br><br>
 
                             <p>Projeto voluntário desenvolvido por <strong>Andrey Carlos</strong></p>
 
