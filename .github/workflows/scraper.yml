@@ -2,7 +2,7 @@ name: Atualizar vagas automaticamente
 
 on:
   schedule:
-    - cron: "0 15 * * *" # 12:00 BR → (UTC-3) 
+    - cron: "0 14 * * *" # 12:00 BR → (UTC-3) 
     - cron: "0 20 * * *" # 17:00 BR → (UTC-3)
   workflow_dispatch:
 
