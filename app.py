@@ -1972,6 +1972,8 @@ def get_html_home():
                 🏢 {{ total_empresas }} empresas monitoradas
             </div>
 
+        </div>
+
         <div class="vaga">
             <h3>💡 Dicas para conseguir emprego mais rápido</h3>
 
