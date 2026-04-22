@@ -114,14 +114,11 @@ MAPA_HIERARQUIA = {
 
 MAPA_AREA = {
     "manutencao": ["manutencao", "manutenção", "automacao", "automação", "robô", "robo", "roboticista", "instrumentação", "instrumentacao", "eletrica", "elétrica", "eletricista", "mecanica", "mecânica", "soldador", "solda", "corte", "ferramentaria", "soldagem", "refrigeracao"],
-    "producao": ["producao", "produção"],
-    "produto": ["produto"],
-    "projeto": ["projeto"],
-    "operacao": ["operacao", "operacional"],
-    "administracao": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner"],
-    "marketing": ["marketing"],
+    "producao": ["producao", "produção", "operacao", "operacional"],
+    "produto": ["projeto", "produto"],
+    "administracao": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner", "custos", "financeiro"],
     "qualidade": ["qualidade", "qa", "segurança", "meio ambiente", "químico", "trabalho"],
-    "logistica": ["logística", "logistica", "estoque", "almoxarifado", "estoquista"],
+    "logistica": ["logística", "logistica", "estoque", "almoxarifado", "estoquista", "repositor", "comércio"],
     "civil": ["civil", "obras", "obra"]
 }
 
