@@ -119,14 +119,11 @@ MAPA_HIERARQUIA = {
 
 MAPA_AREA = {
     "manutencao": ["manutencao", "manutenção", "automacao", "automação", "robô", "robo", "roboticista", "instrumentação", "instrumentacao", "eletrica", "elétrica", "eletricista", "mecanica", "mecânica", "soldador", "solda", "corte", "ferramentaria", "soldagem", "refrigeracao"],
-    "producao": ["producao", "produção"],
-    "produto": ["produto"],
-    "projeto": ["projeto"],
-    "operacao": ["operacao", "operacional"],
-    "administracao": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner"],
-    "marketing": ["marketing"],
+    "producao": ["producao", "produção", "operacao", "operacional"],
+    "produto": ["projeto", "produto"],
+    "administracao": ["administracao", "administrativo", "administrativa", "rh", "dp", "partner", "custos", "financeiro"],
     "qualidade": ["qualidade", "qa", "segurança", "meio ambiente", "químico", "trabalho"],
-    "logistica": ["logística", "logistica", "estoque", "almoxarifado", "estoquista"],
+    "logistica": ["logística", "logistica", "estoque", "almoxarifado", "estoquista", "repositor", "comércio"],
     "civil": ["civil", "obras", "obra"]
 }
 
@@ -1197,13 +1194,10 @@ def pro():
                 <select name="area">
                     <option value="">Selecione</option>
                     <option value="manutencao">Manutenção</option>
-                    <option value="producao">Produção</option>
-                    <option value="produto">Produto</option>
-                    <option value="projeto">Projetos</option>
-                    <option value="operacao">Operação</option>
-                    <option value="administracao">Administração</option>
-                    <option value="marketing">Marketing</option>
-                    <option value="qualidade">Qualidade/SMS/Químico</option>
+                    <option value="producao">Produção/Operação</option>
+                    <option value="produto">Projetos/Produto</option>
+                    <option value="administracao">Administração/RH</option>
+                    <option value="qualidade">Qualidade/Segurança/Meio Ambiente/Químico</option>
                     <option value="logistica">Logística</option>
                     <option value="civil">Civil</option>
                 </select>
