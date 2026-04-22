@@ -2005,7 +2005,7 @@ def montar_relatorio_usuario(user, vagas_filtradas, vagas_novas):
             f'style="text-decoration:none;color:#0a66c2;" '
             f'title="{v["titulo"]}">'
             f'<p style="margin:0 0 6px 0;font-weight:bold;font-size:14px;line-height:1.3;'
-            f'max-height:34px;overflow:hidden;">{v["titulo"].upper()}</p>'
+            f'max-height:54px;overflow:hidden;">{v["titulo"].upper()}</p>'
             '</a>'
             
             f'<p style="margin:0 0 8px 0;font-size:13px;">Empresa: <b>{v["empresa"]}</b></p>'
