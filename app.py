@@ -430,7 +430,7 @@ def salvar_pro(dados):
     requests.put(url, headers=headers, json=payload)
     
 
-def enviar_email_solicitacao_pro(nome, email, tipo, valor):
+def enviar_email_solicitacao_pro(nome, email, tipo, valor, plano):
     try:
         response = requests.post(
             "https://api.resend.com/emails",
@@ -447,7 +447,7 @@ Nome: {nome}
 Email: {email}
 Filtro: {tipo}
 Valor: {valor}
-Plano: {plano_nome}
+Plano: {plano}
 """
             }
         )
@@ -2741,7 +2741,7 @@ def assinar_pro():
 
     salvar_pro(dados)
 
-    enviar_email_solicitacao_pro(nome, email, tipo, valor)
+    enviar_email_solicitacao_pro(nome, email, tipo, valor, plano)
 
     return f"""
     <h2>✅ Solicitação recebida!</h2>
