@@ -1,5 +1,18 @@
 {
-  "pendentes": [],
+  "pendentes": [
+    {
+      "id": "4be71d7b",
+      "nome": "Cintia Regina ",
+      "email": "acintiaregina@yahoo.com.br",
+      "tipo_filtro": "area",
+      "valor": "qualidade",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-23T09:25:07.125724"
+    }
+  ],
   "ativos": [
     {
       "id": "175674c3",
