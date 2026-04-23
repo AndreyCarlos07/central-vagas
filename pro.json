@@ -1,18 +1,6 @@
 {
   "pendentes": [
     {
-      "id": "4be71d7b",
-      "nome": "Cintia Regina ",
-      "email": "acintiaregina@yahoo.com.br",
-      "tipo_filtro": "area",
-      "valor": "qualidade",
-      "plano": "mensal",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-23T09:25:07.125724"
-    },
-    {
       "id": "0feaa85a",
       "nome": "Andrey Carlos",
       "email": "teste@gmail.com",
@@ -80,6 +68,18 @@
       "data_inicio": "2026-04-23T10:38:13.940858",
       "expira_em": "2026-05-23T10:38:13.940871",
       "data_criacao": "2026-04-19T16:28:29.772878"
+    },
+    {
+      "id": "4be71d7b",
+      "nome": "Cintia Regina ",
+      "email": "acintiaregina@yahoo.com.br",
+      "tipo_filtro": "area",
+      "valor": "qualidade",
+      "plano": "mensal",
+      "status": "ativo",
+      "data_inicio": "2026-04-23T10:45:02.091253",
+      "expira_em": "2026-05-23T10:45:02.091266",
+      "data_criacao": "2026-04-23T09:25:07.125724"
     }
   ],
   "expirados": []
