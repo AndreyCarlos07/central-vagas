@@ -1,5 +1,24 @@
 {
-  "pendentes": [],
+  "pendentes": [
+    {
+      "id": "a64a4d28",
+      "nome": "Kevin Teixeira Mourão ",
+      "email": "kevinmourao2014@outlook.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "BYD",
+        "CONTINENTAL",
+        "ELETRODATA ENGENHARIA",
+        "KEMPETRO",
+        "LM MOBILIDADE"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-23T18:06:28.823899"
+    }
+  ],
   "ativos": [
     {
       "id": "175674c3",
