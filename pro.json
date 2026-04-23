@@ -1,21 +1,5 @@
 {
-  "pendentes": [
-    {
-      "id": "b7a09cad",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "empresa",
-      "valor": [
-        "3CORAÇÕES",
-        "ACELEN",
-        "ALVOAR LÁCTEOS"
-      ],
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-20T01:26:05.373211"
-    }
-  ],
+  "pendentes": [],
   "ativos": [
     {
       "id": "175674c3",
