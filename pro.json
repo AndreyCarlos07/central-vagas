@@ -48,17 +48,6 @@
       "data_criacao": "2026-04-19T16:28:00.178258"
     },
     {
-      "id": "82c374ce",
-      "nome": "Adan Carlos",
-      "email": "adancarlosbr@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "auxiliar",
-      "status": "ativo",
-      "data_inicio": "2026-04-19T16:31:40.513091",
-      "expira_em": "2026-05-19T16:31:40.513102",
-      "data_criacao": "2026-04-19T16:28:29.772878"
-    },
-    {
       "id": "0c40d6df",
       "nome": "Andrey Batist",
       "email": "andrey.engenhariamecatronica@gmail.com",
@@ -70,5 +59,17 @@
       "data_criacao": "2026-04-13T08:25:59.526023"
     }
   ],
-  "expirados": []
+  "expirados": [
+    {
+      "id": "82c374ce",
+      "nome": "Adan Carlos",
+      "email": "adancarlosbr@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "auxiliar",
+      "status": "expirado",
+      "data_inicio": "2026-04-19T16:31:40.513091",
+      "expira_em": "2026-05-19T16:31:40.513102",
+      "data_criacao": "2026-04-19T16:28:29.772878"
+    }
+  ]
 }
