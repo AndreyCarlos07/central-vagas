@@ -457,6 +457,7 @@ SITES = [
         "url": "https://careers.goldwind.com/Brazil/search", 
         "tipo": "goldwind"
     },
+    {
         "empresa": "ARDAGH GROUP",
         "url": "https://careers.ardaghgroup.com/search", 
         "tipo": "ardagh"
