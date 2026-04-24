@@ -31,8 +31,8 @@ ARQUIVO = "vagas_ocultas.json"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["BYD", "LM MOBILIDADE", "MRV&CO"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["ARDAGH GROUP"]
 
 # ===========================
 # VAGAS CONFIG
@@ -456,6 +456,10 @@ SITES = [
         "empresa": "GOLDWIND",
         "url": "https://careers.goldwind.com/Brazil/search", 
         "tipo": "goldwind"
+    },
+        "empresa": "ARDAGH GROUP",
+        "url": "https://careers.ardaghgroup.com/search", 
+        "tipo": "ardagh"
     },
     {
         "empresa": "HALLIBURTON",
@@ -1408,6 +1412,204 @@ def coletar_goldwind(page, site):
     return vagas
 
 # ===========================
+# ARDAGH GROUP
+# ===========================
+def coletar_ardagh_group(page, site):
+    vagas = []
+    links_coletados = set()
+    total_empresa = 0  # 👈 contador geral real
+
+    page.goto(site["url"], timeout=60000)
+    page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(3000)
+
+    print("🔎 Verificando age gate...")
+
+    # ===========================
+    # 1️⃣ VERIFICA AGE GATE
+    # ===========================
+    if page.locator("#input-date-day").count() > 0:
+        print("🔐 Age gate detectado. Preenchendo data...")
+
+        page.fill("#input-date-day", "23")
+        page.fill("#input-date-month", "09")
+        page.fill("#input-date-year", "1993")
+
+        page.click("#input-date-submit")
+        page.wait_for_load_state("networkidle")
+        page.goto("https://careers.ardaghgroup.com/Brazil/search")
+        page.wait_for_selector("#location", timeout=30000)
+
+    else:
+        print("✅ Age gate não apareceu.")
+
+    # ===========================
+    # 2️⃣ CIDADES PARA FILTRAR
+    # ===========================
+    cidades = ["Alagoinhas"]
+
+    for cidade in cidades:
+
+        print(f"📍 Filtrando cidade: {cidade}")
+
+        vagas_cidade = 0  # 👈 contador REAL dessa cidade
+
+        try:
+            page.fill("#location", cidade)
+            page.click("#searchfilter-submit")
+            page.wait_for_load_state("networkidle")
+            page.wait_for_timeout(3000)
+
+            # ===========================
+            # 3️⃣ COLETAR LINKS
+            # ===========================
+            links = page.locator("a[href*='/job/']")
+            total = links.count()
+
+            for i in range(total):
+                try:
+                    link = links.nth(i).get_attribute("href")
+
+                    if not link:
+                        continue
+
+                    if link.startswith("/"):
+                        link = "https://careers.theheinekencompany.com" + link
+
+                    link_limpo = link.split("?")[0]
+
+                    if link_limpo in links_coletados:
+                        continue
+
+                    links_coletados.add(link_limpo)
+
+                    # título direto da listagem
+                    titulo = links.nth(i).inner_text().strip()
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": site["empresa"],
+                        "link": link_limpo
+                    })
+
+                    vagas_cidade += 1
+                    total_empresa += 1
+
+                except Exception as e:
+                    print("Erro ao processar vaga:", e)
+                    continue
+
+            print(f"Total coletado em {cidade}: {vagas_cidade}")
+
+        except Exception as e:
+            print(f"Erro ao filtrar {cidade}:", e)
+            continue
+
+    print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
+    return vagas
+    
+
+# ===========================
+# ARDAGH GROUP 2
+# ===========================
+def coletar_ardagh_group2(page, site):
+    vagas = []
+    links_coletados = set()
+    total_empresa = 0  # 👈 contador geral real
+
+    page.goto(site["url"], timeout=60000)
+    page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(3000)
+
+    print("🔎 Verificando age gate...")
+
+    # ===========================
+    # 1️⃣ VERIFICA AGE GATE
+    # ===========================
+    if page.locator("#input-date-day").count() > 0:
+        print("🔐 Age gate detectado. Preenchendo data...")
+
+        page.fill("#input-date-day", "23")
+        page.fill("#input-date-month", "09")
+        page.fill("#input-date-year", "1993")
+
+        page.click("#input-date-submit")
+        page.wait_for_load_state("networkidle")
+        page.goto("https://careers.ardaghgroup.com/Brazil/search")
+        page.wait_for_selector("#location", timeout=30000)
+
+    else:
+        print("✅ Age gate não apareceu.")
+
+    # ===========================
+    # 2️⃣ CIDADES PARA FILTRAR
+    # ===========================
+    cidades = ["Alagoinhas"]
+
+    for cidade in cidades:
+
+        print(f"📍 Filtrando cidade: {cidade}")
+
+        vagas_cidade = 0  # 👈 contador REAL dessa cidade
+
+        try:
+            page.fill("#location", cidade)
+            page.click("#searchfilter-submit")
+            page.wait_for_load_state("networkidle")
+            page.wait_for_timeout(3000)
+
+            # ===========================
+            # 3️⃣ COLETAR LINKS
+            # ===========================
+            links = page.locator("a[href*='/job/']")
+            total = links.count()
+
+            for i in range(total):
+                try:
+                    link = links.nth(i).get_attribute("href")
+
+                    if not link:
+                        continue
+
+                    if link.startswith("/"):
+                        link = "https://careers.goldwind.com" + link
+
+                    link_limpo = link.split("?")[0]
+
+                    if link_limpo in links_coletados:
+                        continue
+
+                    links_coletados.add(link_limpo)
+
+                    # título direto da listagem
+                    titulo = links.nth(i).inner_text().strip()
+
+                    vagas.append({
+                        "id": str(uuid.uuid4())[:8],
+                        "titulo": titulo,
+                        "empresa": site["empresa"],
+                        "link": link_limpo
+                    })
+
+                    vagas_cidade += 1
+                    total_empresa += 1
+
+                except Exception as e:
+                    print("Erro ao processar vaga:", e)
+                    continue
+
+            print(f"Total coletado em {cidade}: {vagas_cidade}")
+
+        except Exception as e:
+            print(f"Erro ao filtrar {cidade}:", e)
+            continue
+
+    print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
+    return vagas
+
+
+# ===========================
 # HALLIBURTON
 # ===========================
 def coletar_halliburton(page, site):
@@ -2238,6 +2440,12 @@ def main():
 
                 elif site["tipo"] == "goldwind":
                     vagas = coletar_goldwind(page, site)
+
+                elif site["tipo"] == "ardagh":
+                    vagas = coletar_ardagh_group(page, site)
+
+                elif site["tipo"] == "ardagh":
+                    vagas = coletar_ardagh_group2(page, site)
 
                 elif site["tipo"] == "halliburton":
                     vagas = coletar_halliburton(page, site)
