@@ -17,6 +17,18 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-23T18:06:28.823899"
+    },
+    {
+      "id": "8ef34c26",
+      "nome": "Rafael Costa",
+      "email": "rafcosta1202@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "manutencao",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-27T13:27:20.181159"
     }
   ],
   "ativos": [
