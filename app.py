@@ -2048,25 +2048,23 @@ def get_html_home():
                 <select name="empresa">
                     <option value="">Todas empresas</option>
 
-                    <option disabled>──────────</option>
-                    <option disabled>🏭 EMPRESAS</option>
+                    <optgroup label="🏭 EMPRESAS">
+                        {% for emp in empresas_normais %}
+                            <option value="{{ emp }}"
+                            {% if emp == filtro_empresa %}selected{% endif %}>
+                                {{ emp }}
+                            </option>
+                        {% endfor %}
+                    </optgroup>
 
-                    {% for emp in empresas_normais %}
-                        <option value="{{ emp }}"
-                        {% if emp == filtro_empresa %}selected{% endif %}>
-                            {{ emp }}
-                        </option>
-                    {% endfor %}
-
-                    <option disabled>──────────</option>
-                    <option disabled>🤝 RECRUTADORAS</option>
-
-                    {% for emp in recrutadoras %}
-                    <option value="{{ emp }}"
-                        {% if emp == filtro_empresa %}selected{% endif %}>
-                            {{ emp }}
-                    </option>
-                    {% endfor %}
+                    <optgroup label="🤝 RECRUTADORAS">
+                        {% for emp in recrutadoras %}
+                            <option value="{{ emp }}"
+                            {% if emp == filtro_empresa %}selected{% endif %}>
+                                {{ emp }}
+                            </option>
+                        {% endfor %}
+                    </optgroup>
                 </select>
 
 
