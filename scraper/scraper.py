@@ -1223,50 +1223,6 @@ def coletar_jobconvo(page, site):
     
 
 # ===========================
-# JOBCONVO (ADECCO)
-# ===========================
-def coletar_jobconvo_adecco(page, site):
-    vagas = []
-    links_coletados = set()
-
-    page.goto(site["url"], timeout=60000)
-    page.wait_for_load_state("networkidle")
-
-    print("URL carregada:", page.url)
-
-    linhas = page.locator("tr.joblist")
-    total = linhas.count()
-
-    print("Total de vagas encontradas:", total)
-
-    for i in range(total):
-        try:
-            linha = linhas.nth(i)
-
-            link = linha.locator("a.text-primary").get_attribute("href")
-            titulo = linha.locator("h2.jobname").inner_text().strip()
-
-            if not link or link in links_coletados:
-                continue
-
-            links_coletados.add(link)
-
-            vagas.append({
-                "id": str(uuid.uuid4())[:8],
-                "titulo": titulo,
-                "empresa": site["empresa"],
-                "link": link.split("&")[0]  # limpa parâmetros extras
-            })
-
-        except Exception as e:
-            print("Erro ao processar vaga:", e)
-            continue
-
-    print(f"📌 {site['empresa']} (JOBCONVO): {len(vagas)} vagas coletadas")
-    return vagas
-    
-
-# ===========================
 # HEINEKEN
 # ===========================
 def coletar_heineken(page, site):
@@ -2386,9 +2342,6 @@ def main():
 
                 elif site["tipo"] == "jobconvo":
                     vagas = coletar_jobconvo(page, site)
-
-                elif site["tipo"] == "jobconvo":
-                    vagas = coletar_jobconvo_adecco(page, site)
 
                 elif site["tipo"] == "heineken":
                     vagas = coletar_heineken(page, site)
