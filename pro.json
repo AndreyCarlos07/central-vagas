@@ -1,18 +1,6 @@
 {
   "pendentes": [
     {
-      "id": "3d7063e1",
-      "nome": "Nilmara Moura ",
-      "email": "nilmaramoura@gmail.com",
-      "tipo_filtro": "area",
-      "valor": "administracao",
-      "plano": "mensal",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-27T13:32:56.241912"
-    },
-    {
       "id": "eecbc3d5",
       "nome": "CLEBER CONCEICAO NOLASCO",
       "email": "clebernolasco80@gmail.com",
@@ -154,6 +142,18 @@
       "data_inicio": "2026-04-27T14:18:10.735438",
       "expira_em": "2026-05-27T14:18:10.735447",
       "data_criacao": "2026-04-27T13:27:20.181159"
+    },
+    {
+      "id": "3d7063e1",
+      "nome": "Nilmara Moura ",
+      "email": "nilmaramoura@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "administracao",
+      "plano": "mensal",
+      "status": "ativo",
+      "data_inicio": "2026-04-27T14:18:22.748797",
+      "expira_em": "2026-05-27T14:18:22.748809",
+      "data_criacao": "2026-04-27T13:32:56.241912"
     }
   ],
   "expirados": [
