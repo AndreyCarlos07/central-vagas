@@ -45,6 +45,11 @@ ARQUIVO_CONTATOS = "contatos.json"
 ARQUIVO_PRO = "pro.json"
 
 
+RECRUTADORAS = [
+    "ADECCO"
+]
+
+
 # ==========================
 # PALAVRAS BLOQUEADAS
 # ==========================
@@ -2042,11 +2047,25 @@ def get_html_home():
 
                 <select name="empresa">
                     <option value="">Todas empresas</option>
-                    {% for emp in empresas_unicas %}
+
+                    <option disabled>──────────</option>
+                    <option disabled>🏭 EMPRESAS</option>
+
+                    {% for emp in empresas_normais %}
                         <option value="{{ emp }}"
                         {% if emp == filtro_empresa %}selected{% endif %}>
                             {{ emp }}
                         </option>
+                    {% endfor %}
+
+                    <option disabled>──────────</option>
+                    <option disabled>🤝 RECRUTADORAS</option>
+
+                    {% for emp in recrutadoras %}
+                    <option value="{{ emp }}"
+                        {% if emp == filtro_empresa %}selected{% endif %}>
+                            {{ emp }}
+                    </option>
                     {% endfor %}
                 </select>
 
@@ -2268,6 +2287,10 @@ def home():
     total_paginas = (total_vagas + VAGAS_POR_PAGINA - 1) // VAGAS_POR_PAGINA
 
     empresas_unicas = sorted(set(v["empresa"] for v in vagas_ativas()))
+    
+    empresas_normais = [e for e in empresas_unicas if e not in RECRUTADORAS]
+    recrutadoras = [e for e in empresas_unicas if e in RECRUTADORAS]
+    
     total_empresas = len(empresas_unicas)
 
     avaliacoes = carregar_avaliacoes()["aprovadas"]
@@ -2320,7 +2343,9 @@ def home():
         total_pendentes_av=total_pendentes_av,
         total_contatos=total_contatos,
         total_pro_pendentes=total_pro_pendentes,
-        total_ocultas=total_ocultas
+        total_ocultas=total_ocultas,
+        empresas_normais=empresas_normais,
+        recrutadoras=recrutadoras
     )
 
 
