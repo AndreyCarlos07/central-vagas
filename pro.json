@@ -53,6 +53,18 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-27T13:31:22.598864"
+    },
+    {
+      "id": "3d7063e1",
+      "nome": "Nilmara Moura ",
+      "email": "nilmaramoura@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "administracao",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-27T13:32:56.241912"
     }
   ],
   "ativos": [
