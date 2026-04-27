@@ -31,8 +31,8 @@ ARQUIVO = "vagas_ocultas.json"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["ARDAGH GROUP"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["ADECCO"]
 
 # ===========================
 # VAGAS CONFIG
@@ -445,6 +445,11 @@ SITES = [
     {
         "empresa": "SOTREQ",
         "url": "https://app.jobconvo.com/pt-br/careers/Sotreq/f6adee26-687e-4320-89a9-6ef13602f81d/?title=&state=&city=SIM%C3%95ES+FILHO",
+        "tipo": "jobconvo"
+    },
+    {
+        "empresa": "ADECCO",
+        "url": "https://app.jobconvo.com/pt-br/careers/Adecco/7b3711ce-e38f-4f76-ab5c-1fbef972c147/?title=&state=BAHIA&city=ALAGOINHAS",
         "tipo": "jobconvo"
     },
     {
@@ -1215,6 +1220,51 @@ def coletar_jobconvo(page, site):
 
     print(f"📌 {site['empresa']} (JOBCONVO): {len(vagas)} vagas coletadas")
     return vagas
+    
+
+# ===========================
+# JOBCONVO (ADECCO)
+# ===========================
+def coletar_jobconvo_adecco(page, site):
+    vagas = []
+    links_coletados = set()
+
+    page.goto(site["url"], timeout=60000)
+    page.wait_for_load_state("networkidle")
+
+    print("URL carregada:", page.url)
+
+    linhas = page.locator("tr.joblist")
+    total = linhas.count()
+
+    print("Total de vagas encontradas:", total)
+
+    for i in range(total):
+        try:
+            linha = linhas.nth(i)
+
+            link = linha.locator("a.text-primary").get_attribute("href")
+            titulo = linha.locator("h2.jobname").inner_text().strip()
+
+            if not link or link in links_coletados:
+                continue
+
+            links_coletados.add(link)
+
+            vagas.append({
+                "id": str(uuid.uuid4())[:8],
+                "titulo": titulo,
+                "empresa": site["empresa"],
+                "link": link.split("&")[0]  # limpa parâmetros extras
+            })
+
+        except Exception as e:
+            print("Erro ao processar vaga:", e)
+            continue
+
+    print(f"📌 {site['empresa']} (JOBCONVO): {len(vagas)} vagas coletadas")
+    return vagas
+    
 
 # ===========================
 # HEINEKEN
@@ -2336,6 +2386,9 @@ def main():
 
                 elif site["tipo"] == "jobconvo":
                     vagas = coletar_jobconvo(page, site)
+
+                elif site["tipo"] == "jobconvo":
+                    vagas = coletar_jobconvo_adecco(page, site)
 
                 elif site["tipo"] == "heineken":
                     vagas = coletar_heineken(page, site)
