@@ -32,7 +32,7 @@ ARQUIVO = "vagas_ocultas.json"
 # DEBUG CONFIG
 # ===========================
 MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["ADECCO"]
+EMPRESAS_DEBUG = ["SOTREQ", "ADECCO"]
 
 # ===========================
 # VAGAS CONFIG
