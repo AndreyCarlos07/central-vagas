@@ -453,6 +453,11 @@ SITES = [
         "tipo": "jobconvo"
     },
     {
+        "empresa": "ADECCO",
+        "url": "https://app.jobconvo.com/pt-br/careers/Adecco/7b3711ce-e38f-4f76-ab5c-1fbef972c147/?title=&state=BAHIA&city=DIAS+D%26APOS%3B%C3%81VILA",
+        "tipo": "jobconvo"
+    },
+    {
         "empresa": "HEINEKEN",
         "url": "https://careers.theheinekencompany.com/Brazil/search", 
         "tipo": "heineken"
