@@ -41,6 +41,18 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-04-27T13:30:05.478813"
+    },
+    {
+      "id": "bf6d9c03",
+      "nome": "CLEBER CONCEICAO NOLASCO",
+      "email": "clebernolasco80@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "producao",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-27T13:31:22.598864"
     }
   ],
   "ativos": [
