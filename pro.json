@@ -1,5 +1,18 @@
 {
-  "pendentes": [],
+  "pendentes": [
+    {
+      "id": "2782a4e4",
+      "nome": "OSVALDO DE JESUS COSTA JUNIOR",
+      "email": "osvaldojcjr@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "producao",
+      "plano": "trimestral",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-04-28T12:59:58.023135"
+    }
+  ],
   "ativos": [
     {
       "id": "175674c3",
