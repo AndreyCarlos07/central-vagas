@@ -396,7 +396,8 @@ SITES = [
     {
         "empresa": "MERCADO LIVRE",
         "url": "https://mercadolibre.eightfold.ai/careers",
-        "tipo": "eightfold"
+        "tipo": "eightfold",
+        "cidades": ["Simões Filho", "Lauro de Freitas-BA"]
     },
     {
     "empresa": "FORD",
@@ -957,37 +958,36 @@ def coletar_petropolis(page, site):
 def coletar_eightfold(page, site):
     vagas = []
 
-    page.goto("https://mercadolibre.eightfold.ai/careers", timeout=60000)
-    page.wait_for_load_state("networkidle")
+    for cidade in site["cidades"]:
 
-    # Espera o campo aparecer
-    page.wait_for_selector('input[data-testid="position-query-search-search"]', timeout=15000)
+        page.goto("https://mercadolibre.eightfold.ai/careers", timeout=60000)
+        page.wait_for_load_state("networkidle")
 
-    # Digita Simões Filho
-    page.fill('input[data-testid="position-query-search-search"]', "Simões Filho")
-    page.keyboard.press("Enter")
+        page.wait_for_selector('input[data-testid="position-query-search-search"]', timeout=15000)
 
-    # Espera os resultados carregarem
-    page.wait_for_selector('a[href*="/careers/job/"]', timeout=15000)
-    page.wait_for_load_state("networkidle")
+        page.fill('input[data-testid="position-query-search-search"]', cidade)
+        page.keyboard.press("Enter")
 
-    # Coleta links
-    links = page.locator('a[href*="/careers/job/"]')
-    total = links.count()
+        page.wait_for_selector('a[href*="/careers/job/"]', timeout=15000)
+        page.wait_for_load_state("networkidle")
 
-    for i in range(total):
-        titulo = links.nth(i).inner_text()
-        link = links.nth(i).get_attribute("href")
+        links = page.locator('a[href*="/careers/job/"]')
+        total = links.count()
 
-        if link and not link.startswith("http"):
-            link = "https://mercadolibre.eightfold.ai" + link
+        for i in range(total):
+            titulo = links.nth(i).inner_text()
+            link = links.nth(i).get_attribute("href")
 
-        vagas.append({
-            "id": str(uuid.uuid4())[:8],
-            "empresa": site["empresa"],
-            "titulo": titulo.strip(),
-            "link": link
-        })
+            if link and not link.startswith("http"):
+                link = "https://mercadolibre.eightfold.ai" + link
+
+            vagas.append({
+                "id": str(uuid.uuid4())[:8],
+                "empresa": site["empresa"],
+                "titulo": titulo.strip(),
+                "link": link,
+                "cidade": cidade  # 👈 já prepara pro futuro
+            })
 
     print(f"📌 {site['empresa']} (EIGHTFOLD): {len(vagas)} vagas coletadas")
     return vagas
