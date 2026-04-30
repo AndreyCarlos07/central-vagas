@@ -1,0 +1,10 @@
+[
+  {
+    "nome": "Cliente 1",
+    "imagem": "/static/banner1.png"
+  },
+  {
+    "nome": "Cliente 2",
+    "imagem": "/static/banner2.png"
+  }
+]
