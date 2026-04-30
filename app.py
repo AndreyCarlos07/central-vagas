@@ -3182,7 +3182,7 @@ def redirect_vaga(id):
 
         <p style="color:#666;font-size:13px;">
         Se o redirecionamento não funcionar automaticamente,
-        clique em <b>"Atualizar página e aguarde os segundos"</b>.
+        clique em <b>"Atualizar página e aguarde os segundos na tela até o link da vaga carregar"</b>.
         </p>
 
         <br>
