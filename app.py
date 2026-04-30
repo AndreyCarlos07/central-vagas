@@ -3162,6 +3162,8 @@ def redirect_vaga(id):
             <img src="{{ banner }}" style="max-width:300px;">
         </div>
 
+        <br><br>        
+
         <p>
         ⏳ Redirecionando em <span id="contador">10</span> segundos...
         </p>
@@ -3180,7 +3182,7 @@ def redirect_vaga(id):
         }, 1000);
         </script>
 
-        <p style="color:#666;font-size:13px;">
+        <p style="margin-top:15px;color:#555;font-size:12px;">
         Se o redirecionamento não funcionar automaticamente,
         clique em <b>"Atualizar página e aguarde os segundos na tela até o link da vaga carregar"</b>.
         </p>
