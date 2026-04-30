@@ -3032,7 +3032,7 @@ def vaga(id):
 
                             <br>
 
-                            <a href="{{ vaga.link }}" target="_blank"
+                            <a href="/redirect/{{ vaga.id }}"
                                onclick="event.preventDefault();
                                         gtag('event', 'click_vaga', {
                                             'vaga': '{{ vaga.titulo.upper() }}',
