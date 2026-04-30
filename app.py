@@ -3158,7 +3158,7 @@ def redirect_vaga(id):
         </p>
 
         <script>
-        let tempo = 3;
+        let tempo = 10;
 
         const intervalo = setInterval(() => {
             tempo--;
