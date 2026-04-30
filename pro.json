@@ -58,18 +58,6 @@
       "data_criacao": "2026-04-23T09:25:07.125724"
     },
     {
-      "id": "8ef34c26",
-      "nome": "Rafael Costa",
-      "email": "rafcosta1202@gmail.com",
-      "tipo_filtro": "area",
-      "valor": "manutencao",
-      "plano": "mensal",
-      "status": "ativo",
-      "data_inicio": "2026-04-27T14:18:10.735438",
-      "expira_em": "2026-05-27T14:18:10.735447",
-      "data_criacao": "2026-04-27T13:27:20.181159"
-    },
-    {
       "id": "eecbc3d5",
       "nome": "CLEBER CONCEICAO NOLASCO",
       "email": "clebernolasco80@gmail.com",
@@ -178,6 +166,18 @@
       "data_inicio": "2026-04-27T14:18:22.748797",
       "expira_em": "2026-05-27T14:18:22.748809",
       "data_criacao": "2026-04-27T13:32:56.241912"
+    },
+    {
+      "id": "8ef34c26",
+      "nome": "Rafael Costa",
+      "email": "rafcosta1202@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "manutencao",
+      "plano": "mensal",
+      "status": "expirado",
+      "data_inicio": "2026-04-27T14:18:10.735438",
+      "expira_em": "2026-05-27T14:18:10.735447",
+      "data_criacao": "2026-04-27T13:27:20.181159"
     }
   ]
 }
