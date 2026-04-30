@@ -371,7 +371,7 @@ def salvar_contatos(dados):
     requests.put(url, headers=headers, json=payload)
 
 
-def enviar_email_contato(nome, tipo, mensagem):
+def enviar_email_contato(nome, tipo, mensagem, email):
     try:
         response = requests.post(
             "https://api.resend.com/emails",
@@ -383,7 +383,7 @@ def enviar_email_contato(nome, tipo, mensagem):
                 "from": "Central de Vagas <onboarding@resend.dev>",  # depois pode trocar
                 "to": [EMAIL_USER_CENTRAL],
                 "subject": "Novo contato recebido - Central de Vagas",
-                "text": f"Nome: {nome}\nTipo: {tipo}\nMensagem:\n{mensagem}"
+                "text": f"Nome: {nome}\nE-mail: {email}\nTipo: {tipo}\nMensagem:\n{mensagem}"
             }
         )
 
@@ -847,6 +847,7 @@ def contato():
 
                     <select name="tipo">
                         <option value="sugestao">Sugestão</option>
+                        <option value="parcerias">Parcerias</option>
                         <option value="problema">Problemas no Site</option>
                         <option value="problema_pro">Problemas na Assinatura PRO</option>
                     </select>
@@ -2575,12 +2576,14 @@ def aprovar(id):
 def enviar_contato():
 
     nome = request.form.get("nome")
+    email = request.form.get("email")
     tipo = request.form.get("tipo")
     mensagem = request.form.get("mensagem")
 
     novo = {
         "id": str(uuid.uuid4())[:8],
         "nome": nome,
+        "email": email,
         "tipo": tipo,
         "mensagem": mensagem,
         "data": datetime.now().isoformat()
@@ -2593,7 +2596,7 @@ def enviar_contato():
 
     # 🔥 NÃO BLOQUEIA O SITE
     #threading.Thread(target=enviar_email_contato,args=(nome, tipo, mensagem)).start()
-    enviar_email_contato(nome, tipo, mensagem)
+    enviar_email_contato(nome, tipo, mensagem, email)
     #print("SIMULANDO ENVIO DE EMAIL")
     #print(nome, tipo, mensagem)
 
