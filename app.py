@@ -3133,7 +3133,7 @@ def redirect_vaga(id):
         <p>Você está acessando como usuário gratuito.</p>
 
         <p>
-        🚀 Com o <b>PRO</b>, você acessa instantaneamente e recebe vagas no email.
+        🚀 Com o plano <b>PRO</b>, você acessa instantaneamente e recebe vagas no email.
         </p>
 
         <a href="/pro" style="
@@ -3182,12 +3182,12 @@ def redirect_vaga(id):
         }, 1000);
         </script>
 
+        <br><br>
+
         <p style="margin-top:15px;color:#555;font-size:12px;">
         Se o redirecionamento não funcionar automaticamente,
         clique em <b>"Atualizar página e aguarde os segundos na tela até o link da vaga carregar"</b>.
         </p>
-
-        <br>
 
         <button onclick="location.reload()" style="
             background:#0066cc;
