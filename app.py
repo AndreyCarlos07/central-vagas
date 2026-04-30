@@ -847,6 +847,7 @@ def contato():
 
                     <select name="tipo">
                         <option value="sugestao">Sugestão</option>
+                        <option value="sugestao">Parcerias</option
                         <option value="problema">Problemas no Site</option>
                         <option value="problema_pro">Problemas na Assinatura PRO</option>
                     </select>
@@ -3133,7 +3134,7 @@ def redirect_vaga(id):
         <p>Você está acessando como usuário gratuito.</p>
 
         <p>
-        🚀 Com o plano <b>PRO</b>, você acessa instantaneamente e recebe vagas no email.
+        🚀 Com o plano <b>PRO</b>, você acessa instantaneamente e recebe vagas no email de acordo com seu perfil.
         </p>
 
         <a href="/pro" style="
