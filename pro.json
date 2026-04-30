@@ -94,6 +94,31 @@
       "data_criacao": "2026-04-27T13:34:16.900281"
     },
     {
+      "id": "2782a4e4",
+      "nome": "OSVALDO DE JESUS COSTA JUNIOR",
+      "email": "osvaldojcjr@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "producao",
+      "plano": "trimestral",
+      "status": "ativo",
+      "data_inicio": "2026-04-28T14:07:21.682934",
+      "expira_em": "2026-07-27T14:07:21.682948",
+      "data_criacao": "2026-04-28T12:59:58.023135"
+    }
+  ],
+  "expirados": [
+    {
+      "id": "0c40d6df",
+      "nome": "Andrey Batist",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "expirado",
+      "data_inicio": "2026-04-19T16:36:36.617304",
+      "expira_em": "2026-04-20T16:36:36.617315",
+      "data_criacao": "2026-04-13T08:25:59.526023"
+    },
+    {
       "id": "0a803af9",
       "nome": "Bárbara Sousa Nascimento",
       "email": "nascimentob1993@gmail.com",
@@ -149,35 +174,10 @@
         "ZEENTECH"
       ],
       "plano": "mensal",
-      "status": "ativo",
+      "status": "expirado",
       "data_inicio": "2026-04-27T14:18:40.672311",
       "expira_em": "2026-05-27T14:18:40.672341",
       "data_criacao": "2026-04-27T13:55:16.031307"
-    },
-    {
-      "id": "2782a4e4",
-      "nome": "OSVALDO DE JESUS COSTA JUNIOR",
-      "email": "osvaldojcjr@gmail.com",
-      "tipo_filtro": "area",
-      "valor": "producao",
-      "plano": "trimestral",
-      "status": "ativo",
-      "data_inicio": "2026-04-28T14:07:21.682934",
-      "expira_em": "2026-07-27T14:07:21.682948",
-      "data_criacao": "2026-04-28T12:59:58.023135"
-    }
-  ],
-  "expirados": [
-    {
-      "id": "0c40d6df",
-      "nome": "Andrey Batist",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "expirado",
-      "data_inicio": "2026-04-19T16:36:36.617304",
-      "expira_em": "2026-04-20T16:36:36.617315",
-      "data_criacao": "2026-04-13T08:25:59.526023"
     }
   ]
 }
