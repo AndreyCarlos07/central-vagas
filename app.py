@@ -3154,7 +3154,7 @@ def redirect_vaga(id):
         </div>
 
         <p>
-        ⏳ Redirecionando em <span id="contador">3</span> segundos...
+        ⏳ Redirecionando em <span id="contador">10</span> segundos...
         </p>
 
         <script>
@@ -3170,6 +3170,24 @@ def redirect_vaga(id):
             }
         }, 1000);
         </script>
+
+        <p style="color:#666;font-size:13px;">
+        Se o redirecionamento não funcionar automaticamente,
+        clique em <b>"Atualizar página e aguarde os segundos"</b>.
+        </p>
+
+        <br>
+
+        <button onclick="location.reload()" style="
+            background:#0066cc;
+            color:white;
+            padding:10px 15px;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        ">
+        🔄 Atualizar página
+        </button>
 
     </body>
     </html>
