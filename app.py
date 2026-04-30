@@ -75,6 +75,11 @@ PALAVRAS_BLOQUEADAS = {
 }
 
 
+def carregar_banners():
+    with open("banners.json") as f:
+        return json.load(f)
+
+
 def normalizar(texto):
     if not texto:
         return ""
@@ -2137,7 +2142,7 @@ def get_html_home():
         {% if vagas %}
             {% for vaga in vagas %}
                 <div class="vaga">
-                    <a href="/vaga/{{ vaga.id }}?redirect=1" target="_blank" class="vaga-link"
+                    <a href="/redirect/{{ vaga.id }}" class="vaga-link"
                        onclick="event.preventDefault();
                                 gtag('event', 'click_vaga', {
                                     'vaga': '{{ vaga.titulo.upper() }}',
@@ -3099,6 +3104,78 @@ def vaga(id):
 
     return "Vaga não encontrada ou encerrada", 404
 
+
+@app.route("/redirect/<id>")
+def redirect_vaga(id):
+    vagas = vagas_ativas()
+
+    vaga = next((v for v in vagas if v["id"] == id), None)
+
+    if not vaga:
+        return "Vaga não encontrada"
+
+    link_vaga = vaga["link"]
+
+    # 🔥 BANNERS DINÂMICOS
+    import random
+    banners = carregar_banners()
+    banner = random.choice(banners)["imagem"]
+
+    html = """
+    <html>
+    <head>
+        <title>Redirecionando...</title>
+    </head>
+    <body style="font-family:Arial;text-align:center;padding:40px;">
+
+        <h2>🔎 Redirecionando para a vaga...</h2>
+
+        <p>Você está acessando como usuário gratuito.</p>
+
+        <p>
+        🚀 Com o <b>PRO</b>, você acessa instantaneamente e recebe vagas no email.
+        </p>
+
+        <a href="/pro" style="
+            background:#ff9800;
+            color:white;
+            padding:10px 15px;
+            border-radius:6px;
+            text-decoration:none;
+        ">
+        💎 Assinar PRO
+        </a>
+
+        <br><br>
+
+        <div style="margin:20px;">
+            <p><b>📢 Divulgação</b></p>
+            <img src="{{ banner }}" style="max-width:300px;">
+        </div>
+
+        <p>
+        ⏳ Redirecionando em <span id="contador">3</span> segundos...
+        </p>
+
+        <script>
+        let tempo = 3;
+
+        const intervalo = setInterval(() => {
+            tempo--;
+            document.getElementById("contador").innerText = tempo;
+
+            if (tempo <= 0) {
+                clearInterval(intervalo);
+                window.location.href = "{{ link_vaga }}";
+            }
+        }, 1000);
+        </script>
+
+    </body>
+    </html>
+    """
+
+    return render_template_string(html, link_vaga=link_vaga, banner=banner)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
