@@ -3146,6 +3146,15 @@ def redirect_vaga(id):
         💎 Assinar PRO
         </a>
 
+        <p style="margin-top:15px;font-size:12px;color:#555;">
+        A Central de Vagas é um projeto independente. O plano PRO ajuda a manter a plataforma ativa,
+        cobrindo custos de infraestrutura e melhorias contínuas do serviço.
+        </p>
+
+        <p style="font-size:12px;color:#555;">
+        Este serviço não garante contratação e não possui vínculo com empresas.
+        </p>
+
         <br><br>
 
         <div style="margin:20px;">
