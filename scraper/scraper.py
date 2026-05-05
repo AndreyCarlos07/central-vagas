@@ -215,6 +215,13 @@ def salvar_csv(arquivo, vagas):
         fieldnames = ["id", "titulo", "empresa", "link", "data_coleta"]
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
+
+        # 🔍 DEBUG AQUI
+        for vaga in vagas:
+            if "cidade" in vaga:
+                print("⚠️ CAMPO 'cidade' ENCONTRADO:", vaga)
+                break
+                
         for vaga in vagas:
             writer.writerow(vaga)
 
