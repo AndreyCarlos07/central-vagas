@@ -213,7 +213,7 @@ def filtrar_vagas_usuario(vagas, user):
 def salvar_csv(arquivo, vagas):
     with open(arquivo, "w", newline="", encoding="utf-8") as f:
         fieldnames = ["id", "titulo", "empresa", "link", "data_coleta"]
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
         writer.writeheader()
         for vaga in vagas:
             writer.writerow(vaga)
