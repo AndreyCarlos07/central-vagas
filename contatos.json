@@ -173,14 +173,6 @@
       "data": "2026-04-09T16:24:20.244445"
     },
     {
-      "id": "24cb5274",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo": "parcerias",
-      "mensagem": "asdasdasda",
-      "data": "2026-04-30T23:07:32.570207"
-    },
-    {
       "id": "ec7c05fe",
       "nome": "Andrey Carlos",
       "email": "andrey.engenhariamecatronica@gmail.com",
@@ -198,5 +190,14 @@
       "data": "2026-05-08T14:23:22.808645"
     }
   ],
-  "excluidos": []
+  "excluidos": [
+    {
+      "id": "24cb5274",
+      "nome": "Andrey Carlos",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo": "parcerias",
+      "mensagem": "asdasdasda",
+      "data": "2026-04-30T23:07:32.570207"
+    }
+  ]
 }
