@@ -108,6 +108,20 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-05-08T09:59:54.131883"
+    },
+    {
+      "id": "f962954a",
+      "nome": "Marco Antônio Carvalho Cavalcante ",
+      "email": "marco773@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "ACELEN"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-05-08T09:59:56.944583"
     }
   ],
   "ativos": [
