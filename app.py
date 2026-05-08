@@ -2781,7 +2781,7 @@ def enviar_contato():
 
     # 🔥 NÃO BLOQUEIA O SITE
     #threading.Thread(target=enviar_email_contato,args=(nome, tipo, mensagem)).start()
-    enviar_email_contato(novo)
+    enviar_email_contato(contato)
     #print("SIMULANDO ENVIO DE EMAIL")
     #print(nome, tipo, mensagem)
 
