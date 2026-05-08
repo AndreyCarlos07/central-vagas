@@ -126,16 +126,7 @@
       "data": "2026-05-08T15:08:47.204231"
     }
   ],
-  "andamento": [
-    {
-      "id": "24cb5274",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo": "parcerias",
-      "mensagem": "asdasdasda",
-      "data": "2026-04-30T23:07:32.570207"
-    }
-  ],
+  "andamento": [],
   "resolvidos": [
     {
       "id": "f35da2a0",
@@ -197,6 +188,14 @@
       "tipo": "sugestao",
       "mensagem": "teste2",
       "data": "2026-04-09T16:24:20.244445"
+    },
+    {
+      "id": "24cb5274",
+      "nome": "Andrey Carlos",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo": "parcerias",
+      "mensagem": "asdasdasda",
+      "data": "2026-04-30T23:07:32.570207"
     }
   ],
   "excluidos": []
