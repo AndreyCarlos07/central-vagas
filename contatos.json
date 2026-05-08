@@ -56,19 +56,6 @@
       "tipo": "parcerias",
       "mensagem": "Só Levi Melquisedeque Silva de Oliveira tenho um sonho em trabalhar na \r\nEmpresa ",
       "data": "2026-04-30T23:52:40.042522"
-    },
-    {
-      "id": "595f3aa7",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo": "vitrine",
-      "mensagem": ".",
-      "linkedin": "https://www.linkedin.com/in/engandreycarlos/",
-      "cidade": "Salvador",
-      "tempo_recolocacao": "",
-      "resumo": "•Experiência em Indústria Multinacional Automotiva, Química e Energia.\r\n•Noções avançadas em Projetos/Indicadores/Testes de Performance/Melhorias.\r\n•Conhecimento SAP, MES, IoT.\r\n•Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
-      "autorizacao": true,
-      "data": "2026-05-08T13:02:47.441590"
     }
   ],
   "andamento": [
@@ -93,6 +80,19 @@
       "tipo": "problema_pro",
       "mensagem": "Problema na assinatura",
       "data": "2026-04-19T16:06:36.068739"
+    },
+    {
+      "id": "595f3aa7",
+      "nome": "Andrey Carlos",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo": "vitrine",
+      "mensagem": ".",
+      "linkedin": "https://www.linkedin.com/in/engandreycarlos/",
+      "cidade": "Salvador",
+      "tempo_recolocacao": "",
+      "resumo": "•Experiência em Indústria Multinacional Automotiva, Química e Energia.\r\n•Noções avançadas em Projetos/Indicadores/Testes de Performance/Melhorias.\r\n•Conhecimento SAP, MES, IoT.\r\n•Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
+      "autorizacao": true,
+      "data": "2026-05-08T13:02:47.441590"
     }
   ],
   "resolvidos": [],
