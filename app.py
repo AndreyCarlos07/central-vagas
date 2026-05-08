@@ -836,12 +836,19 @@ def contato():
             function toggleVitrine(tipo) {
                 const vitrine = document.getElementById("campos-vitrine");
                 const autorizacao = document.getElementById("autorizacao");
+                const campoMensagem = document.getElementById("campo-mensagem");
+                const textareaMensagem = document.querySelector("textarea[name='mensagem']");
+
                 if (tipo === "vitrine") {
                     vitrine.style.display = "block";
                     autorizacao.required = true;
+                    campoMensagem.style.display = "none";
+                    textareaMensagem.required = false;
                 } else {
                     vitrine.style.display = "none";
                     autorizacao.required = false;
+                    campoMensagem.style.display = "block";
+                    textareaMensagem.required = true;
                 }
             }
             </script>
@@ -2706,9 +2713,13 @@ def enviar_contato():
 
         # 🔥 CAMPOS DA VITRINE
         "linkedin": request.form.get("linkedin", ""),
+        "objetivo": request.form.get("objetivo", ""),
         "cidade": request.form.get("cidade", ""),
         "tempo_recolocacao": request.form.get("tempo_recolocacao", ""),
-        "resumo": request.form.get("resumo", ""),
+        "resumo1": request.form.get("resumo1", ""),
+        "resumo2": request.form.get("resumo2", ""),
+        "resumo3": request.form.get("resumo3", ""),
+        "resumo4": request.form.get("resumo4", ""),
         "autorizacao": autorizacao == "on",
 
         "data": datetime.now().isoformat()
