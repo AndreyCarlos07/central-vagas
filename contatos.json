@@ -164,13 +164,6 @@
       "tipo": "problema_pro",
       "mensagem": "Problema na assinatura",
       "data": "2026-04-19T16:06:36.068739"
-    },
-    {
-      "id": "46ce37df",
-      "nome": "Teste2",
-      "tipo": "sugestao",
-      "mensagem": "teste2",
-      "data": "2026-04-09T16:24:20.244445"
     }
   ],
   "excluidos": [
@@ -198,6 +191,13 @@
       "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
       "autorizacao": true,
       "data": "2026-05-08T14:23:22.808645"
+    },
+    {
+      "id": "46ce37df",
+      "nome": "Teste2",
+      "tipo": "sugestao",
+      "mensagem": "teste2",
+      "data": "2026-04-09T16:24:20.244445"
     }
   ]
 }
