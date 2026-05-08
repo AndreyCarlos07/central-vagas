@@ -157,13 +157,6 @@
       "resumo": "•Experiência em Indústria Multinacional Automotiva, Química e Energia.\r\n•Noções avançadas em Projetos/Indicadores/Testes de Performance/Melhorias.\r\n•Conhecimento SAP, MES, IoT.\r\n•Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
       "autorizacao": true,
       "data": "2026-05-08T13:02:47.441590"
-    },
-    {
-      "id": "7d6260aa",
-      "nome": "Andrey Carlos",
-      "tipo": "problema_pro",
-      "mensagem": "Problema na assinatura",
-      "data": "2026-04-19T16:06:36.068739"
     }
   ],
   "excluidos": [
@@ -198,6 +191,13 @@
       "tipo": "sugestao",
       "mensagem": "teste2",
       "data": "2026-04-09T16:24:20.244445"
+    },
+    {
+      "id": "7d6260aa",
+      "nome": "Andrey Carlos",
+      "tipo": "problema_pro",
+      "mensagem": "Problema na assinatura",
+      "data": "2026-04-19T16:06:36.068739"
     }
   ]
 }
