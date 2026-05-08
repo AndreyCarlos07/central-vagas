@@ -161,23 +161,6 @@
       "resumo": "•Experiência em Indústria Multinacional Automotiva, Química e Energia.\r\n•Noções avançadas em Projetos/Indicadores/Testes de Performance/Melhorias.\r\n•Conhecimento SAP, MES, IoT.\r\n•Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
       "autorizacao": true,
       "data": "2026-05-08T13:02:47.441590"
-    },
-    {
-      "id": "438c25b9",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo": "vitrine",
-      "mensagem": "",
-      "linkedin": "https://www.linkedin.com/in/engandreycarlos/",
-      "objetivo": "Engenheiro",
-      "cidade": "Salvador",
-      "tempo_recolocacao": "",
-      "resumo1": "Experiência em Indústria Multinacional Automotiva, Química e Energia.",
-      "resumo2": "Noções avançadas em Projetos/Indicadores/Testes de Performance/Melhorias.",
-      "resumo3": "Conhecimento SAP, MES, IoT.",
-      "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
-      "autorizacao": true,
-      "data": "2026-05-08T13:44:37.824349"
     }
   ],
   "resolvidos": [
@@ -197,6 +180,23 @@
       "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
       "autorizacao": true,
       "data": "2026-05-08T14:23:10.248250"
+    },
+    {
+      "id": "438c25b9",
+      "nome": "Andrey Carlos",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo": "vitrine",
+      "mensagem": "",
+      "linkedin": "https://www.linkedin.com/in/engandreycarlos/",
+      "objetivo": "Engenheiro",
+      "cidade": "Salvador",
+      "tempo_recolocacao": "",
+      "resumo1": "Experiência em Indústria Multinacional Automotiva, Química e Energia.",
+      "resumo2": "Noções avançadas em Projetos/Indicadores/Testes de Performance/Melhorias.",
+      "resumo3": "Conhecimento SAP, MES, IoT.",
+      "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
+      "autorizacao": true,
+      "data": "2026-05-08T13:44:37.824349"
     }
   ],
   "excluidos": []
