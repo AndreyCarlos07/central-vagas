@@ -867,24 +867,103 @@ def contato():
                         <option value="problema_pro">Problemas na Assinatura PRO</option>
                     </select>
 
-                    <div id="campos-vitrine" style="display:none;">
+                   <div id="campos-vitrine" style="
+                       display:none;
+                       background:#f8f9fa;\
+                       padding:15px;
+                       border-radius:8px;
+                       margin-bottom:15px;
+                    ">
 
-                        <input name="area" placeholder="Área profissional">
-                        <input name="cidade" placeholder="Cidade">
-                        <input name="linkedin" placeholder="LinkedIn">
-                        <input name="tempo_desempregado" placeholder="Tempo desempregado">
+                        <h3>🤝 Vitrine Solidária</h3>
 
-                        <textarea name="resumo" placeholder="Resumo profissional"></textarea>
+                        <input name="area"
+                               maxlength="60"
+                               placeholder="Área profissional">
 
-                        <label style="font-size:14px;">
-                            <input type="checkbox" name="autorizacao" id="autorizacao">
-                            Autorizo a divulgação pública das informações enviadas
-                            para fins de networking profissional.
+                        <input name="cidade"
+                               maxlength="40"
+                               placeholder="Cidade">
+
+                        <input name="objetivo"
+                               maxlength="80"
+                               placeholder="Objetivo profissional (ex: Auxiliar de Engenharia)">
+
+                        <input type="url"
+                               name="linkedin"
+                               pattern="https://(www\.)?linkedin\.com/.*"
+                               placeholder="https://www.linkedin.com/in/seuperfil/">
+
+                        <input type="number"
+                               name="tempo_desempregado"
+                               min="0"
+                               max="999"
+                               placeholder="Tempo desempregado (em meses)">
+
+                        <textarea name="resumo1"
+                                  maxlength="120"
+                                  placeholder="Resumo profissional - linha 1"></textarea>
+
+                        <textarea name="resumo2"
+                                  maxlength="120"
+                                  placeholder="Resumo profissional - linha 2"></textarea>
+
+                        <textarea name="resumo3"
+                                  maxlength="120"
+                                  placeholder="Resumo profissional - linha 3"></textarea>
+
+                        <textarea name="resumo4"
+                                  maxlength="120"
+                                  placeholder="Resumo profissional - linha 4"></textarea>
+
+                        <label style="
+                            display:flex;
+                            align-items:flex-start;
+                            gap:10px;
+                            background:#fff3cd;
+                            padding:12px;
+                            border-radius:8px;
+                            margin-top:10px;
+                            font-size:14px;
+                            line-height:1.5;
+                        ">
+                            <input type="checkbox"
+                                   name="autorizacao"
+                                   id="autorizacao"
+                                   style="width:auto;margin-top:4px;">
+
+                            <span>
+                                Autorizo a divulgação pública das informações enviadas
+                                para fins de networking profissional.
+                            </span>
                         </label>
+
+                        <small style="
+                            display:block;
+                            margin-top:15px;
+                            color:#666;
+                            line-height:1.5;
+                        ">
+                            As informações poderão ser exibidas publicamente no site,
+                            incluindo nome, LinkedIn, área profissional e resumo.
+
+                            <br><br>
+
+                            A remoção poderá ser solicitada a qualquer momento.
+
+                            <br><br>
+
+                            O Central de Vagas não garante contratação ou recolocação profissional,
+                            atuando apenas como espaço de networking e visibilidade profissional.
+                        </small>
 
                     </div>
 
-                    <textarea name="mensagem" placeholder="Escreva sua mensagem..." required></textarea>
+                    <div id="campo-mensagem">
+                        <textarea name="mensagem"
+                                  placeholder="Escreva sua mensagem..."
+                                  required></textarea>
+                    </div>
 
                     <button type="submit">Enviar</button>
 
