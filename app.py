@@ -2764,7 +2764,8 @@ def enviar_contato():
         "linkedin": request.form.get("linkedin", ""),
         "objetivo": request.form.get("objetivo", ""),
         "cidade": request.form.get("cidade", ""),
-        "tempo_recolocacao": request.form.get("tempo_recolocacao", ""),
+        "tempo_desempregado": request.form.get("tempo_desempregado", ""),
+        "area": request.form.get("area", ""),
         "resumo1": request.form.get("resumo1", ""),
         "resumo2": request.form.get("resumo2", ""),
         "resumo3": request.form.get("resumo3", ""),
@@ -2781,7 +2782,7 @@ def enviar_contato():
 
     # 🔥 NÃO BLOQUEIA O SITE
     #threading.Thread(target=enviar_email_contato,args=(nome, tipo, mensagem)).start()
-    enviar_email_contato(contato)
+    enviar_email_contato(novo)
     #print("SIMULANDO ENVIO DE EMAIL")
     #print(nome, tipo, mensagem)
 
