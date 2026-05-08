@@ -178,7 +178,9 @@
       "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
       "autorizacao": true,
       "data": "2026-05-08T13:44:37.824349"
-    },
+    }
+  ],
+  "resolvidos": [
     {
       "id": "f35da2a0",
       "nome": "Andrey Carlos",
@@ -197,6 +199,5 @@
       "data": "2026-05-08T14:23:10.248250"
     }
   ],
-  "resolvidos": [],
   "excluidos": []
 }
