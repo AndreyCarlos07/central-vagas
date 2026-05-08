@@ -122,6 +122,18 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-05-08T09:59:56.944583"
+    },
+    {
+      "id": "96cce288",
+      "nome": "GLAUBER LIMA BAHIA",
+      "email": "glauber.bahia@hotmail.com",
+      "tipo_filtro": "area",
+      "valor": "manutencao",
+      "plano": "trimestral",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-05-08T16:11:08.528724"
     }
   ],
   "ativos": [
