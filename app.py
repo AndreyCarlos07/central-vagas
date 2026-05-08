@@ -832,6 +832,20 @@ def contato():
             </script>
             {% endif %}
 
+            <script>
+            function toggleVitrine(tipo) {
+                const vitrine = document.getElementById("campos-vitrine");
+                const autorizacao = document.getElementById("autorizacao");
+                if (tipo === "vitrine") {
+                    vitrine.style.display = "block";
+                    autorizacao.required = true;
+                } else {
+                    vitrine.style.display = "none";
+                    autorizacao.required = false;
+                }
+            }
+            </script>
+
             <div class="top-buttons">
                 <a href="/">🏠 Vagas</a>
             </div>
@@ -845,12 +859,30 @@ def contato():
                     <input name="nome" placeholder="Seu nome" required>
                     <input type="email" name="email" placeholder="Seu e-mail" required>
 
-                    <select name="tipo">
+                    <select name="tipo" onchange="toggleVitrine(this.value)">
                         <option value="sugestao">Sugestão</option>
+                        <option value="vitrine">Vitrine Solidaria</option>
                         <option value="parcerias">Parcerias</option>
                         <option value="problema">Problemas no Site</option>
                         <option value="problema_pro">Problemas na Assinatura PRO</option>
                     </select>
+
+                    <div id="campos-vitrine" style="display:none;">
+
+                        <input name="area" placeholder="Área profissional">
+                        <input name="cidade" placeholder="Cidade">
+                        <input name="linkedin" placeholder="LinkedIn">
+                        <input name="tempo_desempregado" placeholder="Tempo desempregado">
+
+                        <textarea name="resumo" placeholder="Resumo profissional"></textarea>
+
+                        <label style="font-size:14px;">
+                            <input type="checkbox" name="autorizacao" id="autorizacao">
+                            Autorizo a divulgação pública das informações enviadas
+                            para fins de networking profissional.
+                        </label>
+
+                    </div>
 
                     <textarea name="mensagem" placeholder="Escreva sua mensagem..." required></textarea>
 
@@ -2579,6 +2611,12 @@ def enviar_contato():
     email = request.form.get("email")
     tipo = request.form.get("tipo")
     mensagem = request.form.get("mensagem")
+    
+    autorizacao = request.form.get("autorizacao")
+
+    # 🔥 VALIDAÇÃO IMPORTANTE
+    if tipo == "vitrine" and not autorizacao:
+        return "Autorização obrigatória"
 
     novo = {
         "id": str(uuid.uuid4())[:8],
@@ -2586,6 +2624,14 @@ def enviar_contato():
         "email": email,
         "tipo": tipo,
         "mensagem": mensagem,
+
+        # 🔥 CAMPOS DA VITRINE
+        "linkedin": request.form.get("linkedin", ""),
+        "cidade": request.form.get("cidade", ""),
+        "tempo_recolocacao": request.form.get("tempo_recolocacao", ""),
+        "resumo": request.form.get("resumo", ""),
+        "autorizacao": autorizacao == "on",
+
         "data": datetime.now().isoformat()
     }
 
@@ -2613,6 +2659,33 @@ def admin_contatos():
 
     html = """
     <a href="/?admin={{token}}">← voltar</a>
+
+    <h2>🤝 Vitrine Solidária</h2>
+    {% for c in contatos %}
+        {% if c.tipo == "vitrine" %}
+            <div style="border:2px solid #ff9800;padding:10px;margin-bottom:10px;border-radius:8px;">
+            
+                <strong>{{ c.nome }}</strong><br>
+                📍 {{ c.cidade }}<br>
+                💼 {{ c.area }}<br>
+                🔗 {{ c.linkedin }}<br>
+                ⏳ {{ c.tempo_desempregado }}<br><br>
+
+                <b>Resumo:</b><br>
+                {{ c.resumo }}<br><br>
+
+                <b>Mensagem:</b><br>
+                {{ c.mensagem }}<br><br>
+
+                <a href="/andamento/{{c.id}}?admin={{token}}">
+                    Mover p/ andamento
+                </a>
+
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    <hr>
 
     <h2>📥 Contatos recebidos</h2>
     {% for c in contatos %}
