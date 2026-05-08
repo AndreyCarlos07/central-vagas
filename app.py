@@ -371,8 +371,57 @@ def salvar_contatos(dados):
     requests.put(url, headers=headers, json=payload)
 
 
-def enviar_email_contato(nome, tipo, mensagem, email):
+def enviar_email_contato(contato):
+
     try:
+
+        if contato["tipo"] == "vitrine":
+
+            corpo = f"""
+🤝 NOVA SOLICITAÇÃO - VITRINE SOLIDÁRIA
+
+Nome: {contato["nome"]}
+E-mail: {contato["email"]}
+
+📍 Cidade:
+{contato["cidade"]}
+
+💼 Área:
+{contato["area"]}
+
+🎯 Objetivo:
+{contato["objetivo"]}
+
+⏳ Tempo desempregado:
+{contato["tempo_desempregado"]} meses
+
+🔗 LinkedIn:
+{contato["linkedin"]}
+
+📝 Resumo Profissional:
+
+- {contato["resumo1"]}
+- {contato["resumo2"]}
+- {contato["resumo3"]}
+- {contato["resumo4"]}
+
+✅ Autorização aceita:
+{contato["autorizacao"]}
+"""
+
+        else:
+
+            corpo = f"""
+Novo contato recebido - Central de Vagas
+
+Nome: {contato["nome"]}
+E-mail: {contato["email"]}
+Tipo: {contato["tipo"]}
+
+Mensagem:
+{contato["mensagem"]}
+"""
+
         response = requests.post(
             "https://api.resend.com/emails",
             headers={
@@ -380,10 +429,10 @@ def enviar_email_contato(nome, tipo, mensagem, email):
                 "Content-Type": "application/json"
             },
             json={
-                "from": "Central de Vagas <onboarding@resend.dev>",  # depois pode trocar
+                "from": "Central de Vagas <onboarding@resend.dev>",
                 "to": [EMAIL_USER_CENTRAL],
                 "subject": "Novo contato recebido - Central de Vagas",
-                "text": f"Nome: {nome}\nE-mail: {email}\nTipo: {tipo}\nMensagem:\n{mensagem}"
+                "text": corpo
             }
         )
 
@@ -2720,7 +2769,7 @@ def enviar_contato():
         "resumo2": request.form.get("resumo2", ""),
         "resumo3": request.form.get("resumo3", ""),
         "resumo4": request.form.get("resumo4", ""),
-        "autorizacao": autorizacao == "on",
+        "autorizacao": request.form.get("autorizacao") == "on",
 
         "data": datetime.now().isoformat()
     }
@@ -2755,17 +2804,51 @@ def admin_contatos():
         {% if c.tipo == "vitrine" %}
             <div style="border:2px solid #ff9800;padding:10px;margin-bottom:10px;border-radius:8px;">
             
-                <strong>{{ c.nome }}</strong><br>
-                📍 {{ c.cidade }}<br>
-                💼 {{ c.area }}<br>
-                🔗 {{ c.linkedin }}<br>
-                ⏳ {{ c.tempo_desempregado }}<br><br>
+                <h3 style="margin-top:0;">
+                    {{ c.nome }}
+                </h3>
 
-                <b>Resumo:</b><br>
-                {{ c.resumo }}<br><br>
+                <p>
+                    📍 <b>Cidade:</b> {{ c.cidade }}
+                </p>
 
-                <b>Mensagem:</b><br>
-                {{ c.mensagem }}<br><br>
+                <p>
+                    💼 <b>Área:</b> {{ c.area }}
+                </p>
+
+                <p>
+                    🎯 <b>Objetivo:</b> {{ c.objetivo }}
+                </p>
+
+                <p>
+                    ⏳ <b>Tempo desempregado:</b>
+                    {{ c.tempo_desempregado }} meses
+                </p>
+
+                <p>
+                    🔗 <a href="{{ c.linkedin }}" target="_blank">
+                    LinkedIn
+                    </a>
+                </p>
+
+                <div style="
+                    background:white;
+                    padding:10px;
+                    border-radius:8px;
+                    border:1px solid #ddd;
+                    margin-top:10px;
+                ">
+
+                    <b>📝 Resumo profissional:</b><br><br>
+
+                    {{ c.resumo1 }}<br>
+                    {{ c.resumo2 }}<br>
+                    {{ c.resumo3 }}<br>
+                    {{ c.resumo4 }}
+
+                </div>
+
+                <br>
 
                 <a href="/andamento/{{c.id}}?admin={{token}}">
                     Mover p/ andamento
