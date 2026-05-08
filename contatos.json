@@ -56,6 +56,23 @@
       "tipo": "parcerias",
       "mensagem": "Só Levi Melquisedeque Silva de Oliveira tenho um sonho em trabalhar na \r\nEmpresa ",
       "data": "2026-04-30T23:52:40.042522"
+    },
+    {
+      "id": "438c25b9",
+      "nome": "Andrey Carlos",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo": "vitrine",
+      "mensagem": "",
+      "linkedin": "https://www.linkedin.com/in/engandreycarlos/",
+      "objetivo": "Engenheiro",
+      "cidade": "Salvador",
+      "tempo_recolocacao": "",
+      "resumo1": "Experiência em Indústria Multinacional Automotiva, Química e Energia.",
+      "resumo2": "Noções avançadas em Projetos/Indicadores/Testes de Performance/Melhorias.",
+      "resumo3": "Conhecimento SAP, MES, IoT.",
+      "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
+      "autorizacao": true,
+      "data": "2026-05-08T13:44:37.824349"
     }
   ],
   "andamento": [
