@@ -171,6 +171,16 @@
       "tipo": "sugestao",
       "mensagem": "teste2",
       "data": "2026-04-09T16:24:20.244445"
+    }
+  ],
+  "excluidos": [
+    {
+      "id": "24cb5274",
+      "nome": "Andrey Carlos",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo": "parcerias",
+      "mensagem": "asdasdasda",
+      "data": "2026-04-30T23:07:32.570207"
     },
     {
       "id": "ec7c05fe",
@@ -188,16 +198,6 @@
       "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
       "autorizacao": true,
       "data": "2026-05-08T14:23:22.808645"
-    }
-  ],
-  "excluidos": [
-    {
-      "id": "24cb5274",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo": "parcerias",
-      "mensagem": "asdasdasda",
-      "data": "2026-04-30T23:07:32.570207"
     }
   ]
 }
