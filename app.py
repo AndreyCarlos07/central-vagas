@@ -935,26 +935,26 @@ def contato():
 
                         <input name="area"
                                maxlength="60"
-                               placeholder="Área profissional">
+                               placeholder="Área profissional" required>
 
                         <input name="cidade"
                                maxlength="40"
-                               placeholder="Cidade">
+                               placeholder="Cidade" required>
 
                         <input name="objetivo"
                                maxlength="80"
-                               placeholder="Objetivo profissional (ex: Auxiliar de Engenharia)">
+                               placeholder="Objetivo profissional (ex: Auxiliar de Engenharia)" required>
 
                         <input type="url"
                                name="linkedin"
                                pattern="https://(www\.)?linkedin\.com/.*"
-                               placeholder="https://www.linkedin.com/in/seuperfil/">
+                               placeholder="https://www.linkedin.com/in/seuperfil/" required>
 
                         <input type="number"
                                name="tempo_desempregado"
                                min="0"
                                max="999"
-                               placeholder="Tempo desempregado (em meses)">
+                               placeholder="Tempo desempregado (em meses)" required>
 
                         <textarea name="resumo1"
                                   maxlength="120"
@@ -962,15 +962,15 @@ def contato():
 
                         <textarea name="resumo2"
                                   maxlength="120"
-                                  placeholder="Resumo profissional - linha 2"></textarea>
+                                  placeholder="Resumo profissional - linha 2" required></textarea>
 
                         <textarea name="resumo3"
                                   maxlength="120"
-                                  placeholder="Resumo profissional - linha 3"></textarea>
+                                  placeholder="Resumo profissional - linha 3" required></textarea>
 
                         <textarea name="resumo4"
                                   maxlength="120"
-                                  placeholder="Resumo profissional - linha 4"></textarea>
+                                  placeholder="Resumo profissional - linha 4" required></textarea>
 
                         <label style="
                             display:flex;
