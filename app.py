@@ -958,7 +958,7 @@ def contato():
 
                         <textarea name="resumo1"
                                   maxlength="120"
-                                  placeholder="Resumo profissional - linha 1"></textarea>
+                                  placeholder="Resumo profissional - linha 1" required></textarea>
 
                         <textarea name="resumo2"
                                   maxlength="120"
