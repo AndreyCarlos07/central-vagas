@@ -1808,12 +1808,6 @@ def get_html_home_pro():
             
         </div>
 
-        <!-- banner_home_topo -->
-        <ins class="adsbygoogle"
-            style="display:block; width:300px;height:50px"
-            data-ad-client="ca-pub-2211390415336582"
-            data-ad-slot="8168087096"></ins>
-
         <div class="paginacao">
         {% if page_av > 1 %}
         <a href="?page={{page}}&page_av={{ page_av-1 }}">← Anterior</a>
@@ -2352,12 +2346,6 @@ def get_html_home():
             {% endif %}
             
         </div>
-
-        <!-- banner_home_topo -->
-        <ins class="adsbygoogle"
-            style="display:block; width:300px;height:50px"
-            data-ad-client="ca-pub-2211390415336582"
-            data-ad-slot="8168087096"></ins>
 
         <h2>⭐ Avaliações</h2>
 
@@ -3431,11 +3419,11 @@ def redirect_vaga(id):
         <br><br>        
 
         <p>
-        ⏳ Redirecionando em <span id="contador">10</span> segundos...
+        ⏳ Redirecionando em <span id="contador">20</span> segundos...
         </p>
 
         <script>
-        let tempo = 10;
+        let tempo = 20;
 
         const intervalo = setInterval(() => {
             tempo--;
