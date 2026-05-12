@@ -183,24 +183,6 @@
       "data": "2026-05-08T15:08:47.204231"
     },
     {
-      "id": "44ba5d4d",
-      "nome": "DARLINE MARTA TEIXEIRA CARVALHO MELO",
-      "email": "darlinemelo@gmail.com",
-      "tipo": "vitrine",
-      "mensagem": "",
-      "linkedin": "https://www.linkedin.com/in/darlinemelo/",
-      "objetivo": "Engenharia Civil",
-      "cidade": "Salvador",
-      "tempo_desempregado": "4",
-      "area": "Engenharia Civil",
-      "resumo1": "Acompanhamento de obras",
-      "resumo2": "Compatibilização de projetos",
-      "resumo3": "Elaboração de projetos",
-      "resumo4": "Orçamentos",
-      "autorizacao": true,
-      "data": "2026-05-12T14:31:28.720178"
-    },
-    {
       "id": "f9538885",
       "nome": "DARLINE MARTA TEIXEIRA CARVALHO MELO",
       "email": "darlinemelo@gmail.com",
@@ -254,6 +236,24 @@
       "resumo4": "Gestão de suprimentos ",
       "autorizacao": true,
       "data": "2026-05-12T14:19:28.686598"
+    },
+    {
+      "id": "44ba5d4d",
+      "nome": "DARLINE MARTA TEIXEIRA CARVALHO MELO",
+      "email": "darlinemelo@gmail.com",
+      "tipo": "vitrine",
+      "mensagem": "",
+      "linkedin": "https://www.linkedin.com/in/darlinemelo/",
+      "objetivo": "Engenharia Civil",
+      "cidade": "Salvador",
+      "tempo_desempregado": "4",
+      "area": "Engenharia Civil",
+      "resumo1": "Acompanhamento de obras",
+      "resumo2": "Compatibilização de projetos",
+      "resumo3": "Elaboração de projetos",
+      "resumo4": "Orçamentos",
+      "autorizacao": true,
+      "data": "2026-05-12T14:31:28.720178"
     }
   ],
   "excluidos": [
