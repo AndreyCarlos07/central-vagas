@@ -134,6 +134,18 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-05-08T16:11:08.528724"
+    },
+    {
+      "id": "183b18be",
+      "nome": "Diandorin lua ",
+      "email": "Diandorinluan51@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "manutencao",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-05-12T18:49:34.575456"
     }
   ],
   "ativos": [
