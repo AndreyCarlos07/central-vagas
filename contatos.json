@@ -74,6 +74,24 @@
       "resumo4": "Experiência com Lean",
       "autorizacao": true,
       "data": "2026-05-12T14:49:07.319426"
+    },
+    {
+      "id": "013ef1fe",
+      "nome": "Vitoria Letícia Passos dos Santos",
+      "email": "vitoriapassos@hotmail.com",
+      "tipo": "vitrine",
+      "mensagem": "",
+      "linkedin": "https://www.linkedin.com/in/vit%C3%B3ria-let%C3%ADcia-passos-logistica?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+      "objetivo": "Assistente/Líder ",
+      "cidade": "Camaçari e Salvador ",
+      "tempo_desempregado": "2",
+      "area": "Logística ",
+      "resumo1": "Controlador de Frotas SR",
+      "resumo2": "Almoxarife",
+      "resumo3": "Assistente de Logística ",
+      "resumo4": "Assistente de Frota ",
+      "autorizacao": true,
+      "data": "2026-05-12T14:23:58.468016"
     }
   ],
   "andamento": [],
@@ -324,24 +342,6 @@
       "resumo4": "Orçamentos",
       "autorizacao": true,
       "data": "2026-05-12T14:33:07.195300"
-    },
-    {
-      "id": "013ef1fe",
-      "nome": "Vitoria Letícia Passos dos Santos",
-      "email": "vitoriapassos@hotmail.com",
-      "tipo": "vitrine",
-      "mensagem": "",
-      "linkedin": "https://www.linkedin.com/in/vit%C3%B3ria-let%C3%ADcia-passos-logistica?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-      "objetivo": "Assistente/Líder ",
-      "cidade": "Camaçari e Salvador ",
-      "tempo_desempregado": "2",
-      "area": "Logística ",
-      "resumo1": "Controlador de Frotas SR",
-      "resumo2": "Almoxarife",
-      "resumo3": "Assistente de Logística ",
-      "resumo4": "Assistente de Frota ",
-      "autorizacao": true,
-      "data": "2026-05-12T14:23:58.468016"
     }
   ]
 }
