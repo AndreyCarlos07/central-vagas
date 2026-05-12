@@ -1,14 +1,17 @@
 [
   {
     "nome": "Cliente 1",
-    "imagem": "/static/banner1.png"
+    "imagem": "/static/banner1.png",
+    "linkedin": "https://www.linkedin.com/in/engandreycarlos"
   },
   {
     "nome": "Cliente 2",
-    "imagem": "/static/banner2.png"
+    "imagem": "/static/banner2.png",
+    "linkedin": "https://www.linkedin.com/in/engandreycarlos"    
   },
   {
     "nome": "Cliente 3",
-    "imagem": "/static/banner3.png"
+    "imagem": "/static/banner3.png",
+    "linkedin": "https://www.linkedin.com/in/engandreycarlos"
   }
 ]
