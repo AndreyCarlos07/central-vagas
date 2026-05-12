@@ -74,7 +74,9 @@
       "resumo4": "Experiência com Lean",
       "autorizacao": true,
       "data": "2026-05-12T14:49:07.319426"
-    },
+    }
+  ],
+  "andamento": [
     {
       "id": "013ef1fe",
       "nome": "Vitoria Letícia Passos dos Santos",
@@ -94,7 +96,6 @@
       "data": "2026-05-12T14:23:58.468016"
     }
   ],
-  "andamento": [],
   "resolvidos": [
     {
       "id": "f35da2a0",
