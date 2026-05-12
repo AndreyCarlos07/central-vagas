@@ -148,23 +148,6 @@
       "resumo4": "Orçamentos",
       "autorizacao": true,
       "data": "2026-05-12T14:33:07.195300"
-    },
-    {
-      "id": "b2a8efa5",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo": "vitrine",
-      "mensagem": "",
-      "linkedin": "https://www.linkedin.com/in/engandreycarlos/",
-      "objetivo": "Engenheiro",
-      "cidade": "Salvador",
-      "tempo_recolocacao": "",
-      "resumo1": "Experiência em Indústria Multinacional Automotiva, Química e Energia.",
-      "resumo2": "Noções avançadas em Projetos/Indicadores/Testes de Performance/Melhorias.",
-      "resumo3": "Conhecimento SAP, MES, IoT.",
-      "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
-      "autorizacao": true,
-      "data": "2026-05-08T14:26:15.821114"
     }
   ],
   "excluidos": [
@@ -324,6 +307,23 @@
       "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
       "autorizacao": true,
       "data": "2026-05-08T14:54:33.565860"
+    },
+    {
+      "id": "b2a8efa5",
+      "nome": "Andrey Carlos",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo": "vitrine",
+      "mensagem": "",
+      "linkedin": "https://www.linkedin.com/in/engandreycarlos/",
+      "objetivo": "Engenheiro",
+      "cidade": "Salvador",
+      "tempo_recolocacao": "",
+      "resumo1": "Experiência em Indústria Multinacional Automotiva, Química e Energia.",
+      "resumo2": "Noções avançadas em Projetos/Indicadores/Testes de Performance/Melhorias.",
+      "resumo3": "Conhecimento SAP, MES, IoT.",
+      "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
+      "autorizacao": true,
+      "data": "2026-05-08T14:26:15.821114"
     }
   ]
 }
