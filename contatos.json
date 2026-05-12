@@ -163,24 +163,6 @@
       "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
       "autorizacao": true,
       "data": "2026-05-08T15:08:47.204231"
-    },
-    {
-      "id": "a112b3c4",
-      "nome": "Roberto Gomes Bacellar da Silva ",
-      "email": "robertobacellar@yahoo.com.br",
-      "tipo": "vitrine",
-      "mensagem": "",
-      "linkedin": "https://www.linkedin.com/in/robertobacellar/",
-      "objetivo": "Coordenador / Supervisor / Analista Sênior ",
-      "cidade": "Salvador ",
-      "tempo_desempregado": "10",
-      "area": "Suprimentos ",
-      "resumo1": "Sólida experiência nas áreas de Suprimentos e Facilities ",
-      "resumo2": "Contratação de terceirizados ",
-      "resumo3": "Gestão de contratos ",
-      "resumo4": "Gestão de suprimentos ",
-      "autorizacao": true,
-      "data": "2026-05-12T14:19:28.686598"
     }
   ],
   "resolvidos": [
@@ -200,6 +182,24 @@
       "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
       "autorizacao": true,
       "data": "2026-05-08T14:23:10.248250"
+    },
+    {
+      "id": "a112b3c4",
+      "nome": "Roberto Gomes Bacellar da Silva ",
+      "email": "robertobacellar@yahoo.com.br",
+      "tipo": "vitrine",
+      "mensagem": "",
+      "linkedin": "https://www.linkedin.com/in/robertobacellar/",
+      "objetivo": "Coordenador / Supervisor / Analista Sênior ",
+      "cidade": "Salvador ",
+      "tempo_desempregado": "10",
+      "area": "Suprimentos ",
+      "resumo1": "Sólida experiência nas áreas de Suprimentos e Facilities ",
+      "resumo2": "Contratação de terceirizados ",
+      "resumo3": "Gestão de contratos ",
+      "resumo4": "Gestão de suprimentos ",
+      "autorizacao": true,
+      "data": "2026-05-12T14:19:28.686598"
     }
   ],
   "excluidos": [
