@@ -78,24 +78,6 @@
   ],
   "andamento": [
     {
-      "id": "16f52758",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo": "vitrine",
-      "mensagem": "",
-      "linkedin": "https://www.linkedin.com/in/engandreycarlos/",
-      "objetivo": "Engenheiro",
-      "cidade": "Salvador",
-      "tempo_desempregado": "2",
-      "area": "Engenharia",
-      "resumo1": "",
-      "resumo2": "a",
-      "resumo3": "",
-      "resumo4": "",
-      "autorizacao": true,
-      "data": "2026-05-08T23:38:40.020178"
-    },
-    {
       "id": "f402fe00",
       "nome": "Andrey Carlos",
       "email": "andrey.engenhariamecatronica@gmail.com",
@@ -254,6 +236,24 @@
       "resumo4": "Aptidão com várias tecnologias da informação/automação e ferramentas da qualidade.",
       "autorizacao": true,
       "data": "2026-05-08T15:56:08.864424"
+    },
+    {
+      "id": "16f52758",
+      "nome": "Andrey Carlos",
+      "email": "andrey.engenhariamecatronica@gmail.com",
+      "tipo": "vitrine",
+      "mensagem": "",
+      "linkedin": "https://www.linkedin.com/in/engandreycarlos/",
+      "objetivo": "Engenheiro",
+      "cidade": "Salvador",
+      "tempo_desempregado": "2",
+      "area": "Engenharia",
+      "resumo1": "",
+      "resumo2": "a",
+      "resumo3": "",
+      "resumo4": "",
+      "autorizacao": true,
+      "data": "2026-05-08T23:38:40.020178"
     }
   ],
   "excluidos": [
