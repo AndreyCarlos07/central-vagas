@@ -6,5 +6,9 @@
   {
     "nome": "Cliente 2",
     "imagem": "/static/banner2.png"
+  },
+  {
+    "nome": "Cliente 3",
+    "imagem": "/static/banner3.png"
   }
 ]
