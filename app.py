@@ -3369,7 +3369,10 @@ def redirect_vaga(id):
     # 🔥 BANNERS DINÂMICOS
     import random
     banners = carregar_banners()
-    banner = random.choice(banners)["imagem"]
+    banner_escolhido = random.choice(banners)
+
+    banner = banner_escolhido["imagem"]
+    linkedin = banner_escolhido["linkedin"]
 
     html = """
     <html>
@@ -3407,10 +3410,23 @@ def redirect_vaga(id):
 
         <br><br>
 
-        <div style="margin:20px;">
-            <p><b>📢 Divulgação</b></p>
-            <img src="{{ banner }}" style="max-width:300px;">
-        </div>
+        <p style="font-size:18px;font-weight:bold;color:#0066cc;">
+        🤝 Vitrine Solidária
+        </p>
+
+        <a href="{{ linkedin }}" target="_blank">
+            <img src="{{ banner }}"
+                 loading="lazy"
+                 style="width:100%;max-width:300px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+        </a>
+
+        <p style="font-size:13px;color:#555;max-width:400px;margin:auto;">
+        Profissionais em busca de recolocação e visibilidade profissional.
+
+        <br><br>
+
+        Para saber mais informações sobre o profissional e ajudar, clique sobre o banner.
+        </p>
 
         <br><br>        
 
@@ -3454,7 +3470,7 @@ def redirect_vaga(id):
     </html>
     """
 
-    return render_template_string(html, link_vaga=link_vaga, banner=banner)
+    return render_template_string(html, link_vaga=link_vaga, banner=banner, linkedin=linkedin)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
