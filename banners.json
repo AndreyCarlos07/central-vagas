@@ -7,11 +7,16 @@
   {
     "nome": "Roberto Gomes Bacellar da Silva",
     "imagem": "/static/banner2.png",
-    "linkedin": "https://www.linkedin.com/in/robertobacellar/"    
+    "linkedin": "https://www.linkedin.com/in/robertobacellar"    
   },
   {
-    "nome": "Cliente 3",
+    "nome": "DARLINE MARTA TEIXEIRA CARVALHO MELO",
     "imagem": "/static/banner3.png",
-    "linkedin": "https://www.linkedin.com/in/engandreycarlos"
+    "linkedin": "https://www.linkedin.com/in/darlinemelo"
+  },
+  {
+    "nome": "Vitoria Letícia Passos dos Santos",
+    "imagem": "/static/banner4.png",
+    "linkedin": "https://www.linkedin.com/in/vit%C3%B3ria-let%C3%ADcia-passos-logistica"
   }
 ]
