@@ -1,22 +1,6 @@
 {
   "pendentes": [
     {
-      "id": "041fa9c5",
-      "nome": "Levi Melquisedeque Silva de Oliveira ",
-      "email": "levioliverfiel@gmail.com",
-      "tipo_filtro": "empresa",
-      "valor": [
-        "BRASKEM",
-        "BRIDGESTONE",
-        "BYD"
-      ],
-      "plano": "mensal",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-04-30T23:58:16.541576"
-    },
-    {
       "id": "978d6a87",
       "nome": "Felipe de Souza Araujo",
       "email": "felipesouzasaa@gmail.com",
