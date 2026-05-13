@@ -146,6 +146,54 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-05-12T18:49:35.278856"
+    }
+  ],
+  "ativos": [
+    {
+      "id": "91fd4abb",
+      "nome": "Valber Assis",
+      "email": "valbercassis@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "engenheiro",
+      "status": "ativo",
+      "data_inicio": "2026-04-19T16:31:15.243673",
+      "expira_em": "2026-05-19T16:31:15.243683",
+      "data_criacao": "2026-04-19T16:28:00.178258"
+    },
+    {
+      "id": "82c374ce",
+      "nome": "Adan Carlos",
+      "email": "adancarlosbr@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "auxiliar",
+      "status": "ativo",
+      "data_inicio": "2026-04-23T10:38:13.940858",
+      "expira_em": "2026-05-23T10:38:13.940871",
+      "data_criacao": "2026-04-19T16:28:29.772878"
+    },
+    {
+      "id": "4be71d7b",
+      "nome": "Cintia Regina ",
+      "email": "cintiareginaaa@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "qualidade",
+      "plano": "mensal",
+      "status": "ativo",
+      "data_inicio": "2026-04-23T10:45:02.091253",
+      "expira_em": "2026-05-23T10:45:02.091266",
+      "data_criacao": "2026-04-23T09:25:07.125724"
+    },
+    {
+      "id": "2782a4e4",
+      "nome": "OSVALDO DE JESUS COSTA JUNIOR",
+      "email": "osvaldojcjr@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "producao",
+      "plano": "trimestral",
+      "status": "ativo",
+      "data_inicio": "2026-04-28T14:07:21.682934",
+      "expira_em": "2026-07-27T14:07:21.682948",
+      "data_criacao": "2026-04-28T12:59:58.023135"
     },
     {
       "id": "59d694e0",
@@ -200,58 +248,10 @@
         "ZEENTECH"
       ],
       "plano": "mensal",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
+      "status": "ativo",
+      "data_inicio": "2026-05-13T17:46:35.812184",
+      "expira_em": "2026-06-12T17:46:35.812195",
       "data_criacao": "2026-05-13T11:53:12.810856"
-    }
-  ],
-  "ativos": [
-    {
-      "id": "91fd4abb",
-      "nome": "Valber Assis",
-      "email": "valbercassis@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "engenheiro",
-      "status": "ativo",
-      "data_inicio": "2026-04-19T16:31:15.243673",
-      "expira_em": "2026-05-19T16:31:15.243683",
-      "data_criacao": "2026-04-19T16:28:00.178258"
-    },
-    {
-      "id": "82c374ce",
-      "nome": "Adan Carlos",
-      "email": "adancarlosbr@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "auxiliar",
-      "status": "ativo",
-      "data_inicio": "2026-04-23T10:38:13.940858",
-      "expira_em": "2026-05-23T10:38:13.940871",
-      "data_criacao": "2026-04-19T16:28:29.772878"
-    },
-    {
-      "id": "4be71d7b",
-      "nome": "Cintia Regina ",
-      "email": "cintiareginaaa@gmail.com",
-      "tipo_filtro": "area",
-      "valor": "qualidade",
-      "plano": "mensal",
-      "status": "ativo",
-      "data_inicio": "2026-04-23T10:45:02.091253",
-      "expira_em": "2026-05-23T10:45:02.091266",
-      "data_criacao": "2026-04-23T09:25:07.125724"
-    },
-    {
-      "id": "2782a4e4",
-      "nome": "OSVALDO DE JESUS COSTA JUNIOR",
-      "email": "osvaldojcjr@gmail.com",
-      "tipo_filtro": "area",
-      "valor": "producao",
-      "plano": "trimestral",
-      "status": "ativo",
-      "data_inicio": "2026-04-28T14:07:21.682934",
-      "expira_em": "2026-07-27T14:07:21.682948",
-      "data_criacao": "2026-04-28T12:59:58.023135"
     }
   ],
   "expirados": [
