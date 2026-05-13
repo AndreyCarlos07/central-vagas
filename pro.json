@@ -1,24 +1,6 @@
 {
   "pendentes": [
     {
-      "id": "b361f36b",
-      "nome": "Jeferson do Nascimento costa ",
-      "email": "jefersoncosta.mec@gmail.com",
-      "tipo_filtro": "empresa",
-      "valor": [
-        "HALLIBURTON",
-        "MRV&CO",
-        "SOTREQ",
-        "WILSON SONS",
-        "YPÊ"
-      ],
-      "plano": "trimestral",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-05-07T22:12:46.455734"
-    },
-    {
       "id": "25222904",
       "nome": "Marco Antônio Carvalho Cavalcante ",
       "email": "marco773@gmail.com",
