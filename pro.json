@@ -1,18 +1,5 @@
 {
-  "pendentes": [
-    {
-      "id": "851701ef",
-      "nome": "Diandorin lua ",
-      "email": "Diandorinluan51@gmail.com",
-      "tipo_filtro": "area",
-      "valor": "manutencao",
-      "plano": "mensal",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-05-12T18:49:35.278856"
-    }
-  ],
+  "pendentes": [],
   "ativos": [
     {
       "id": "91fd4abb",
