@@ -146,18 +146,6 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-05-12T18:49:35.278856"
-    },
-    {
-      "id": "ca5c43e7",
-      "nome": "Andrey Carlos",
-      "email": "andrey.engenhariamecatronica@gmail.com",
-      "tipo_filtro": "hierarquia",
-      "valor": "supervisor",
-      "plano": "mensal",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-05-13T17:50:20.015015"
     }
   ],
   "ativos": [
@@ -261,8 +249,8 @@
       ],
       "plano": "mensal",
       "status": "ativo",
-      "data_inicio": "2026-05-13T17:46:35.812184",
-      "expira_em": "2026-06-12T17:46:35.812195",
+      "data_inicio": "2026-05-13T17:48:37.223898",
+      "expira_em": "2026-06-12T17:48:37.223908",
       "data_criacao": "2026-05-13T11:53:12.810856"
     }
   ],
