@@ -31,8 +31,8 @@ ARQUIVO = "vagas_ocultas.json"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
-EMPRESAS_DEBUG = ["SOTREQ", "ADECCO"]
+MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+EMPRESAS_DEBUG = ["HEINEKEN"]
 
 # ===========================
 # VAGAS CONFIG
@@ -329,6 +329,7 @@ SITES = [
     {"empresa": "GRUPO FERTIPAR", "url": "https://grupofertipar.gupy.io", "tipo": "gupy"},
     {"empresa": "MRV&CO", "url": "https://vagas-mrveco.gupy.io", "tipo": "gupy"},
     {"empresa": "BAUMINAS", "url": "https://grupobauminas.gupy.io", "tipo": "gupy"},
+    {"empresa": "DAIKIN", "url": "https://daikinbrasil.gupy.io", "tipo": "gupy"},
     {
         "empresa": "BRIDGESTONE",
         "url": "https://bridgestone.wd5.myworkdayjobs.com/pt-BR/LATAMExternalCareers",
@@ -482,7 +483,12 @@ SITES = [
     },
     {
         "empresa": "HEINEKEN",
-        "url": "https://careers.theheinekencompany.com/Brazil/search", 
+        "url": "https://careers.theheinekencompany.com/Job-Listing?title=alagoinhas&field_location_country_code_1[]=BR", 
+        "tipo": "heineken"
+    },
+    {
+        "empresa": "HEINEKEN",
+        "url": "https://careers.theheinekencompany.com/Job-Listing?title=salvador&field_location_country_code_1[]=BR", 
         "tipo": "heineken"
     },
     {
@@ -1253,99 +1259,67 @@ def coletar_jobconvo(page, site):
 # HEINEKEN
 # ===========================
 def coletar_heineken(page, site):
+
     vagas = []
     links_coletados = set()
-    total_empresa = 0  # 👈 contador geral real
 
-    page.goto(site["url"], timeout=60000)
-    page.wait_for_load_state("networkidle")
-    page.wait_for_timeout(3000)
+    try:
+        print(f"🌍 Acessando: {site['url']}")
 
-    print("🔎 Verificando age gate...")
-
-    # ===========================
-    # 1️⃣ VERIFICA AGE GATE
-    # ===========================
-    if page.locator("#input-date-day").count() > 0:
-        print("🔐 Age gate detectado. Preenchendo data...")
-
-        page.fill("#input-date-day", "23")
-        page.fill("#input-date-month", "09")
-        page.fill("#input-date-year", "1993")
-
-        page.click("#input-date-submit")
+        page.goto(site["url"], timeout=60000)
         page.wait_for_load_state("networkidle")
-        page.goto("https://careers.theheinekencompany.com/Brazil/search")
-        page.wait_for_selector("#location", timeout=30000)
+        page.wait_for_timeout(3000)
 
-    else:
-        print("✅ Age gate não apareceu.")
+        # ===========================
+        # COLETAR LINKS
+        # ===========================
+        links = page.locator("a[href*='/job/']")
+        total = links.count()
 
-    # ===========================
-    # 2️⃣ CIDADES PARA FILTRAR
-    # ===========================
-    cidades = ["Alagoinhas", "Salvador"]
+        print(f"🔎 {total} links encontrados")
 
-    for cidade in cidades:
+        for i in range(total):
 
-        print(f"📍 Filtrando cidade: {cidade}")
+            try:
+                link = links.nth(i).get_attribute("href")
 
-        vagas_cidade = 0  # 👈 contador REAL dessa cidade
-
-        try:
-            page.fill("#location", cidade)
-            page.click("#searchfilter-submit")
-            page.wait_for_load_state("networkidle")
-            page.wait_for_timeout(3000)
-
-            # ===========================
-            # 3️⃣ COLETAR LINKS
-            # ===========================
-            links = page.locator("a[href*='/job/']")
-            total = links.count()
-
-            for i in range(total):
-                try:
-                    link = links.nth(i).get_attribute("href")
-
-                    if not link:
-                        continue
-
-                    if link.startswith("/"):
-                        link = "https://careers.theheinekencompany.com" + link
-
-                    link_limpo = link.split("?")[0]
-
-                    if link_limpo in links_coletados:
-                        continue
-
-                    links_coletados.add(link_limpo)
-
-                    # título direto da listagem
-                    titulo = links.nth(i).inner_text().strip()
-
-                    vagas.append({
-                        "id": str(uuid.uuid4())[:8],
-                        "titulo": titulo,
-                        "empresa": site["empresa"],
-                        "link": link_limpo
-                    })
-
-                    vagas_cidade += 1
-                    total_empresa += 1
-
-                except Exception as e:
-                    print("Erro ao processar vaga:", e)
+                if not link:
                     continue
 
-            print(f"Total coletado em {cidade}: {vagas_cidade}")
+                # completa URL relativa
+                if link.startswith("/"):
+                    link = "https://careers.theheinekencompany.com" + link
 
-        except Exception as e:
-            print(f"Erro ao filtrar {cidade}:", e)
-            continue
+                # remove parâmetros
+                link_limpo = link.split("?")[0]
 
-    print(f"📌 {site['empresa']}: {total_empresa} vagas coletadas")
+                # evita duplicadas
+                if link_limpo in links_coletados:
+                    continue
+
+                links_coletados.add(link_limpo)
+
+                # pega título
+                titulo = links.nth(i).inner_text().strip()
+
+                vagas.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "titulo": titulo,
+                    "empresa": site["empresa"],
+                    "link": link_limpo
+                })
+
+            except Exception as e:
+                print("Erro ao processar vaga:", e)
+                continue
+
+        print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
+
+    except Exception as e:
+        print(f"Erro HEINEKEN: {e}")
+
     return vagas
+    
 
 # ===========================
 # GOLDWIND
