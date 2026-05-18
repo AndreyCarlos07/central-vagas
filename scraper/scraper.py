@@ -1267,53 +1267,45 @@ def coletar_heineken(page, site):
 
         print(f"🌍 Acessando: {site['url']}")
 
+        # ===========================
+        # INJETA COOKIES
+        # ===========================
+        context = page.context
+
+        context.add_cookies([
+            {
+                "name": "cf_clearance",
+                "value": "SEU_CF_CLEARANCE",
+                "domain": ".theheinekencompany.com",
+                "path": "/"
+            },
+            {
+                "name": "__cf_bm",
+                "value": "SEU_CF_BM",
+                "domain": ".theheinekencompany.com",
+                "path": "/"
+            },
+            {
+                "name": "age_gate_access",
+                "value": "b326b5062b2f0e69046810717534cb09",
+                "domain": ".theheinekencompany.com",
+                "path": "/"
+            }
+        ])
+
+        # ===========================
+        # ABRE DOMÍNIO PRIMEIRO
+        # ===========================
         page.goto(
-            "https://careers.theheinekencompany.com/Job-Listing",
+            "https://careers.theheinekencompany.com",
             timeout=90000,
             wait_until="load"
         )
 
-        # ===========================
-        # ESPERA CLOUDFLARE
-        # ===========================
-        print("🛡️ Aguardando Cloudflare...")
-
-        page.wait_for_timeout(15000)
+        page.wait_for_timeout(5000)
 
         # ===========================
-        # ACEITAR COOKIES
-        # ===========================
-        try:
-            page.click("text=Yes", timeout=5000)
-            print("🍪 Cookies aceitos")
-            page.wait_for_timeout(2000)
-        except:
-            print("🍪 Popup de cookies não apareceu")
-
-        # ===========================
-        # AGE GATE
-        # ===========================
-        try:
-
-            if page.locator("#edit-year").count() > 0:
-
-                print("🔞 Age gate detectado")
-
-                page.fill("#edit-day", "23")
-                page.fill("#edit-month", "09")
-                page.fill("#edit-year", "1993")
-
-                page.keyboard.press("Enter")
-
-                page.wait_for_timeout(5000)
-
-                print("✅ Age gate enviado")
-
-        except Exception as e:
-            print("Erro age gate:", e)
-
-        # ===========================
-        # AGORA ABRE URL FILTRADA
+        # ABRE URL DA VAGA
         # ===========================
         page.goto(
             site["url"],
@@ -1324,7 +1316,14 @@ def coletar_heineken(page, site):
         page.wait_for_timeout(10000)
 
         # ===========================
-        # COLETAR VAGAS
+        # DEBUG HTML
+        # ===========================
+        html = page.content()
+
+        print(html[:2000])
+
+        # ===========================
+        # COLETAR LINKS
         # ===========================
         links = page.locator("a[href*='/job/']")
 
@@ -1343,11 +1342,17 @@ def coletar_heineken(page, site):
                 if not href:
                     continue
 
+                if "/job/" not in href:
+                    continue
+
+                # completa URL
                 if href.startswith("/"):
                     href = "https://careers.theheinekencompany.com" + href
 
+                # remove parâmetros
                 href = href.split("?")[0]
 
+                # evita repetição
                 if href in links_coletados:
                     continue
 
