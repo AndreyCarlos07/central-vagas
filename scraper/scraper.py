@@ -1264,34 +1264,78 @@ def coletar_heineken(page, site):
     links_coletados = set()
 
     try:
+
         print(f"🌍 Acessando: {site['url']}")
 
+        page.goto(
+            "https://careers.theheinekencompany.com/Job-Listing",
+            timeout=90000,
+            wait_until="load"
+        )
+
+        # ===========================
+        # ESPERA CLOUDFLARE
+        # ===========================
+        print("🛡️ Aguardando Cloudflare...")
+
+        page.wait_for_timeout(15000)
+
+        # ===========================
+        # ACEITAR COOKIES
+        # ===========================
+        try:
+            page.click("text=Yes", timeout=5000)
+            print("🍪 Cookies aceitos")
+            page.wait_for_timeout(2000)
+        except:
+            print("🍪 Popup de cookies não apareceu")
+
+        # ===========================
+        # AGE GATE
+        # ===========================
+        try:
+
+            if page.locator("#edit-year").count() > 0:
+
+                print("🔞 Age gate detectado")
+
+                page.fill("#edit-day", "23")
+                page.fill("#edit-month", "09")
+                page.fill("#edit-year", "1993")
+
+                page.keyboard.press("Enter")
+
+                page.wait_for_timeout(5000)
+
+                print("✅ Age gate enviado")
+
+        except Exception as e:
+            print("Erro age gate:", e)
+
+        # ===========================
+        # AGORA ABRE URL FILTRADA
+        # ===========================
         page.goto(
             site["url"],
             timeout=90000,
             wait_until="load"
         )
 
-        # espera brutal
-        page.wait_for_timeout(20000)
+        page.wait_for_timeout(10000)
 
-        # força scroll
-        page.mouse.wheel(0, 5000)
-        page.wait_for_timeout(5000)
-
-        # debug
-        print("📄 Página carregada")
-
-        # pega TODOS os links
-        links = page.locator("a")
+        # ===========================
+        # COLETAR VAGAS
+        # ===========================
+        links = page.locator("a[href*='/job/']")
 
         total = links.count()
 
-        print(f"🔎 {total} links totais encontrados")
+        print(f"🔎 {total} links encontrados")
 
         for i in range(total):
 
             try:
+
                 elemento = links.nth(i)
 
                 href = elemento.get_attribute("href")
@@ -1299,11 +1343,6 @@ def coletar_heineken(page, site):
                 if not href:
                     continue
 
-                # filtra apenas vagas
-                if "/job/" not in href:
-                    continue
-
-                # completa url
                 if href.startswith("/"):
                     href = "https://careers.theheinekencompany.com" + href
 
