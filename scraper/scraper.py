@@ -1268,46 +1268,54 @@ def coletar_heineken(page, site):
 
         page.goto(
             site["url"],
-            timeout=60000,
-            wait_until="domcontentloaded"
+            timeout=90000,
+            wait_until="load"
         )
 
-        # espera renderização JS
-        page.wait_for_timeout(10000)
+        # espera brutal
+        page.wait_for_timeout(20000)
 
-        # pega todos os links de vagas
-        links = page.locator("a[href*='/job/']")
+        # força scroll
+        page.mouse.wheel(0, 5000)
+        page.wait_for_timeout(5000)
+
+        # debug
+        print("📄 Página carregada")
+
+        # pega TODOS os links
+        links = page.locator("a")
+
         total = links.count()
 
-        print(f"🔎 {total} links encontrados")
+        print(f"🔎 {total} links totais encontrados")
 
         for i in range(total):
 
             try:
                 elemento = links.nth(i)
 
-                link = elemento.get_attribute("href")
+                href = elemento.get_attribute("href")
 
-                if not link:
+                if not href:
                     continue
 
-                # completa URL
-                if link.startswith("/"):
-                    link = "https://careers.theheinekencompany.com" + link
-
-                # remove params
-                link_limpo = link.split("?")[0]
-
-                # evita repetição
-                if link_limpo in links_coletados:
+                # filtra apenas vagas
+                if "/job/" not in href:
                     continue
 
-                links_coletados.add(link_limpo)
+                # completa url
+                if href.startswith("/"):
+                    href = "https://careers.theheinekencompany.com" + href
 
-                # pega título
+                href = href.split("?")[0]
+
+                if href in links_coletados:
+                    continue
+
+                links_coletados.add(href)
+
                 titulo = elemento.inner_text().strip()
 
-                # ignora links vazios
                 if not titulo:
                     continue
 
@@ -1315,14 +1323,13 @@ def coletar_heineken(page, site):
                     "id": str(uuid.uuid4())[:8],
                     "titulo": titulo,
                     "empresa": site["empresa"],
-                    "link": link_limpo
+                    "link": href
                 })
 
                 print(f"✅ {titulo}")
 
             except Exception as e:
-                print("Erro ao processar vaga:", e)
-                continue
+                print("Erro vaga:", e)
 
         print(f"📌 {site['empresa']}: {len(vagas)} vagas coletadas")
 
