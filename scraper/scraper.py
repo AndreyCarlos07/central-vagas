@@ -31,7 +31,7 @@ ARQUIVO = "vagas_ocultas.json"
 # ===========================
 # DEBUG CONFIG
 # ===========================
-MODO_DEBUG = True  # 🔥 Troque para False quando quiser rodar tudo
+MODO_DEBUG = False  # 🔥 Troque para False quando quiser rodar tudo
 EMPRESAS_DEBUG = ["HEINEKEN"]
 
 # ===========================
@@ -2406,14 +2406,14 @@ def main():
                 elif site["tipo"] == "jobconvo":
                     vagas = coletar_jobconvo(page, site)
 
-                elif site["tipo"] == "heineken":
-                    vagas = coletar_heineken(page, site)
+                #elif site["tipo"] == "heineken":
+                    #vagas = coletar_heineken(page, site)
 
                 elif site["tipo"] == "goldwind":
                     vagas = coletar_goldwind(page, site)
 
-                elif site["tipo"] == "ardagh":
-                    vagas = coletar_ardagh_group(page, site)
+                #elif site["tipo"] == "ardagh":
+                    #vagas = coletar_ardagh_group(page, site)
 
                 elif site["tipo"] == "halliburton":
                     vagas = coletar_halliburton(page, site)
