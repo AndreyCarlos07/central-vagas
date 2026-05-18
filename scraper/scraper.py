@@ -1266,27 +1266,39 @@ def coletar_heineken(page, site):
     try:
         print(f"🌍 Acessando: {site['url']}")
 
-        page.goto(site["url"], timeout=60000)
-        page.wait_for_load_state("networkidle")
-        page.wait_for_timeout(3000)
+        # abre página
+        page.goto(
+            site["url"],
+            timeout=60000,
+            wait_until="domcontentloaded"
+        )
+
+        # espera os cards aparecerem
+        page.wait_for_selector(".job-list-item", timeout=30000)
+
+        # pequeno delay
+        page.wait_for_timeout(2000)
 
         # ===========================
-        # COLETAR LINKS
+        # PEGA TODOS OS CARDS
         # ===========================
-        links = page.locator("a[href*='/job/']")
-        total = links.count()
+        cards = page.locator(".job-list-item")
+        total = cards.count()
 
-        print(f"🔎 {total} links encontrados")
+        print(f"🔎 {total} vagas encontradas")
 
         for i in range(total):
 
             try:
-                link = links.nth(i).get_attribute("href")
+                card = cards.nth(i)
+
+                # link da vaga
+                link = card.locator("a[href*='/job/']").first.get_attribute("href")
 
                 if not link:
                     continue
 
-                # completa URL relativa
+                # completa URL
                 if link.startswith("/"):
                     link = "https://careers.theheinekencompany.com" + link
 
@@ -1299,8 +1311,13 @@ def coletar_heineken(page, site):
 
                 links_coletados.add(link_limpo)
 
-                # pega título
-                titulo = links.nth(i).inner_text().strip()
+                # título da vaga
+                titulo = (
+                    card.locator(".job-title a")
+                    .first
+                    .inner_text()
+                    .strip()
+                )
 
                 vagas.append({
                     "id": str(uuid.uuid4())[:8],
@@ -1308,6 +1325,8 @@ def coletar_heineken(page, site):
                     "empresa": site["empresa"],
                     "link": link_limpo
                 })
+
+                print(f"✅ {titulo}")
 
             except Exception as e:
                 print("Erro ao processar vaga:", e)
