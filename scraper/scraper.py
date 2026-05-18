@@ -1266,34 +1266,27 @@ def coletar_heineken(page, site):
     try:
         print(f"🌍 Acessando: {site['url']}")
 
-        # abre página
         page.goto(
             site["url"],
             timeout=60000,
             wait_until="domcontentloaded"
         )
 
-        # espera os cards aparecerem
-        page.wait_for_selector(".job-list-item", timeout=30000)
+        # espera renderização JS
+        page.wait_for_timeout(10000)
 
-        # pequeno delay
-        page.wait_for_timeout(2000)
+        # pega todos os links de vagas
+        links = page.locator("a[href*='/job/']")
+        total = links.count()
 
-        # ===========================
-        # PEGA TODOS OS CARDS
-        # ===========================
-        cards = page.locator(".job-list-item")
-        total = cards.count()
-
-        print(f"🔎 {total} vagas encontradas")
+        print(f"🔎 {total} links encontrados")
 
         for i in range(total):
 
             try:
-                card = cards.nth(i)
+                elemento = links.nth(i)
 
-                # link da vaga
-                link = card.locator("a[href*='/job/']").first.get_attribute("href")
+                link = elemento.get_attribute("href")
 
                 if not link:
                     continue
@@ -1302,22 +1295,21 @@ def coletar_heineken(page, site):
                 if link.startswith("/"):
                     link = "https://careers.theheinekencompany.com" + link
 
-                # remove parâmetros
+                # remove params
                 link_limpo = link.split("?")[0]
 
-                # evita duplicadas
+                # evita repetição
                 if link_limpo in links_coletados:
                     continue
 
                 links_coletados.add(link_limpo)
 
-                # título da vaga
-                titulo = (
-                    card.locator(".job-title a")
-                    .first
-                    .inner_text()
-                    .strip()
-                )
+                # pega título
+                titulo = elemento.inner_text().strip()
+
+                # ignora links vazios
+                if not titulo:
+                    continue
 
                 vagas.append({
                     "id": str(uuid.uuid4())[:8],
