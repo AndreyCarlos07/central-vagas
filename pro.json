@@ -39,18 +39,6 @@
       "data_criacao": "2026-04-19T16:28:29.772878"
     },
     {
-      "id": "4be71d7b",
-      "nome": "Cintia Regina ",
-      "email": "cintiareginaaa@gmail.com",
-      "tipo_filtro": "area",
-      "valor": "qualidade",
-      "plano": "mensal",
-      "status": "ativo",
-      "data_inicio": "2026-04-23T10:45:02.091253",
-      "expira_em": "2026-05-23T10:45:02.091266",
-      "data_criacao": "2026-04-23T09:25:07.125724"
-    },
-    {
       "id": "2782a4e4",
       "nome": "OSVALDO DE JESUS COSTA JUNIOR",
       "email": "osvaldojcjr@gmail.com",
@@ -251,6 +239,18 @@
       "data_inicio": "2026-04-19T16:29:50.075527",
       "expira_em": "2026-05-19T16:29:50.075538",
       "data_criacao": "2026-04-19T16:29:10.068869"
+    },
+    {
+      "id": "4be71d7b",
+      "nome": "Cintia Regina ",
+      "email": "cintiareginaaa@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "qualidade",
+      "plano": "mensal",
+      "status": "expirado",
+      "data_inicio": "2026-04-23T10:45:02.091253",
+      "expira_em": "2026-05-23T10:45:02.091266",
+      "data_criacao": "2026-04-23T09:25:07.125724"
     }
   ]
 }
