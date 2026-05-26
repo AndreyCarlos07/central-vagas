@@ -1,20 +1,5 @@
 {
-  "pendentes": [
-    {
-      "id": "0b8bb7d9",
-      "nome": "WILLAN MARQUES SILVA",
-      "email": "willanmorguls285@gmail.com",
-      "tipo_filtro": "empresa",
-      "valor": [
-        "ACELEN RENOVÁVEIS"
-      ],
-      "plano": "mensal",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-05-21T01:37:12.416804"
-    }
-  ],
+  "pendentes": [],
   "ativos": [
     {
       "id": "91fd4abb",
