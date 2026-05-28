@@ -2,21 +2,21 @@
   {
     "nome": "Cliente 1",
     "imagem": "/static/banner1.png",
-    "linkedin": "https://www.linkedin.com/in/engandreycarlos"
+    "linkedin": ""
   },
   {
     "nome": "Roberto Gomes Bacellar da Silva",
     "imagem": "/static/banner2.png",
-    "linkedin": "https://www.linkedin.com/in/robertobacellar"    
+    "linkedin": ""    
   },
   {
     "nome": "DARLINE MARTA TEIXEIRA CARVALHO MELO",
     "imagem": "/static/banner3.png",
-    "linkedin": "https://www.linkedin.com/in/darlinemelo"
+    "linkedin": ""
   },
   {
     "nome": "Vitoria Letícia Passos dos Santos",
     "imagem": "/static/banner4.png",
-    "linkedin": "https://www.linkedin.com/in/vit%C3%B3ria-let%C3%ADcia-passos-logistica"
+    "linkedin": ""
   }
 ]
