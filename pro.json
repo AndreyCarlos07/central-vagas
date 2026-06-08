@@ -1,5 +1,18 @@
 {
-  "pendentes": [],
+  "pendentes": [
+    {
+      "id": "e455dfec",
+      "nome": "SIMONE DO CARMO SOUZA",
+      "email": "simone78322@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "producao",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-06-08T16:41:23.175070"
+    }
+  ],
   "ativos": [
     {
       "id": "91fd4abb",
