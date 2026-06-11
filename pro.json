@@ -11,6 +11,18 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-06-08T16:41:23.175070"
+    },
+    {
+      "id": "be4f390c",
+      "nome": "Marcoles Hudson",
+      "email": "marcoleshudson2024@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "logistica",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-06-11T00:22:49.192410"
     }
   ],
   "ativos": [
