@@ -1,5 +1,22 @@
 {
-  "pendentes": [],
+  "pendentes": [
+    {
+      "id": "5ad8a394",
+      "nome": "Claudiane Silva",
+      "email": "claudiane758780@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "GRUPO BOTICÁRIO",
+        "KIMBERLY-CLARK",
+        "MERCADO LIVRE"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-06-19T02:18:37.294566"
+    }
+  ],
   "ativos": [
     {
       "id": "91fd4abb",
