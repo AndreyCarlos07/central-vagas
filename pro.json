@@ -1,5 +1,20 @@
 {
-  "pendentes": [],
+  "pendentes": [
+    {
+      "id": "4e93ccfa",
+      "nome": "Tiago Sousa silva",
+      "email": "tiicoazd@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "BYD"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-07-09T20:36:09.880730"
+    }
+  ],
   "ativos": [
     {
       "id": "91fd4abb",
