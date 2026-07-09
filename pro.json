@@ -60,23 +60,6 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-06-30T12:44:45.495032"
-    },
-    {
-      "id": "4707b4db",
-      "nome": "Jacy Xavier dos Santos ",
-      "email": "jacyleaodabarra@hotmail.com",
-      "tipo_filtro": "empresa",
-      "valor": [
-        "3CORAÇÕES",
-        "ADECCO",
-        "GRUPO BOTICÁRIO",
-        "MERCADO LIVRE"
-      ],
-      "plano": "mensal",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-06-30T12:44:46.983530"
     }
   ],
   "ativos": [
