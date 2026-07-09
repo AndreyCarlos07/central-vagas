@@ -29,20 +29,6 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-06-25T12:32:56.642667"
-    },
-    {
-      "id": "b937914e",
-      "nome": "Claudio maia de Queiroz ",
-      "email": "cacaudandan016@gmail.com",
-      "tipo_filtro": "empresa",
-      "valor": [
-        "MERCADO LIVRE"
-      ],
-      "plano": "mensal",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-06-25T12:32:59.678635"
     }
   ],
   "ativos": [
