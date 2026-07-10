@@ -13,6 +13,24 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-07-09T20:36:09.880730"
+    },
+    {
+      "id": "74dc501b",
+      "nome": "Ailton Cerqueira de souza ",
+      "email": "ailtoncerqueira200@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "3CORAÇÕES",
+        "ACELEN",
+        "ACELEN RENOVÁVEIS",
+        "ADECCO",
+        "BYD"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-07-10T16:12:54.952580"
     }
   ],
   "ativos": [
