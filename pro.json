@@ -1,24 +1,6 @@
 {
   "pendentes": [
     {
-      "id": "cbd8864c",
-      "nome": "Ailton Cerqueira de souza ",
-      "email": "ailtoncerqueira200@gmail.com",
-      "tipo_filtro": "empresa",
-      "valor": [
-        "3CORAÇÕES",
-        "ACELEN",
-        "ACELEN RENOVÁVEIS",
-        "ADECCO",
-        "BYD"
-      ],
-      "plano": "mensal",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-07-10T16:13:24.863050"
-    },
-    {
       "id": "05efd99e",
       "nome": "djfabianoo@gmail.com",
       "email": "djfabianoo@gmail.com",
