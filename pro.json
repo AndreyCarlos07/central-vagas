@@ -63,6 +63,30 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-07-10T23:31:52.166027"
+    },
+    {
+      "id": "bc3cf371",
+      "nome": "FELIPE DOS SANTOS MOREIRA",
+      "email": "felipesantosmoreira1991@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "ACELEN",
+        "BRASKEM",
+        "BYD",
+        "CONTINENTAL",
+        "ENGEPACK",
+        "GRUPO BOTICÁRIO",
+        "M. DIAS BRANCO",
+        "MERCADO LIVRE",
+        "PERBRAS",
+        "SOLAR COCA COLA",
+        "YPÊ"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-07-14T12:10:19.189750"
     }
   ],
   "ativos": [
