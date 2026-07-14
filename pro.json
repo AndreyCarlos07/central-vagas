@@ -159,6 +159,20 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-07-14T12:10:37.592493"
+    },
+    {
+      "id": "ae33a5c4",
+      "nome": "Candido Ferreira Ferreira",
+      "email": "candidoferreiraferreira95667@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "BRACELL"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-07-14T12:25:20.411872"
     }
   ],
   "ativos": [
