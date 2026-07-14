@@ -1,20 +1,6 @@
 {
   "pendentes": [
     {
-      "id": "05efd99e",
-      "nome": "djfabianoo@gmail.com",
-      "email": "djfabianoo@gmail.com",
-      "tipo_filtro": "empresa",
-      "valor": [
-        "ADECCO"
-      ],
-      "plano": "trimestral",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-07-10T23:31:52.166027"
-    },
-    {
       "id": "bc3cf371",
       "nome": "FELIPE DOS SANTOS MOREIRA",
       "email": "felipesantosmoreira1991@gmail.com",
