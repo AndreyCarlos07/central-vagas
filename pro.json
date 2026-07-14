@@ -1,30 +1,5 @@
 {
-  "pendentes": [
-    {
-      "id": "bc3cf371",
-      "nome": "FELIPE DOS SANTOS MOREIRA",
-      "email": "felipesantosmoreira1991@gmail.com",
-      "tipo_filtro": "empresa",
-      "valor": [
-        "ACELEN",
-        "BRASKEM",
-        "BYD",
-        "CONTINENTAL",
-        "ENGEPACK",
-        "GRUPO BOTICÁRIO",
-        "M. DIAS BRANCO",
-        "MERCADO LIVRE",
-        "PERBRAS",
-        "SOLAR COCA COLA",
-        "YPÊ"
-      ],
-      "plano": "mensal",
-      "status": "pendente",
-      "data_inicio": null,
-      "expira_em": null,
-      "data_criacao": "2026-07-14T12:10:19.189750"
-    }
-  ],
+  "pendentes": [],
   "ativos": [
     {
       "id": "91fd4abb",
@@ -59,6 +34,30 @@
       "data_inicio": "2026-04-28T14:07:21.682934",
       "expira_em": "2026-07-27T14:07:21.682948",
       "data_criacao": "2026-04-28T12:59:58.023135"
+    },
+    {
+      "id": "bc3cf371",
+      "nome": "FELIPE DOS SANTOS MOREIRA",
+      "email": "felipesantosmoreira1991@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "ACELEN",
+        "BRASKEM",
+        "BYD",
+        "CONTINENTAL",
+        "ENGEPACK",
+        "GRUPO BOTICÁRIO",
+        "M. DIAS BRANCO",
+        "MERCADO LIVRE",
+        "PERBRAS",
+        "SOLAR COCA COLA",
+        "YPÊ"
+      ],
+      "plano": "mensal",
+      "status": "ativo",
+      "data_inicio": "2026-07-14T13:55:32.400916",
+      "expira_em": "2026-08-13T13:55:32.400927",
+      "data_criacao": "2026-07-14T12:10:19.189750"
     }
   ],
   "expirados": [
