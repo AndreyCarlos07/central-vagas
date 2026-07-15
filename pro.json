@@ -67,6 +67,18 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-07-15T12:14:54.469706"
+    },
+    {
+      "id": "3a522429",
+      "nome": "Vanderson Andrade",
+      "email": "vandersonandrade930@gmail.com",
+      "tipo_filtro": "hierarquia",
+      "valor": "auxiliar",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-07-15T12:18:05.116391"
     }
   ],
   "ativos": [
