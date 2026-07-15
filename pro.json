@@ -79,6 +79,18 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-07-15T12:18:05.116391"
+    },
+    {
+      "id": "d4f569d2",
+      "nome": "Danilo Pereira Dantas",
+      "email": "danilo10dantas@hotmail.com",
+      "tipo_filtro": "area",
+      "valor": "manutencao",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-07-15T17:14:49.359912"
     }
   ],
   "ativos": [
