@@ -91,6 +91,23 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-07-15T17:14:49.359912"
+    },
+    {
+      "id": "46ffb9e9",
+      "nome": "Clécio Pinheiro ",
+      "email": "cleciopinheiro47@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "3CORAÇÕES",
+        "ACELEN",
+        "ACELEN RENOVÁVEIS",
+        "ADECCO"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-07-23T14:12:48.560785"
     }
   ],
   "ativos": [
