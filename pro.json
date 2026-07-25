@@ -108,6 +108,18 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-07-23T14:12:48.560785"
+    },
+    {
+      "id": "68aa779a",
+      "nome": "JORGE CHAVES BASTOS",
+      "email": "jorgebastos123.jb@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "producao",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-07-25T00:31:46.618618"
     }
   ],
   "ativos": [
