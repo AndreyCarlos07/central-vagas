@@ -120,6 +120,18 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-07-25T00:31:46.618618"
+    },
+    {
+      "id": "36edb1d3",
+      "nome": "Thaise do Nascimento Gonçalves ",
+      "email": "thaise.26nascimento@yahoo.com.br",
+      "tipo_filtro": "area",
+      "valor": "qualidade",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-07-25T20:52:23.766524"
     }
   ],
   "ativos": [
