@@ -132,6 +132,21 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-07-25T20:52:23.766524"
+    },
+    {
+      "id": "ace306f9",
+      "nome": "Levi Melquisedeque Silva de Oliveira ",
+      "email": "levioliverfiel@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "BRIDGESTONE",
+        "BYD"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-07-31T01:46:08.588780"
     }
   ],
   "ativos": [
