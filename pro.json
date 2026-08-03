@@ -147,6 +147,20 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-07-31T01:46:08.588780"
+    },
+    {
+      "id": "25c3b52b",
+      "nome": "Charles ",
+      "email": "charlesroger1@hotmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "BRIDGESTONE"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-08-03T02:33:56.784657"
     }
   ],
   "ativos": [
