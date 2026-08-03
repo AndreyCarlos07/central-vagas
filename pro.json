@@ -161,6 +161,43 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-08-03T02:33:56.784657"
+    },
+    {
+      "id": "b34ac0a0",
+      "nome": "Felipe dos Santos Moreira ",
+      "email": "felipesantosmoreira1991@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "3CORAÇÕES",
+        "ACELEN",
+        "ACELEN RENOVÁVEIS",
+        "ADECCO",
+        "BAUMINAS",
+        "BRACELL",
+        "BRASKEM",
+        "BRIDGESTONE",
+        "BYD",
+        "CETREL",
+        "CIBRA",
+        "CONTINENTAL",
+        "ENGEPACK",
+        "FORTLEV",
+        "GRUPO BOTICÁRIO",
+        "GRUPO FERTIPAR",
+        "GRUPO PETRÓPOLIS",
+        "INTERMARÍTIMA",
+        "KIMBERLY-CLARK",
+        "KORDSA",
+        "M. DIAS BRANCO",
+        "MERCADO LIVRE",
+        "SOLAR COCA COLA",
+        "YPÊ"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-08-03T20:14:51.512062"
     }
   ],
   "ativos": [
