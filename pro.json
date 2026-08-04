@@ -198,6 +198,18 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-08-03T20:14:51.512062"
+    },
+    {
+      "id": "b45d62aa",
+      "nome": "MARIA HELENA SANTANA DE CARVALHO",
+      "email": "helena162009@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "producao",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-08-04T01:25:35.487777"
     }
   ],
   "ativos": [
