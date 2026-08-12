@@ -224,6 +224,22 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-08-04T01:26:48.069935"
+    },
+    {
+      "id": "ed6443bc",
+      "nome": "José Leonardo Pereira neto",
+      "email": "jleonardo3076@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "ACELEN",
+        "ACELEN RENOVÁVEIS",
+        "ADECCO"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-08-12T11:02:58.714301"
     }
   ],
   "ativos": [
