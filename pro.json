@@ -240,6 +240,18 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-08-12T11:02:58.714301"
+    },
+    {
+      "id": "cbdb8c56",
+      "nome": "Thaís Oliveira",
+      "email": "thaissao@gmail.com",
+      "tipo_filtro": "area",
+      "valor": "administracao",
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-08-13T10:15:43.595011"
     }
   ],
   "ativos": [
