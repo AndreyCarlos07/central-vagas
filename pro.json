@@ -315,6 +315,31 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-08-17T03:08:50.412246"
+    },
+    {
+      "id": "9558f9e3",
+      "nome": "Daniela Araújo dos Santos Oliveira ",
+      "email": "danielaaraujojc@hotmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "ACELEN",
+        "ACELEN RENOVÁVEIS",
+        "BRACELL",
+        "BRASKEM",
+        "BRIDGESTONE",
+        "BYD",
+        "CONTINENTAL",
+        "GOLDWIND",
+        "GRUPO BOTICÁRIO",
+        "KORDSA",
+        "PERBRAS",
+        "TRONOX"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-08-29T00:52:19.440316"
     }
   ],
   "ativos": [
