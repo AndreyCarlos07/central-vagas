@@ -340,6 +340,34 @@
       "data_inicio": null,
       "expira_em": null,
       "data_criacao": "2026-08-29T00:52:19.440316"
+    },
+    {
+      "id": "8b3e86d7",
+      "nome": "Daniel dos santos pereira da Silva ",
+      "email": "dossantosdaniel801@gmail.com",
+      "tipo_filtro": "empresa",
+      "valor": [
+        "3CORAÇÕES",
+        "AMBEV",
+        "BRACELL",
+        "BRASKEM",
+        "BRIDGESTONE",
+        "BYD",
+        "CONTINENTAL",
+        "ENGEPACK",
+        "GERDAU",
+        "GRUPO BOTICÁRIO",
+        "M. DIAS BRANCO",
+        "MERCADO LIVRE",
+        "SOLAR COCA COLA",
+        "WILSON SONS",
+        "YPÊ"
+      ],
+      "plano": "mensal",
+      "status": "pendente",
+      "data_inicio": null,
+      "expira_em": null,
+      "data_criacao": "2026-09-17T19:52:54.514612"
     }
   ],
   "ativos": [
